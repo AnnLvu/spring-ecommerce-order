@@ -1,3 +1,4 @@
+.env
 HELP.md
 .gradle
 build/
@@ -38,3 +39,6 @@ out/
 
 ### Mac OS ###
 .DS_Store
+
+productdb.mv.db
+productdb.trace.db
