@@ -3,7 +3,7 @@ package ecommerce.controller.member
 import ecommerce.annotations.LoginMember
 import ecommerce.dto.cartProduct.CartProductResponseDTO
 import ecommerce.dto.response.MessageResponse
-import ecommerce.jpaEntity.User
+import ecommerce.entity.User
 import ecommerce.service.CartService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping

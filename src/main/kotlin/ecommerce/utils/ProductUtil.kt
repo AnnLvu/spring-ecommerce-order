@@ -1,7 +1,7 @@
 package ecommerce.utils
 
 import ecommerce.dto.products.ProductResponseDTO
-import ecommerce.jpaEntity.Product
+import ecommerce.entity.Product
 
 fun Product.toProductDTO(): ProductResponseDTO {
     return ProductResponseDTO(

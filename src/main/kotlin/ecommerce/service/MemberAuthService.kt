@@ -7,8 +7,8 @@ import ecommerce.dto.user.UserRequestDTO
 import ecommerce.enums.UserRole
 import ecommerce.exception.UserAlreadyExistsException
 import ecommerce.infrastructure.JwtProvider
-import ecommerce.jpaEntity.Cart
-import ecommerce.jpaEntity.User
+import ecommerce.entity.Cart
+import ecommerce.entity.User
 import ecommerce.repository.UserRepository
 import org.springframework.stereotype.Service
 import java.net.URI

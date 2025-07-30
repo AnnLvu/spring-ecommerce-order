@@ -1,4 +1,4 @@
-package ecommerce.jpaEntity
+package ecommerce.entity
 
 import ecommerce.exception.EntityNotFoundException
 import jakarta.persistence.CascadeType

@@ -5,7 +5,7 @@ import ecommerce.dto.products.ProductPatchDTO
 import ecommerce.dto.products.ProductResponseDTO
 import ecommerce.exception.DuplicateProductNameException
 import ecommerce.exception.EntityNotFoundException
-import ecommerce.jpaEntity.Product
+import ecommerce.entity.Product
 import ecommerce.repository.ProductRepository
 import ecommerce.utils.toProductDTO
 import org.springframework.stereotype.Service

@@ -1,4 +1,4 @@
-package ecommerce.jpaEntity
+package ecommerce.entity
 
 import ecommerce.enums.CartAction
 import jakarta.persistence.Column
