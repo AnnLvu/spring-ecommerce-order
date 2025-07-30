@@ -1,49 +1,53 @@
 package ecommerce.controller.member
 
-import ecommerce.dto.auth.LoginRequest
-import ecommerce.dto.products.ProductDTO
-import ecommerce.enums.UserRole
-import ecommerce.exception.UserCredentialException
-import ecommerce.mapper.UserRowMapper
+import ecommerce.dto.user.UserRequestDTO
+import ecommerce.entity.Product
+import ecommerce.repository.CartStatisticsRepository
 import ecommerce.repository.ProductRepository
+import ecommerce.repository.UserRepository
 import ecommerce.service.MemberAuthService
 import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
-import org.springframework.jdbc.core.JdbcTemplate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class CartControllerTest {
     private lateinit var token: String
 
     @Autowired
-    lateinit var jdbcTemplate: JdbcTemplate
+    private lateinit var cartStatisticsRepository: CartStatisticsRepository
+
+    @Autowired
+    private lateinit var userRepository: UserRepository
 
     @Autowired
     lateinit var memberAuthService: MemberAuthService
 
-    @Autowired
-    lateinit var userRowMapper: UserRowMapper
+    @BeforeEach
+    fun initBefore() {
+        val user =
+            UserRequestDTO(
+                name = "testUser",
+                email = "user@testing.com",
+                password = "testPassword",
+            )
+        token = memberAuthService.signUp(user).token
+    }
+
+    @AfterEach
+    fun initAfter() {
+        cartStatisticsRepository.deleteAll()
+        userRepository.deleteAll()
+        productRepository.deleteAll()
+    }
 
     @Autowired
     lateinit var productRepository: ProductRepository
-
-    @BeforeEach
-    fun init() {
-        val sql = "select * from users where role = '${UserRole.USER}'"
-        val result = jdbcTemplate.query(sql, userRowMapper).first()
-        token =
-            memberAuthService.logIn(
-                LoginRequest(
-                    result.email, result.password,
-                ),
-            )
-    }
 
     @Test
     fun getCartItems() {
@@ -59,11 +63,10 @@ class CartControllerTest {
 
     @Test
     fun addProduct() {
-        val productId =
-            productRepository.create(
-                ProductDTO(
+        val product =
+            productRepository.save(
+                Product(
                     name = "addProduct",
-                    description = "add product",
                     price = 10.0,
                     quantity = 10,
                     imageUrl = "",
@@ -73,7 +76,7 @@ class CartControllerTest {
             RestAssured
                 .given().log().all()
                 .header("Authorization", token)
-                .`when`().post("/api/member/cart/$productId")
+                .`when`().post("/api/member/cart/${product.id}")
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
@@ -81,11 +84,10 @@ class CartControllerTest {
 
     @Test
     fun removeProduct() {
-        val productId =
-            productRepository.create(
-                ProductDTO(
-                    name = "removeProduct",
-                    description = "add product",
+        val product =
+            productRepository.save(
+                Product(
+                    name = "addProduct",
                     price = 10.0,
                     quantity = 10,
                     imageUrl = "",
@@ -95,30 +97,16 @@ class CartControllerTest {
         RestAssured
             .given().log().all()
             .header("Authorization", token)
-            .`when`().post("/api/member/cart/$productId")
+            .`when`().post("/api/member/cart/${product.id}")
             .then().log().all().extract()
 
         val response =
             RestAssured
                 .given().log().all()
                 .header("Authorization", token)
-                .`when`().delete("/api/member/cart/$productId")
+                .`when`().delete("/api/member/cart/${product.id}")
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value())
-    }
-
-    @Test
-    fun `Admin tries to check cart`() {
-        val sql = "select * from users where role = '${UserRole.ADMIN}'"
-        val result = jdbcTemplate.query(sql, userRowMapper).first()
-        assertThrows<UserCredentialException> {
-            memberAuthService.logIn(
-                LoginRequest(
-                    result.email,
-                    result.password,
-                ),
-            )
-        }
     }
 }

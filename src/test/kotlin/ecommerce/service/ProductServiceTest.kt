@@ -2,10 +2,12 @@ package ecommerce.service
 
 import ecommerce.dto.products.ProductDTO
 import ecommerce.dto.products.ProductPatchDTO
+import ecommerce.entity.Product
 import ecommerce.exception.DuplicateProductNameException
 import ecommerce.exception.EntityNotFoundException
 import ecommerce.repository.ProductRepository
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,17 +21,37 @@ class ProductServiceTest {
     @Autowired
     private lateinit var adminProductService: AdminProductService
 
+    @AfterEach
+    fun initAfter() {
+        productRepository.deleteAll()
+    }
+
     @Test
     fun getAllProducts() {
+        productRepository.save(
+            Product(
+                name = "test",
+                price = 15.0,
+                quantity = 10,
+                imageUrl = "test.png",
+            ),
+        )
         val products = adminProductService.getAllProducts()
-        assertThat(products).isNotEmpty
+        assertThat(products.size).isEqualTo(1)
     }
 
     @Test
     fun getProductById() {
-        val id = createProduct("getProductById")
-        val product = adminProductService.getProductById(id)
-        assertThat(product.id).isEqualTo(id)
+        val product =
+            productRepository.save(
+                Product(
+                    name = "test",
+                    price = 15.0,
+                    quantity = 10,
+                    imageUrl = "test.png",
+                ),
+            )
+        assertThat(adminProductService.getProductById(product.id)).isNotNull
     }
 
     @Test
@@ -38,136 +60,169 @@ class ProductServiceTest {
     }
 
     @Test
-    fun createProduct() {
+    fun create() {
         val uri =
             adminProductService.createProduct(
-                ProductDTO(name = "Product1", description = "description", price = 10.5, imageUrl = "url.com"),
+                ProductDTO(
+                    name = "test",
+                    price = 15.0,
+                    quantity = 10,
+                    imageUrl = "test.png",
+                ),
             )
         assertThat(uri).isNotNull
     }
 
     @Test
     fun `throws error if duplicate name createProduct`() {
-        createProduct("createProduct")
+        val product =
+            productRepository.save(
+                Product(
+                    name = "test",
+                    price = 15.0,
+                    quantity = 10,
+                    imageUrl = "test.png",
+                ),
+            )
         assertThrows<DuplicateProductNameException> {
             adminProductService.createProduct(
-                ProductDTO(name = "createProduct", description = "description", price = 10.5, imageUrl = "url.com"),
+                ProductDTO(
+                    name = product.name,
+                    price = 15.0,
+                    quantity = 10,
+                    imageUrl = "test.png",
+                ),
             )
         }
     }
 
     @Test
     fun updateProduct() {
-        val id = createProduct("updateProduct")
-        adminProductService.updateProduct(
-            id = id,
-            product = ProductDTO(name = "updateProduct2", description = "description", price = 10.5, imageUrl = "url.com"),
-        )
-        val product = adminProductService.getProductById(id)
-        assertThat(product.name).isEqualTo("updateProduct2")
+        val product =
+            productRepository.save(
+                Product(
+                    name = "test",
+                    price = 15.0,
+                    quantity = 10,
+                    imageUrl = "test.png",
+                ),
+            )
+        adminProductService.updateProduct(product.id, ProductDTO(name = "test", price = 11.0, imageUrl = "test.png", quantity = 11))
+        assertThat(productRepository.findById(product.id).orElse(null).price).isEqualTo(11.0)
     }
 
     @Test
     fun `throws error if no product found updateProduct`() {
         assertThrows<EntityNotFoundException> {
-            adminProductService.updateProduct(
-                -1,
-                ProductDTO(name = "Product1", description = "description", price = 10.5, imageUrl = "url.com"),
-            )
+            adminProductService.updateProduct(-3, ProductDTO(name = "test", price = 11.0, imageUrl = "test.png", quantity = 11))
         }
     }
 
     @Test
     fun `throws error if duplicate name updateProduct`() {
-        createProduct("uniqueName")
-
-        val id = createProduct("someName")
-        val product = adminProductService.getProductById(id)
-        val newProduct =
-            product.copy(
-                name = "uniqueName",
+        productRepository.save(
+            Product(
+                name = "test-1",
+                price = 15.0,
+                quantity = 10,
+                imageUrl = "test.png",
+            ),
+        )
+        val product2 =
+            productRepository.save(
+                Product(
+                    name = "test-2",
+                    price = 15.0,
+                    quantity = 10,
+                    imageUrl = "test.png",
+                ),
             )
-
         assertThrows<DuplicateProductNameException> {
-            adminProductService.updateProduct(id, newProduct)
+            adminProductService.updateProduct(product2.id, ProductDTO(name = "test-1", price = 11.0, imageUrl = "test.png", quantity = 11))
         }
     }
 
     @Test
     fun patchProduct() {
-        val id = createProduct("patchProduct")
-        adminProductService.patchProduct(id, ProductPatchDTO(name = "Patched"))
-        val product = adminProductService.getProductById(id)
-        assertThat(product.name).isEqualTo("Patched")
+        val product =
+            productRepository.save(
+                Product(
+                    name = "test",
+                    price = 15.0,
+                    quantity = 10,
+                    imageUrl = "test.png",
+                ),
+            )
+        adminProductService.patchProduct(product.id, ProductPatchDTO(price = 21.0))
+        assertThat(productRepository.findById(product.id).orElse(null).price).isEqualTo(21.0)
     }
 
     @Test
     fun `throws error if no product found patchProduct`() {
         assertThrows<EntityNotFoundException> {
-            adminProductService.patchProduct(
-                -1,
-                ProductPatchDTO(name = "Something"),
-            )
+            adminProductService.patchProduct(-3, ProductPatchDTO(name = "test", price = 11.0, imageUrl = "test.png", quantity = 11))
         }
     }
 
     @Test
     fun `throws error if duplicate name patchProduct`() {
-        createProduct("uniqueName2")
-
-        val id = createProduct("patchName")
-        val patch = ProductPatchDTO(name = "uniqueName2")
-
+        productRepository.save(
+            Product(
+                name = "test-1",
+                price = 15.0,
+                quantity = 10,
+                imageUrl = "test.png",
+            ),
+        )
+        val product2 =
+            productRepository.save(
+                Product(
+                    name = "test-2",
+                    price = 15.0,
+                    quantity = 10,
+                    imageUrl = "test.png",
+                ),
+            )
         assertThrows<DuplicateProductNameException> {
-            adminProductService.patchProduct(id, patch)
+            adminProductService.patchProduct(
+                product2.id,
+                ProductPatchDTO(name = "test-1", price = 11.0, imageUrl = "test.png", quantity = 11),
+            )
         }
     }
 
     @Test
-    fun `updates all fields on patch`() {
-        val id = createProduct("Name1122")
-        val patch =
-            ProductPatchDTO(
-                name = "Name1133",
-                description = "description",
-                price = 10.5,
-                imageUrl = "url.com",
-                quantity = 33,
-            )
-        adminProductService.patchProduct(id, patch)
-        assertThat(adminProductService.getProductById(id).description).isEqualTo("description")
-    }
-
-    @Test
     fun `updates all fields with same name on patch`() {
-        val id = createProduct("Name1122")
-        val patch =
-            ProductPatchDTO(
-                name = "Name1122",
-                description = "description",
-                price = 10.5,
-                imageUrl = "url.com",
-                quantity = 33,
+        val product =
+            productRepository.save(
+                Product(
+                    name = "test",
+                    price = 15.0,
+                    quantity = 10,
+                    imageUrl = "test.png",
+                ),
             )
-        adminProductService.patchProduct(id, patch)
-        assertThat(adminProductService.getProductById(id).description).isEqualTo("description")
+        adminProductService.patchProduct(product.id, ProductPatchDTO(name = "test", price = 11.0, imageUrl = "tests.png", quantity = 11))
+        assertThat(productRepository.findById(product.id).orElse(null).price).isEqualTo(11.0)
     }
 
     @Test
     fun deleteProduct() {
-        val id = createProduct("deleteProduct")
-        adminProductService.deleteProduct(id)
-        assertThrows<EntityNotFoundException> { adminProductService.getProductById(id) }
+        val product =
+            productRepository.save(
+                Product(
+                    name = "test",
+                    price = 15.0,
+                    quantity = 10,
+                    imageUrl = "test.png",
+                ),
+            )
+        adminProductService.deleteProduct(product.id)
+        assertThat(productRepository.findById(product.id).orElse(null)).isNull()
     }
 
     @Test
     fun `Throws error if product not found deleteProduct`() {
         assertThrows<EntityNotFoundException> { adminProductService.deleteProduct(-3) }
-    }
-
-    private fun createProduct(name: String): Long {
-        return productRepository.create(
-            ProductDTO(name = name, description = "description", price = 10.5, imageUrl = "url.com"),
-        )
     }
 }

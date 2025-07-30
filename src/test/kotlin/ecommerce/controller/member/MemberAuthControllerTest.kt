@@ -2,6 +2,8 @@ package ecommerce.controller.member
 
 import ecommerce.dto.auth.LoginRequest
 import ecommerce.dto.user.UserRequestDTO
+import ecommerce.entity.User
+import ecommerce.repository.UserRepository
 import ecommerce.service.MemberAuthService
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
@@ -16,8 +18,11 @@ class MemberAuthControllerTest {
     @Autowired
     private lateinit var memberAuthService: MemberAuthService
 
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
     @Test
-    fun `signIn User`() {
+    fun `sign-up User`() {
         val user =
             UserRequestDTO(
                 name = "test",
@@ -36,14 +41,15 @@ class MemberAuthControllerTest {
     }
 
     @Test
-    fun signUp() {
+    fun login() {
         val user =
-            UserRequestDTO(
-                name = "test",
-                email = "temp2@temp.com",
-                password = "test-456",
+            userRepository.save(
+                User(
+                    name = "test",
+                    email = "temp2@temp.com",
+                    password = "test-456",
+                ),
             )
-        memberAuthService.signUp(user)
         val loginRequest =
             LoginRequest(
                 email = "temp2@temp.com",

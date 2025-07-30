@@ -29,7 +29,7 @@ class MemberAuthController(
     fun login(
         @RequestBody @Valid loginRequest: LoginRequest,
     ): ResponseEntity<TokenResponse> {
-        val token = memberAuthService.logIn(loginRequest)
+        val token = memberAuthService.login(loginRequest)
         return ResponseEntity.ok().body(TokenResponse(token))
     }
 }

@@ -39,7 +39,7 @@ class MemberAuthService(
         return UserCreateResponse(URI.create("/users/$savedMember.id"), "Bearer $authTokenPayload")
     }
 
-    fun logIn(loginRequest: LoginRequest): String {
+    fun login(loginRequest: LoginRequest): String {
         return loginService.login(loginRequest)
     }
 }

@@ -36,7 +36,7 @@ class MemberAuthServiceTest {
                 name = userDTO.name,
                 role = UserRole.USER,
             )
-        userRepository.create(member)
+        userRepository.save(member)
         assertThrows<UserAlreadyExistsException> { memberAuthService.signUp(userDTO) }
     }
 
@@ -60,7 +60,7 @@ class MemberAuthServiceTest {
                 password = "test123",
                 email = "signInError@test.com",
             )
-        assertThrows<UserCredentialException> { memberAuthService.logIn(loginRequest) }
+        assertThrows<UserCredentialException> { memberAuthService.login(loginRequest) }
     }
 
     @Test
@@ -72,13 +72,13 @@ class MemberAuthServiceTest {
                 email = "signInErrorPassword@test.com",
                 role = UserRole.USER,
             )
-        userRepository.create(memberUser)
+        userRepository.save(memberUser)
         val loginRequest =
             LoginRequest(
                 email = memberUser.email,
                 password = "test123456",
             )
-        assertThrows<UserCredentialException> { memberAuthService.logIn(loginRequest) }
+        assertThrows<UserCredentialException> { memberAuthService.login(loginRequest) }
     }
 
     @Test
@@ -90,12 +90,12 @@ class MemberAuthServiceTest {
                 email = "signInError@test.com",
                 role = UserRole.USER,
             )
-        userRepository.create(memberUser)
+        userRepository.save(memberUser)
         val loginRequest =
             LoginRequest(
                 memberUser.email,
                 memberUser.password,
             )
-        assertThat(memberAuthService.logIn(loginRequest)).isNotEmpty
+        assertThat(memberAuthService.login(loginRequest)).isNotEmpty
     }
 }

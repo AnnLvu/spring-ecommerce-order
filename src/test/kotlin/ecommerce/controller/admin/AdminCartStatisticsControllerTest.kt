@@ -1,41 +1,48 @@
 package ecommerce.controller.admin
 
 import ecommerce.dto.auth.LoginRequest
-import ecommerce.mapper.UserRowMapper
+import ecommerce.entity.User
+import ecommerce.enums.UserRole
+import ecommerce.repository.UserRepository
 import ecommerce.service.AdminAuthService
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
-import org.springframework.jdbc.core.JdbcTemplate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class AdminCartStatisticsControllerTest {
     private lateinit var token: String
 
     @Autowired
-    private lateinit var jdbcTemplate: JdbcTemplate
-
-    @Autowired
-    private lateinit var userRowMapper: UserRowMapper
+    lateinit var userRepository: UserRepository
 
     @Autowired
     private lateinit var adminAuthService: AdminAuthService
 
     @BeforeEach
-    fun init() {
-        val sql = "select * from users where role = 'ADMIN'"
-        val result = jdbcTemplate.query(sql, userRowMapper).first()
-        token =
-            adminAuthService.login(
-                LoginRequest(
-                    result.email, result.password,
+    fun initBefore() {
+        val user =
+            userRepository.save(
+                User(
+                    name = "testUser",
+                    email = "admin@testing.com",
+                    password = "testPassword",
+                    role = UserRole.ADMIN,
                 ),
             )
+        token = adminAuthService.login(LoginRequest(user.email, user.password))
+    }
+
+    @AfterEach
+    fun initAfter() {
+        val user = userRepository.findByEmail("admin@testing.com").orElseThrow()
+        userRepository.delete(user)
     }
 
     @Test

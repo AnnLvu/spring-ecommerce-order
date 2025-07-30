@@ -71,20 +71,6 @@ class ProductDTOTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = [" ", "12"])
-    fun `should fail validation for invalid description - size`(description: String) {
-        val dto =
-            ProductDTO(
-                name = "Product-1",
-                price = 10.2,
-                imageUrl = "https://example.com/images/usb_c_hub.jpg",
-                quantity = 20,
-            )
-        val violations = validator.validate(dto)
-        assertThat(violations.firstOrNull()?.message).isEqualTo("Description must be greater than 3 characters")
-    }
-
-    @ParameterizedTest
     @ValueSource(doubles = [-1.3, 0.0])
     fun `should fail validation for invalid price`(price: Double) {
         val dto =
