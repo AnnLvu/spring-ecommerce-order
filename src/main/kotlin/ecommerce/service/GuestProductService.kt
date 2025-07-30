@@ -1,7 +1,7 @@
 package ecommerce.service
 
-import ecommerce.dto.products.ProductDTO
-import ecommerce.mapper.toDto
+import ecommerce.dto.products.ProductResponseDTO
+import ecommerce.utils.toProductDTO
 import ecommerce.repository.ProductRepository
 import org.springframework.stereotype.Service
 
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service
 class GuestProductService(
     private val productRepository: ProductRepository,
 ) {
-    fun getListProducts(): List<ProductDTO> {
+    fun getListProducts(): List<ProductResponseDTO> {
         val products = productRepository.findAll()
-        return products.map { it.toDto() }
+        return products.map { it.toProductDTO() }
     }
 }
