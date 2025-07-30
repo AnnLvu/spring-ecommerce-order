@@ -4,6 +4,7 @@ import ecommerce.dto.cartStatistics.MembersWhoAddedToCartDTO
 import ecommerce.dto.cartStatistics.TopAddedProductsDTO
 import ecommerce.enums.CartAction
 import ecommerce.repository.CartStatisticsRepository
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -13,7 +14,8 @@ class AdminStatisticsService(
 ) {
     fun getTopAddedProducts(): List<TopAddedProductsDTO> {
         val since = LocalDateTime.now().minusDays(TOP_PRODUCTS_SINCE)
-        return cartStatisticsRepository.findTopProducts(CartAction.ADD.toString(), since, TOP_PRODUCTS_LIMIT)
+        val limit = PageRequest.of(0, TOP_PRODUCTS_LIMIT)
+        return cartStatisticsRepository.findTopProducts(CartAction.ADD, since, limit)
     }
 
     fun getMembersWhoAddedToCart(): List<MembersWhoAddedToCartDTO> {
