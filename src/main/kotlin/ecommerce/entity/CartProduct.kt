@@ -14,7 +14,7 @@ import jakarta.persistence.UniqueConstraint
 @Entity
 @Table(
     name = "cart_products",
-    uniqueConstraints = [UniqueConstraint(columnNames = ["user_id", "product_id"])],
+    uniqueConstraints = [UniqueConstraint(columnNames = ["cart_id", "product_id"])],
 )
 open class CartProduct(
     @Id
