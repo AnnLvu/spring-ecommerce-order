@@ -1,9 +1,9 @@
 package ecommerce.config.argumentResolver
 
 import ecommerce.annotations.LoginMember
-import ecommerce.dto.user.MemberUser
 import ecommerce.enums.UserRole
 import ecommerce.exception.UnauthorisedUserException
+import ecommerce.jpaEntity.User
 import ecommerce.repository.UserRepository
 import org.springframework.core.MethodParameter
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -24,22 +24,16 @@ class LoginMemberArgumentResolver(
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?,
-    ): MemberUser {
+    ): User {
         val request = (webRequest as ServletWebRequest).request
         val email = request.getAttribute("email") as String
 
         val user =
-            userRepository.findByEmail(email)
-                ?: throw UnauthorisedUserException("User not found")
-
+            userRepository.findByEmail(email).orElseThrow { UnauthorisedUserException("User not found") }
         if (user.role != UserRole.USER) {
             throw UnauthorisedUserException("User role not valid")
         }
 
-        return MemberUser(
-            user.id,
-            user.email,
-            user.name,
-        )
+        return user
     }
 }

@@ -3,7 +3,7 @@ package ecommerce.controller.member
 import ecommerce.annotations.LoginMember
 import ecommerce.dto.cartProduct.CartProductResponseDTO
 import ecommerce.dto.response.MessageResponse
-import ecommerce.dto.user.MemberUser
+import ecommerce.jpaEntity.User
 import ecommerce.service.CartService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -21,27 +21,27 @@ class CartController(
 ) {
     @GetMapping("")
     fun getCartItems(
-        @LoginMember user: MemberUser,
+        @LoginMember user: User,
     ): ResponseEntity<List<CartProductResponseDTO>> {
-        val products = cartService.getCartProducts(user.id)
+        val products = cartService.getCartProducts(user)
         return ResponseEntity.ok(products)
     }
 
     @PostMapping("/{id}")
     fun addProduct(
-        @LoginMember user: MemberUser,
+        @LoginMember user: User,
         @PathVariable("id") productID: Long,
     ): ResponseEntity<MessageResponse> {
-        val id = cartService.addProductToCart(user.id, productID)
+        val id = cartService.addProductToCart(user, productID)
         return ResponseEntity.created(URI.create("/cart/$id")).body(MessageResponse("Product added to cart"))
     }
 
     @DeleteMapping("/{id}")
     fun removeProduct(
-        @LoginMember user: MemberUser,
+        @LoginMember user: User,
         @PathVariable("id") productID: Long,
     ): ResponseEntity<String> {
-        cartService.removeProductFromCart(user.id, productID)
+        cartService.removeProductFromCart(user, productID)
         return ResponseEntity.noContent().build()
     }
 }
