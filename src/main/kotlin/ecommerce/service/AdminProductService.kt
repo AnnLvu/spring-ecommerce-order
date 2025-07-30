@@ -47,16 +47,16 @@ class AdminProductService(private val productRepository: ProductRepository) {
         val product =
             getValidProduct(id)
 
+        if (isDuplicateProductName(id, productDTO.name)) {
+            throw DuplicateProductNameException(productDTO.name)
+        }
+
         product.name = productDTO.name
         product.price = productDTO.price
         product.quantity = productDTO.quantity
         product.imageUrl = productDTO.imageUrl
 
-        try {
-            productRepository.save(product)
-        } catch (_: Exception) {
-            throw DuplicateProductNameException(productDTO.name)
-        }
+        productRepository.save(product)
     }
 
     fun patchProduct(

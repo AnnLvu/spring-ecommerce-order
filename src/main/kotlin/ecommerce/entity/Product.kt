@@ -20,7 +20,7 @@ class Product(
     var price: Double,
     @Column(name = "quantity", nullable = false)
     var quantity: Int = 1,
-    @Column(name = "image_url", nullable = false, unique = true)
+    @Column(name = "image_url", nullable = false)
     var imageUrl: String,
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime = LocalDateTime.now(),
