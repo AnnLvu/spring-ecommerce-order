@@ -19,8 +19,9 @@ class LoginService(
     ): String {
         val user =
             userRepository.findByEmailAndPassword(
-                loginRequest.email, loginRequest.password,
-            ) ?: throw UserCredentialException()
+                loginRequest.email,
+                loginRequest.password,
+            ).orElseThrow { UserCredentialException() }
 
         if (user.role != expectedRole) {
             throw UserCredentialException("Incorrect role for this endpoint")
