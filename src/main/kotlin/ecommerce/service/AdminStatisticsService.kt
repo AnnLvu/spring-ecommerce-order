@@ -2,38 +2,28 @@ package ecommerce.service
 
 import ecommerce.dto.cartStatistics.MembersWhoAddedToCartDTO
 import ecommerce.dto.cartStatistics.TopAddedProductsDTO
-import ecommerce.entity.MembersWhoAddedToCart
-import ecommerce.entity.TopAddedProducts
+import ecommerce.enums.CartAction
 import ecommerce.repository.CartStatisticsRepository
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class AdminStatisticsService(
     private val cartStatisticsRepository: CartStatisticsRepository,
 ) {
-    fun getTopAddedProducts(limit: Int = 5): List<TopAddedProductsDTO> {
-        val stats = cartStatisticsRepository.getTopAddedProducts(limit)
-        return stats.map { it.toDTO() }
+    fun getTopAddedProducts(): List<TopAddedProductsDTO> {
+        val since = LocalDateTime.now().minusDays(TOP_PRODUCTS_SINCE)
+        return cartStatisticsRepository.findTopProducts(CartAction.ADD.toString(), since, TOP_PRODUCTS_LIMIT)
     }
 
-    fun getMembersWhoAddedToCart(days: Int = 7): List<MembersWhoAddedToCartDTO> {
-        val stats = cartStatisticsRepository.getMembersWhoAddedToCart(days)
-        return stats.map { it.toDTO() }
+    fun getMembersWhoAddedToCart(): List<MembersWhoAddedToCartDTO> {
+        val since = LocalDateTime.now().minusDays(ACTIVE_USERS_SINCE)
+        return cartStatisticsRepository.findActiveUsersSince(since)
     }
 
-    private fun TopAddedProducts.toDTO(): TopAddedProductsDTO {
-        return TopAddedProductsDTO(
-            this.name,
-            this.count,
-            this.createdAt,
-        )
-    }
-
-    private fun MembersWhoAddedToCart.toDTO(): MembersWhoAddedToCartDTO {
-        return MembersWhoAddedToCartDTO(
-            this.id,
-            this.name,
-            this.email,
-        )
+    companion object {
+        private const val TOP_PRODUCTS_SINCE = 30L
+        private const val TOP_PRODUCTS_LIMIT = 5
+        private const val ACTIVE_USERS_SINCE = 7L
     }
 }
