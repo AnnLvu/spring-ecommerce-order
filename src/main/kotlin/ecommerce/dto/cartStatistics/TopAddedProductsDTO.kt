@@ -1,7 +1,9 @@
 package ecommerce.dto.cartStatistics
 
+import java.time.LocalDateTime
+
 class TopAddedProductsDTO(
-    val name: String,
-    val count: Int,
-    val createdAt: String,
+    val productName: String,
+    val count: Long,
+    val createdAt: LocalDateTime,
 )
