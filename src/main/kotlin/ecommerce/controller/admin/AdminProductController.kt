@@ -2,6 +2,7 @@ package ecommerce.controller.admin
 
 import ecommerce.dto.products.ProductDTO
 import ecommerce.dto.products.ProductPatchDTO
+import ecommerce.dto.products.ProductResponseDTO
 import ecommerce.dto.response.MessageResponse
 import ecommerce.service.AdminProductService
 import jakarta.validation.Valid
@@ -20,14 +21,14 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/admin/products")
 class AdminProductController(private val adminProductService: AdminProductService) {
     @GetMapping("")
-    fun getProducts(): ResponseEntity<List<ProductDTO>> {
+    fun getProducts(): ResponseEntity<List<ProductResponseDTO>> {
         return ResponseEntity.ok().body(adminProductService.getAllProducts())
     }
 
     @GetMapping("/{id}")
     fun getProductById(
         @PathVariable("id") id: Long,
-    ): ResponseEntity<ProductDTO> {
+    ): ResponseEntity<ProductResponseDTO> {
         return ResponseEntity.ok().body(adminProductService.getProductById(id))
     }
 
