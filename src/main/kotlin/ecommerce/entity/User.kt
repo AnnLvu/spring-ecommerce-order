@@ -15,7 +15,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "users")
-open class User(
+class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,

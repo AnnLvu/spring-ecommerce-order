@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "cart_statistics")
-open class CartStatistics(
+class CartStatistics(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,

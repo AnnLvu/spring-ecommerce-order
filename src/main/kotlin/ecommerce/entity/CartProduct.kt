@@ -16,7 +16,7 @@ import jakarta.persistence.UniqueConstraint
     name = "cart_products",
     uniqueConstraints = [UniqueConstraint(columnNames = ["cart_id", "product_id"])],
 )
-open class CartProduct(
+class CartProduct(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
