@@ -29,8 +29,9 @@ abstract class BaseAuthInterceptor(
         request.setAttribute("email", payload.email)
 
         val user =
-            userRepository.findByEmail(payload.email)
-                ?: throw UnauthorisedUserException("User not found")
+            userRepository.findByEmail(payload.email).orElseThrow {
+                throw UnauthorisedUserException("User not found")
+            }
 
         return handleAuthenticatedRequest(request, response, handler, user)
     }
