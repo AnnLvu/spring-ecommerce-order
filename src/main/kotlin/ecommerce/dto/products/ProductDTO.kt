@@ -14,8 +14,6 @@ data class ProductDTO(
         message = "Product name contains invalid characters",
     )
     val name: String,
-    @field:Length(min = 3, message = "Description must be greater than 3 characters")
-    val description: String,
     @field:Positive(message = "Product price must be greater than 0")
     val price: Double,
     @field:NotBlank(message = "Image URL cannot be blank")
