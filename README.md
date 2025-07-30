@@ -52,34 +52,51 @@
 - [x] `signUp(user: UserRequestDTO)`: UserCreateResponse
 - [x] `fun logIn(loginRequest: LoginRequest)`: String
 
+## JPA Entities
+### Cart
+#### Columns
+- [x] id: Long
+- [x] user: User `OneToOne`
+- [x] items: MutableList<CartProduct> `OneToMany`
+#### Methods
+- [x] `fun addProduct(product: Product, quantity: Int = 1)`: CartProduct
+- [x] `fun decrementProduct(product: Product, decrement: Int = 1)`
+- [x] `fun removeProduct(product: Product)`
+- [x] `fun clear()`
+### CartProduct
+#### Columns
+- [x] id: Long
+- [x] cart: Cart
+- [x] product: Product
+- [x] quantity: Int
+### CartStatistics
+#### Columns
+- [x] id: Long
+- [x] user: User `ManyToOne`
+- [x] product: Product `ManyToOne`
+- [x] action: CartAction
+### Product
+#### Columns
+- [x] id: Long
+- [x] name: String
+- [x] price: Double
+- [x] quantity: Int
+- [x] imageUrl: String
+- [x] createdAt: LocalDateTime
+### User
+- [x] id: Long
+- [x] email: String
+- [x] password: String
+- [x] name: String
+- [x] role: UserRole
+- [x] cart: Cart? `OneToOne`
+
 ## Repository
 ### CartProductRepository
-- `getCartProducts(cartID: Long)`: List<CartProductResponseDTO>
-- `findCartProduct(cartID: Long, productID: Long)`: CartProductDTO?
-- `updateProductQuantity(cartProductId: Long, quantity: Int)`: Int
-- `removeProduct(cartID: Long, productID: Long)`: Int
-- `addProduct(cartID: Long, productID: Long)`: Long
 ### CartRepository
-- `createCartForUser(userId: Long)`: Void
-- `findMembersCart(userId: Long?)`: CartDTO?
 ### CartStatisticsRepository
-- `create(userID: Long?, productID: Long, action: CartAction)`: Long
-- `getTopAddedProducts(limit: Int = 5)`: List<TopAddedProductsDTO>
-- `getMembersWhoAddedToCart(days: Int = 7)`: List<MembersWhoAddedToCartDTO>
 ### ProductRepository
-- `findAll()`: List<ProductDTO>
-- `findById(id: Long)`: ProductDTO?
-- `create(product: ProductDTO)`: Long
-- `findByName(name: String)`: ProductDTO?
-- `existsByName(name: String)`: Boolean
-- `create(product: ProductDTO)`: Long
-- `update(id: Long, product: ProductDTO)`: Int
-- `deleteById(id: Long)`: Int
 ### UserRepository
-- `create(user: UserDTO)`: Long
-- `findByEmailAndPassword(email: String, password: String)`: UserDTO?
-- `findByEmail(email: String)`: UserDTO?
-- `existsByEmail(email: String)`: Boolean
 
 ## DTO
 ### Auth
@@ -143,7 +160,7 @@
 - name: String
 - role: UserRole
 ## Infrastructure
-### JwtTokenProvider
+### JwtProvider
 - [x] `createToken`: String
 - [x] `getPayload`: AuthTokenPayload
 - [x] `validateToken`: Boolean
@@ -182,7 +199,7 @@
 
 ## Schema
 ### Products
-- id, name, description, price, image_url, quantity
+- id, name, price, image_url, quantity
 - [x] name is `UNIQUE`
 
 ### Users
