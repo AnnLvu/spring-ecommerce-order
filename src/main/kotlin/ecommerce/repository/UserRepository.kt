@@ -1,6 +1,6 @@
 package ecommerce.repository
 
-import ecommerce.entity.User
+import ecommerce.jpaEntity.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.util.Optional
@@ -13,4 +13,6 @@ interface UserRepository : JpaRepository<User, Long> {
         email: String,
         password: String,
     ): Optional<User>
+
+    fun existsByEmail(email: String): Boolean
 }
