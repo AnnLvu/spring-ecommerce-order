@@ -1,8 +1,8 @@
 package ecommerce.service
 
 import ecommerce.dto.products.ProductResponseDTO
-import ecommerce.utils.toProductDTO
 import ecommerce.repository.ProductRepository
+import ecommerce.utils.toProductDTO
 import org.springframework.stereotype.Service
 
 @Service
