@@ -1,6 +1,6 @@
 package ecommerce.controller.guest
 
-import ecommerce.dto.products.ProductDTO
+import ecommerce.dto.products.ProductResponseDTO
 import ecommerce.service.GuestProductService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,7 +13,7 @@ class GuestProductController(
     private val guestProductService: GuestProductService,
 ) {
     @GetMapping("/products")
-    fun listProducts(): ResponseEntity<List<ProductDTO>> {
+    fun listProducts(): ResponseEntity<List<ProductResponseDTO>> {
         val products = guestProductService.getListProducts()
         return ResponseEntity.ok().body(products)
     }
