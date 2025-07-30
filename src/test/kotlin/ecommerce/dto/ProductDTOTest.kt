@@ -24,7 +24,6 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name = "Product-1",
-                description = "Product description",
                 price = 10.2,
                 imageUrl = "https://example.com/images/usb_c_hub.jpg",
                 quantity = 20,
@@ -40,7 +39,6 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name = name,
-                description = "Product description",
                 price = 10.2,
                 imageUrl = "https://example.com/images/usb_c_hub.jpg",
                 quantity = 20,
@@ -64,7 +62,6 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name = name,
-                description = "Product description",
                 price = 10.2,
                 imageUrl = "https://example.com/images/usb_c_hub.jpg",
                 quantity = 20,
@@ -79,7 +76,6 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name = "Product-1",
-                description = description,
                 price = 10.2,
                 imageUrl = "https://example.com/images/usb_c_hub.jpg",
                 quantity = 20,
@@ -94,7 +90,6 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name = "Product-1",
-                description = "description",
                 price = price,
                 imageUrl = "https://example.com/images/usb_c_hub.jpg",
                 quantity = 20,
@@ -109,7 +104,6 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name = "Product-1",
-                description = "description",
                 price = 10.2,
                 imageUrl = imageUrl,
                 quantity = 10,
@@ -125,7 +119,6 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name = "Product-1",
-                description = "description",
                 price = 10.2,
                 imageUrl = "https://example.com/image.png",
                 quantity = quantity,
@@ -146,7 +139,6 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name = "Product-1",
-                description = "description",
                 price = 10.2,
                 imageUrl = imageUrl,
                 quantity = 10,
