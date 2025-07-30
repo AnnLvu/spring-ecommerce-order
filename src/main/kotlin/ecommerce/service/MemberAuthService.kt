@@ -4,11 +4,11 @@ import ecommerce.dto.auth.AuthTokenPayload
 import ecommerce.dto.auth.LoginRequest
 import ecommerce.dto.user.UserCreateResponse
 import ecommerce.dto.user.UserRequestDTO
-import ecommerce.entity.User
 import ecommerce.enums.UserRole
 import ecommerce.exception.UserAlreadyExistsException
 import ecommerce.infrastructure.JwtProvider
-import ecommerce.repository.CartRepository
+import ecommerce.jpaEntity.Cart
+import ecommerce.jpaEntity.User
 import ecommerce.repository.UserRepository
 import org.springframework.stereotype.Service
 import java.net.URI
@@ -16,25 +16,27 @@ import java.net.URI
 @Service
 class MemberAuthService(
     private val userRepository: UserRepository,
-    private val cartRepository: CartRepository,
     private val jwtProvider: JwtProvider,
     private val loginService: LoginService,
 ) {
-    fun signUp(user: UserRequestDTO): UserCreateResponse {
-        if (userRepository.existsByEmail(user.email)) {
-            throw UserAlreadyExistsException(user.email)
+    fun signUp(userRequestDTO: UserRequestDTO): UserCreateResponse {
+        if (userRepository.existsByEmail(userRequestDTO.email)) {
+            throw UserAlreadyExistsException(userRequestDTO.email)
         }
         val member =
             User(
-                email = user.email,
-                password = user.password,
-                name = user.name,
+                email = userRequestDTO.email,
+                password = userRequestDTO.password,
+                name = userRequestDTO.name,
                 role = UserRole.USER,
             )
-        val id = userRepository.create(member)
-        cartRepository.createCartForUser(id)
+
+        member.cart = Cart(user = member)
+
+        val savedMember = userRepository.save(member)
+
         val authTokenPayload = jwtProvider.createToken(AuthTokenPayload(member.email))
-        return UserCreateResponse(URI.create("/users/$id"), "Bearer $authTokenPayload")
+        return UserCreateResponse(URI.create("/users/$savedMember.id"), "Bearer $authTokenPayload")
     }
 
     fun logIn(loginRequest: LoginRequest): String {
