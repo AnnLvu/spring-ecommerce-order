@@ -1,9 +1,9 @@
 package ecommerce.config.argumentResolver
 
 import ecommerce.annotations.LoginMember
+import ecommerce.entity.User
 import ecommerce.enums.UserRole
 import ecommerce.exception.UnauthorisedUserException
-import ecommerce.entity.User
 import ecommerce.repository.UserRepository
 import org.springframework.core.MethodParameter
 import org.springframework.web.bind.support.WebDataBinderFactory
