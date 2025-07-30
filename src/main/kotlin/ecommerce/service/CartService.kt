@@ -6,8 +6,6 @@ import ecommerce.entity.Product
 import ecommerce.entity.User
 import ecommerce.enums.CartAction
 import ecommerce.exception.EntityNotFoundException
-import ecommerce.repository.CartProductRepository
-import ecommerce.repository.CartRepository
 import ecommerce.repository.CartStatisticsRepository
 import ecommerce.repository.ProductRepository
 import jakarta.transaction.Transactional
@@ -16,8 +14,6 @@ import kotlin.Long
 
 @Service
 class CartService(
-    private val cartRepository: CartRepository,
-    private val cartProductRepository: CartProductRepository,
     private val productRepository: ProductRepository,
     private val cartStatisticsRepository: CartStatisticsRepository,
 ) {
