@@ -1,15 +1,16 @@
 package ecommerce.service
 
 import ecommerce.dto.cartProduct.CartProductResponseDTO
-import ecommerce.entity.Cart
-import ecommerce.entity.CartProductResponse
 import ecommerce.enums.CartAction
-import ecommerce.exception.CartOperationException
 import ecommerce.exception.EntityNotFoundException
+import ecommerce.jpaEntity.CartStatistics
+import ecommerce.jpaEntity.Product
+import ecommerce.jpaEntity.User
 import ecommerce.repository.CartProductRepository
 import ecommerce.repository.CartRepository
 import ecommerce.repository.CartStatisticsRepository
 import ecommerce.repository.ProductRepository
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import kotlin.Long
 
@@ -20,78 +21,62 @@ class CartService(
     private val productRepository: ProductRepository,
     private val cartStatisticsRepository: CartStatisticsRepository,
 ) {
-    fun getCartProducts(userID: Long?): List<CartProductResponseDTO> {
-        val cart = getUserCart(userID)
-        val products = cartProductRepository.getCartProducts(cart.id)
-        return products.map { it.toDTO() }
+    fun getCartProducts(user: User): List<CartProductResponseDTO> {
+        val cart = user.cart ?: throw EntityNotFoundException("Cart not found")
+        val products = cart.items
+        return products.map {
+            val product = it.product
+            CartProductResponseDTO(
+                productId = product.id,
+                name = product.name,
+                price = product.price,
+                imageUrl = product.imageUrl,
+                quantity = it.quantity,
+            )
+        }
     }
 
+    @Transactional
     fun addProductToCart(
-        userID: Long?,
-        productID: Long,
+        member: User,
+        productId: Long,
     ): Long {
-        val cart = getUserCart(userID)
-        checkValidProduct(productID)
+        val cart = member.cart ?: throw EntityNotFoundException("Cart not found")
+        val product = getValidProduct(productId)
+        val addedItem = cart.addProduct(product)
 
-        val cartProduct = cartProductRepository.findCartProduct(cart.id, productID)
-
-        return try {
-            val id =
-                if (cartProduct == null) {
-                    cartProductRepository.addProduct(cart.id, productID)
-                } else {
-                    cartProductRepository.updateProductQuantity(cartProduct.id, cartProduct.quantity + 1)
-                    cartProduct.id
-                }
-
-            cartStatisticsRepository.create(userID, productID, CartAction.ADD)
-
-            id
-        } catch (_: Exception) {
-            throw CartOperationException("Failed to add product to cart")
-        }
-    }
-
-    fun removeProductFromCart(
-        userID: Long?,
-        productID: Long,
-    ) {
-        val cart = getUserCart(userID)
-        checkValidProduct(productID)
-
-        val cartProduct =
-            cartProductRepository.findCartProduct(cart.id, productID)
-                ?: throw EntityNotFoundException("Product not in cart")
-
-        try {
-            if (cartProduct.quantity == 1) {
-                cartProductRepository.removeProduct(cart.id, productID)
-            } else {
-                cartProductRepository.updateProductQuantity(cartProduct.id, cartProduct.quantity - 1)
-            }
-        } catch (_: Exception) {
-            throw CartOperationException("Failed to remove product from cart")
-        }
-        cartStatisticsRepository.create(userID, productID, CartAction.DELETE)
-    }
-
-    private fun getUserCart(userID: Long?): Cart {
-        return cartRepository.findMembersCart(userID)
-            ?: throw EntityNotFoundException("Cart not found")
-    }
-
-    private fun checkValidProduct(productID: Long) {
-        productRepository.findById(productID) ?: throw EntityNotFoundException("Product not found")
-    }
-
-    private fun CartProductResponse.toDTO(): CartProductResponseDTO {
-        return CartProductResponseDTO(
-            this.productId,
-            this.name,
-            this.description,
-            this.price,
-            this.imageUrl,
-            this.quantity,
+        cartStatisticsRepository.save(
+            CartStatistics(
+                user = member,
+                product = product,
+                action = CartAction.ADD,
+            ),
         )
+
+        return addedItem.id
+    }
+
+    @Transactional
+    fun removeProductFromCart(
+        member: User,
+        productId: Long,
+    ) {
+        val cart = member.cart ?: throw EntityNotFoundException("Cart not found")
+        val product = getValidProduct(productId)
+
+        cart.decrementProduct(product)
+        cartStatisticsRepository.save(
+            CartStatistics(
+                user = member,
+                product = product,
+                action = CartAction.DELETE,
+            ),
+        )
+    }
+
+    private fun getValidProduct(productID: Long): Product {
+        return productRepository.findById(productID).orElseThrow {
+            EntityNotFoundException("Product not found")
+        }
     }
 }
