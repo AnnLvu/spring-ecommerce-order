@@ -26,11 +26,11 @@ class CartService(
             products.map {
                 val product = it.product
                 CartProductDTO(
-                    productId = product.id,
-                    name = product.name,
-                    price = product.price,
-                    imageUrl = product.imageUrl,
-                    quantity = it.quantity,
+                    product.id,
+                    product.name,
+                    product.price,
+                    product.imageUrl,
+                    it.quantity,
                 )
             },
         )
@@ -43,6 +43,8 @@ class CartService(
     ): Long {
         val cart = getCart(member)
         val product = getValidProduct(productId)
+
+        if (product.quantity == 0) throw EntityNotFoundException("Product not found")
         val addedItem = cart.addProduct(product)
 
         cartStatisticsRepository.save(
