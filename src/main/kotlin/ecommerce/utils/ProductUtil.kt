@@ -1,7 +1,7 @@
 package ecommerce.utils
 
 import ecommerce.dto.products.ProductResponseDTO
-import ecommerce.entity.Product
+import ecommerce.model.Product
 
 fun Product.toProductDTO(): ProductResponseDTO {
     return ProductResponseDTO(

@@ -1,8 +1,8 @@
 package ecommerce.controller.admin
 
 import ecommerce.dto.auth.LoginRequest
-import ecommerce.entity.User
 import ecommerce.enums.UserRole
+import ecommerce.model.User
 import ecommerce.repository.UserRepository
 import ecommerce.service.AdminAuthService
 import io.restassured.RestAssured

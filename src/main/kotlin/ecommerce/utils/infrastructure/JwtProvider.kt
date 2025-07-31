@@ -1,7 +1,7 @@
-package ecommerce.infrastructure
+package ecommerce.utils.infrastructure
 
 import ecommerce.dto.auth.AuthTokenPayload
-import ecommerce.exception.UnauthorisedUserException
+import ecommerce.utils.exception.UnauthorisedUserException
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys

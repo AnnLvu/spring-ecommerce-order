@@ -2,10 +2,10 @@ package ecommerce.service
 
 import ecommerce.dto.products.ProductDTO
 import ecommerce.dto.products.ProductPatchDTO
-import ecommerce.entity.Product
-import ecommerce.exception.DuplicateProductNameException
-import ecommerce.exception.EntityNotFoundException
+import ecommerce.model.Product
 import ecommerce.repository.ProductRepository
+import ecommerce.utils.exception.DuplicateProductNameException
+import ecommerce.utils.exception.EntityNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test

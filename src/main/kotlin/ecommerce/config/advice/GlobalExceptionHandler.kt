@@ -1,13 +1,13 @@
-package ecommerce.advice
+package ecommerce.config.advice
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import ecommerce.dto.error.ErrorResponse
-import ecommerce.exception.CartOperationException
-import ecommerce.exception.DuplicateProductNameException
-import ecommerce.exception.EntityNotFoundException
-import ecommerce.exception.UnauthorisedUserException
-import ecommerce.exception.UserAlreadyExistsException
-import ecommerce.exception.UserCredentialException
+import ecommerce.utils.exception.CartOperationException
+import ecommerce.utils.exception.DuplicateProductNameException
+import ecommerce.utils.exception.EntityNotFoundException
+import ecommerce.utils.exception.UnauthorisedUserException
+import ecommerce.utils.exception.UserAlreadyExistsException
+import ecommerce.utils.exception.UserCredentialException
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

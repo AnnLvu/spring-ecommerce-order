@@ -1,4 +1,4 @@
-package ecommerce.entity
+package ecommerce.model
 
 import ecommerce.enums.UserRole
 import jakarta.persistence.CascadeType

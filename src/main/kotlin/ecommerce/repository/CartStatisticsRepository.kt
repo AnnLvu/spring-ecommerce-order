@@ -2,8 +2,8 @@ package ecommerce.repository
 
 import ecommerce.dto.cartStatistics.MembersWhoAddedToCartDTO
 import ecommerce.dto.cartStatistics.TopAddedProductsDTO
-import ecommerce.entity.CartStatistics
 import ecommerce.enums.CartAction
+import ecommerce.model.CartStatistics
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param

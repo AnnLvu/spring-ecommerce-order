@@ -1,13 +1,13 @@
 package ecommerce.service
 
 import ecommerce.dto.cartProduct.CartProductResponseDTO
-import ecommerce.entity.CartStatistics
-import ecommerce.entity.Product
-import ecommerce.entity.User
 import ecommerce.enums.CartAction
-import ecommerce.exception.EntityNotFoundException
+import ecommerce.model.CartStatistics
+import ecommerce.model.Product
+import ecommerce.model.User
 import ecommerce.repository.CartStatisticsRepository
 import ecommerce.repository.ProductRepository
+import ecommerce.utils.exception.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import kotlin.Long

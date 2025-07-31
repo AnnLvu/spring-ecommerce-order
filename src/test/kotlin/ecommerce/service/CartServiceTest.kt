@@ -1,12 +1,12 @@
 package ecommerce.service
 
 import ecommerce.dto.user.UserRequestDTO
-import ecommerce.entity.Product
-import ecommerce.entity.User
-import ecommerce.exception.EntityNotFoundException
+import ecommerce.model.Product
+import ecommerce.model.User
 import ecommerce.repository.CartStatisticsRepository
 import ecommerce.repository.ProductRepository
 import ecommerce.repository.UserRepository
+import ecommerce.utils.exception.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach

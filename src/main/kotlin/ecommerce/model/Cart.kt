@@ -1,6 +1,6 @@
-package ecommerce.entity
+package ecommerce.model
 
-import ecommerce.exception.EntityNotFoundException
+import ecommerce.utils.exception.EntityNotFoundException
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue

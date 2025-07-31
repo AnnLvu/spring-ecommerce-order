@@ -1,7 +1,7 @@
 package ecommerce.controller.member
 
 import ecommerce.dto.user.UserRequestDTO
-import ecommerce.entity.Product
+import ecommerce.model.Product
 import ecommerce.repository.CartStatisticsRepository
 import ecommerce.repository.ProductRepository
 import ecommerce.repository.UserRepository

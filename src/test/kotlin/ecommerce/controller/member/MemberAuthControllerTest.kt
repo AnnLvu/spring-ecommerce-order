@@ -2,7 +2,7 @@ package ecommerce.controller.member
 
 import ecommerce.dto.auth.LoginRequest
 import ecommerce.dto.user.UserRequestDTO
-import ecommerce.entity.User
+import ecommerce.model.User
 import ecommerce.repository.UserRepository
 import ecommerce.service.MemberAuthService
 import io.restassured.RestAssured

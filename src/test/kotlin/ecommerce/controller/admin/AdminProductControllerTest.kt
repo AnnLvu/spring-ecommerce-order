@@ -3,9 +3,9 @@ package ecommerce.controller.admin
 import ecommerce.dto.auth.LoginRequest
 import ecommerce.dto.products.ProductDTO
 import ecommerce.dto.products.ProductPatchDTO
-import ecommerce.entity.Product
-import ecommerce.entity.User
 import ecommerce.enums.UserRole
+import ecommerce.model.Product
+import ecommerce.model.User
 import ecommerce.repository.ProductRepository
 import ecommerce.repository.UserRepository
 import ecommerce.service.AdminAuthService

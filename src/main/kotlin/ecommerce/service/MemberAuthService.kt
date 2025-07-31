@@ -4,12 +4,12 @@ import ecommerce.dto.auth.AuthTokenPayload
 import ecommerce.dto.auth.LoginRequest
 import ecommerce.dto.user.UserCreateResponse
 import ecommerce.dto.user.UserRequestDTO
-import ecommerce.entity.Cart
-import ecommerce.entity.User
 import ecommerce.enums.UserRole
-import ecommerce.exception.UserAlreadyExistsException
-import ecommerce.infrastructure.JwtProvider
+import ecommerce.model.Cart
+import ecommerce.model.User
 import ecommerce.repository.UserRepository
+import ecommerce.utils.exception.UserAlreadyExistsException
+import ecommerce.utils.infrastructure.JwtProvider
 import org.springframework.stereotype.Service
 import java.net.URI
 

@@ -2,11 +2,11 @@ package ecommerce.service
 
 import ecommerce.dto.auth.LoginRequest
 import ecommerce.dto.user.UserRequestDTO
-import ecommerce.entity.User
 import ecommerce.enums.UserRole
-import ecommerce.exception.UserAlreadyExistsException
-import ecommerce.exception.UserCredentialException
+import ecommerce.model.User
 import ecommerce.repository.UserRepository
+import ecommerce.utils.exception.UserAlreadyExistsException
+import ecommerce.utils.exception.UserCredentialException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
