@@ -1,7 +1,9 @@
 package ecommerce.service
 
-import ecommerce.dto.cartProduct.CartProductResponseDTO
+import ecommerce.dto.cartProduct.CartProductDTO
+import ecommerce.dto.cartProduct.CartProductResponse
 import ecommerce.enums.CartAction
+import ecommerce.model.Cart
 import ecommerce.model.CartStatistics
 import ecommerce.model.Product
 import ecommerce.model.User
@@ -17,19 +19,21 @@ class CartService(
     private val productRepository: ProductRepository,
     private val cartStatisticsRepository: CartStatisticsRepository,
 ) {
-    fun getCartProducts(user: User): List<CartProductResponseDTO> {
-        val cart = user.cart ?: throw EntityNotFoundException("Cart not found")
+    fun getCartProducts(member: User): CartProductResponse {
+        val cart = getCart(member)
         val products = cart.items
-        return products.map {
-            val product = it.product
-            CartProductResponseDTO(
-                productId = product.id,
-                name = product.name,
-                price = product.price,
-                imageUrl = product.imageUrl,
-                quantity = it.quantity,
-            )
-        }
+        return CartProductResponse(
+            products.map {
+                val product = it.product
+                CartProductDTO(
+                    productId = product.id,
+                    name = product.name,
+                    price = product.price,
+                    imageUrl = product.imageUrl,
+                    quantity = it.quantity,
+                )
+            },
+        )
     }
 
     @Transactional
@@ -37,7 +41,7 @@ class CartService(
         member: User,
         productId: Long,
     ): Long {
-        val cart = member.cart ?: throw EntityNotFoundException("Cart not found")
+        val cart = getCart(member)
         val product = getValidProduct(productId)
         val addedItem = cart.addProduct(product)
 
@@ -57,7 +61,7 @@ class CartService(
         member: User,
         productId: Long,
     ) {
-        val cart = member.cart ?: throw EntityNotFoundException("Cart not found")
+        val cart = getCart(member)
         val product = getValidProduct(productId)
 
         cart.decrementProduct(product)
@@ -68,6 +72,33 @@ class CartService(
                 CartAction.DELETE,
             ),
         )
+    }
+
+    @Transactional
+    fun clearCart(member: User) {
+        val cart = getCart(member)
+
+        if (cart.items.isEmpty()) {
+            throw EntityNotFoundException("No items found")
+        }
+
+        val stats =
+            cart.items.map {
+                cartStatisticsRepository.save(
+                    CartStatistics(
+                        member,
+                        it.product,
+                        CartAction.DELETE,
+                    ),
+                )
+            }
+
+        cartStatisticsRepository.saveAll(stats)
+        cart.clear()
+    }
+
+    private fun getCart(member: User): Cart {
+        return member.cart ?: throw EntityNotFoundException("Cart not found")
     }
 
     private fun getValidProduct(productID: Long): Product {

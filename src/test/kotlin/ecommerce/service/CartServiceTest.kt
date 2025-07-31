@@ -69,7 +69,7 @@ class CartServiceTest {
     fun findCartProduct() {
         cartService.addProductToCart(user, product.id)
 
-        assertThat(cartService.getCartProducts(user).size).isEqualTo(1)
+        assertThat(cartService.getCartProducts(user).products.size).isEqualTo(1)
     }
 
     @Test fun `throw error invalid product addProductToCart`() {
@@ -80,7 +80,7 @@ class CartServiceTest {
         cartService.addProductToCart(user, product.id)
         cartService.addProductToCart(user, product.id)
 
-        assertThat(cartService.getCartProducts(user).first().quantity).isEqualTo(2)
+        assertThat(cartService.getCartProducts(user).products.first().quantity).isEqualTo(2)
     }
 
     @Test fun `throw error if no cart found`() {
@@ -101,7 +101,7 @@ class CartServiceTest {
         cartService.addProductToCart(user, product.id)
         cartService.removeProductFromCart(user, product.id)
 
-        assertThat(cartService.getCartProducts(user)).isEmpty()
+        assertThat(cartService.getCartProducts(user).products).isEmpty()
     }
 
     @Test
@@ -115,6 +115,6 @@ class CartServiceTest {
         cartService.addProductToCart(user, product.id)
         cartService.removeProductFromCart(user, product.id)
 
-        assertThat(cartService.getCartProducts(user).first().quantity).isEqualTo(1)
+        assertThat(cartService.getCartProducts(user).products.first().quantity).isEqualTo(1)
     }
 }

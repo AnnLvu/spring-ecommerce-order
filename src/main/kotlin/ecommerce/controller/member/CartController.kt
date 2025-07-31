@@ -1,6 +1,6 @@
 package ecommerce.controller.member
 
-import ecommerce.dto.cartProduct.CartProductResponseDTO
+import ecommerce.dto.cartProduct.CartProductResponse
 import ecommerce.dto.response.MessageResponse
 import ecommerce.model.User
 import ecommerce.service.CartService
@@ -22,7 +22,7 @@ class CartController(
     @GetMapping("")
     fun getCartItems(
         @LoginMember user: User,
-    ): ResponseEntity<List<CartProductResponseDTO>> {
+    ): ResponseEntity<CartProductResponse> {
         val products = cartService.getCartProducts(user)
         return ResponseEntity.ok(products)
     }
@@ -40,8 +40,16 @@ class CartController(
     fun removeProduct(
         @LoginMember user: User,
         @PathVariable("id") productID: Long,
-    ): ResponseEntity<String> {
+    ): ResponseEntity<Void> {
         cartService.removeProductFromCart(user, productID)
+        return ResponseEntity.noContent().build()
+    }
+
+    @DeleteMapping("/clear")
+    fun clearCart(
+        @LoginMember user: User,
+    ): ResponseEntity<Void> {
+        cartService.clearCart(user)
         return ResponseEntity.noContent().build()
     }
 }
