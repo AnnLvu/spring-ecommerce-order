@@ -15,11 +15,11 @@ class Product(
     var name: String,
     @Column(name = "price", nullable = false)
     var price: Double,
-    @Column(name = "quantity", nullable = false)
-    var imageUrl: String,
-    @Column(name = "created_at", nullable = false)
-    var quantity: Int = 1,
     @Column(name = "image_url", nullable = false)
+    var imageUrl: String,
+    @Column(name = "quantity", nullable = false)
+    var quantity: Int = 1,
+    @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime = LocalDateTime.now(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
