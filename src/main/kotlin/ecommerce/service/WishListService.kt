@@ -1,6 +1,5 @@
 package ecommerce.service
 
-import ecommerce.dto.wishList.WishListResponse
 import ecommerce.model.Product
 import ecommerce.model.User
 import ecommerce.model.WishListProduct
@@ -8,7 +7,8 @@ import ecommerce.repository.ProductRepository
 import ecommerce.repository.WishListRepository
 import ecommerce.utils.exception.DuplicateProductNameException
 import ecommerce.utils.exception.EntityNotFoundException
-import ecommerce.utils.extensions.toDTO
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import java.net.URI
 
@@ -18,11 +18,17 @@ class WishListService(
     private val productRepository: ProductRepository,
     private val cartService: CartService,
 ) {
-    fun getProducts(member: User): WishListResponse {
-        val wishListProducts = wishRepository.findAllByUserId(member.id)
-        return WishListResponse(
-            wishListProducts.map { it.toDTO() },
-        )
+    fun getProducts(
+        member: User,
+        page: Int,
+        perPage: Int,
+    ): Page<WishListProduct> {
+        require(page - 1 >= 0) { IllegalArgumentException("page must be > 0") }
+        require(perPage > 1) { IllegalArgumentException("perPage must be > 1") }
+
+        val pageable = PageRequest.of(page - 1, perPage)
+
+        return wishRepository.findAllByUserId(member.id, pageable)
     }
 
     fun addProduct(

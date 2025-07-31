@@ -1,15 +1,19 @@
 package ecommerce.controller.member
 
-import ecommerce.dto.wishList.WishListResponse
+import ecommerce.controller.admin.AdminProductController.Companion.DEFAULT_PAGE
+import ecommerce.controller.admin.AdminProductController.Companion.PER_PAGE
 import ecommerce.model.User
+import ecommerce.model.WishListProduct
 import ecommerce.service.WishListService
 import ecommerce.utils.annotations.LoginMember
+import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -18,8 +22,10 @@ class WishListController(private val wishListService: WishListService) {
     @GetMapping("")
     fun getWishList(
         @LoginMember member: User,
-    ): ResponseEntity<WishListResponse> {
-        val wishListResponse = wishListService.getProducts(member)
+        @RequestParam(value = "page", defaultValue = DEFAULT_PAGE.toString()) page: Int,
+        @RequestParam(value = "perPage", defaultValue = PER_PAGE.toString()) perPage: Int,
+    ): ResponseEntity<Page<WishListProduct>> {
+        val wishListResponse = wishListService.getProducts(member, page, perPage)
         return ResponseEntity.ok().body(wishListResponse)
     }
 
