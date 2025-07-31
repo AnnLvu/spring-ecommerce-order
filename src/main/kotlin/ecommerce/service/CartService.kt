@@ -43,9 +43,9 @@ class CartService(
 
         cartStatisticsRepository.save(
             CartStatistics(
-                user = member,
-                product = product,
-                action = CartAction.ADD,
+                member,
+                product,
+                CartAction.ADD,
             ),
         )
 
@@ -63,9 +63,9 @@ class CartService(
         cart.decrementProduct(product)
         cartStatisticsRepository.save(
             CartStatistics(
-                user = member,
-                product = product,
-                action = CartAction.DELETE,
+                member,
+                product,
+                CartAction.DELETE,
             ),
         )
     }

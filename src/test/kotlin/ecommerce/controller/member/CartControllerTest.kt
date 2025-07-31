@@ -32,9 +32,9 @@ class CartControllerTest {
     fun initBefore() {
         val user =
             UserRequestDTO(
-                name = "testUser",
-                email = "user@testing.com",
-                password = "testPassword",
+                "testUser",
+                "user@testing.com",
+                "testPassword",
             )
         token = memberAuthService.signUp(user).token
     }
@@ -66,10 +66,10 @@ class CartControllerTest {
         val product =
             productRepository.save(
                 Product(
-                    name = "addProduct",
-                    price = 10.0,
-                    quantity = 10,
-                    imageUrl = "",
+                    "addProduct",
+                    10.0,
+                    "",
+                    10,
                 ),
             )
         val response =
@@ -87,10 +87,10 @@ class CartControllerTest {
         val product =
             productRepository.save(
                 Product(
-                    name = "addProduct",
-                    price = 10.0,
-                    quantity = 10,
-                    imageUrl = "",
+                    "addProduct",
+                    10.0,
+                    "",
+                    10,
                 ),
             )
 

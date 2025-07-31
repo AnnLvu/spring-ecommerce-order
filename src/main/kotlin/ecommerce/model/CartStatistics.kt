@@ -16,9 +16,6 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "cart_statistics")
 class CartStatistics(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     var user: User,
@@ -30,4 +27,7 @@ class CartStatistics(
     var action: CartAction,
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime = LocalDateTime.now(),
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0L,
 )

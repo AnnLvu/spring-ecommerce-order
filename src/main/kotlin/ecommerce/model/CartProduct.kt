@@ -17,9 +17,6 @@ import jakarta.persistence.UniqueConstraint
     uniqueConstraints = [UniqueConstraint(columnNames = ["cart_id", "product_id"])],
 )
 class CartProduct(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)
     var cart: Cart,
@@ -28,4 +25,7 @@ class CartProduct(
     var product: Product,
     @Column(name = "quantity", nullable = false)
     var quantity: Int = 1,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0L,
 )

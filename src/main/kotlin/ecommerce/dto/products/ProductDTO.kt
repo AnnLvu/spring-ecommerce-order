@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Positive
 import org.hibernate.validator.constraints.Length
 
 data class ProductDTO(
-    val id: Long? = null,
     @field:Length(min = 3, max = 15, message = "name should be between 3 and 15")
     @field:Pattern(
         regexp = "^[a-zA-Z1-9()\\[\\]+\\-&/_]+$",
@@ -24,4 +23,5 @@ data class ProductDTO(
     val imageUrl: String,
     @field:Min(value = 0, message = "Quantity cannot be negative")
     val quantity: Int = 1,
+    val id: Long? = null,
 )

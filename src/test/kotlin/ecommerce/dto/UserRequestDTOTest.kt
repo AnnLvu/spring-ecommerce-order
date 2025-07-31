@@ -1,14 +1,12 @@
 package ecommerce.dto
 
 import ecommerce.dto.user.UserRequestDTO
-import ecommerce.enums.UserRole
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -25,9 +23,9 @@ class UserRequestDTOTest {
     fun `should pass validation for valid user`() {
         val dto =
             UserRequestDTO(
-                email = "user@example.com",
-                password = "securePass",
-                name = "John Doe",
+                "John Doe",
+                "user@example.com",
+                "securePass",
             )
 
         val violations = validator.validate(dto)
@@ -39,9 +37,9 @@ class UserRequestDTOTest {
     fun `should fail validation when name is blank`(name: String) {
         val dto =
             UserRequestDTO(
-                email = "user@example.com",
-                password = "securePass",
-                name = name,
+                name,
+                "user@example.com",
+                "securePass",
             )
 
         val violations = validator.validate(dto)
@@ -53,9 +51,9 @@ class UserRequestDTOTest {
     fun `should fail validation when email is invalid`(email: String) {
         val dto =
             UserRequestDTO(
-                email = email,
-                password = "securePass",
-                name = "John Doe",
+                "John Doe",
+                email,
+                "securePass",
             )
 
         val violations = validator.validate(dto)
@@ -68,26 +66,12 @@ class UserRequestDTOTest {
     fun `should fail validation when password is too short`(password: String) {
         val dto =
             UserRequestDTO(
-                email = "user@example.com",
-                password = password,
-                name = "John Doe",
+                "John Doe",
+                "user@example.com",
+                password,
             )
 
         val violations = validator.validate(dto)
         assertThat(violations.firstOrNull()?.message).isEqualTo("Password must be at least 6 characters")
-    }
-
-    @ParameterizedTest
-    @EnumSource(UserRole::class)
-    fun `should pass validation with all valid roles`(role: UserRole) {
-        val dto =
-            UserRequestDTO(
-                email = "user@example.com",
-                password = "securePass",
-                name = "John Doe",
-            )
-
-        val violations = validator.validate(dto)
-        assertThat(violations).isEmpty()
     }
 }

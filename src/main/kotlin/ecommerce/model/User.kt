@@ -16,9 +16,6 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "users")
 class User(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
     @Column(name = "email", nullable = false, unique = true)
     var email: String,
     @Column(name = "password", nullable = false)
@@ -30,4 +27,7 @@ class User(
     var role: UserRole = UserRole.USER,
     @OneToOne(mappedBy = "user", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
     var cart: Cart? = null,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0L,
 )

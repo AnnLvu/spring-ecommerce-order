@@ -30,10 +30,10 @@ class AdminCartStatisticsControllerTest {
         val user =
             userRepository.save(
                 User(
-                    name = "testUser",
-                    email = "admin@testing.com",
-                    password = "testPassword",
-                    role = UserRole.ADMIN,
+                    "admin@testing.com",
+                    "testPassword",
+                    "testUser",
+                    UserRole.ADMIN,
                 ),
             )
         token = adminAuthService.login(LoginRequest(user.email, user.password))

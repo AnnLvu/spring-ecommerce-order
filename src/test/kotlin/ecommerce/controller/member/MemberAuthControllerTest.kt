@@ -25,9 +25,9 @@ class MemberAuthControllerTest {
     fun `sign-up User`() {
         val user =
             UserRequestDTO(
-                name = "test",
-                email = "temp@temp.com",
-                password = "test-456",
+                "test",
+                "temp@temp.com",
+                "test-456",
             )
         val response =
             RestAssured
@@ -45,15 +45,15 @@ class MemberAuthControllerTest {
         val user =
             userRepository.save(
                 User(
-                    name = "test",
-                    email = "temp2@temp.com",
-                    password = "test-456",
+                    "temp2@temp.com",
+                    "test-456",
+                    "test",
                 ),
             )
         val loginRequest =
             LoginRequest(
-                email = "temp2@temp.com",
-                password = "test-456",
+                "temp2@temp.com",
+                "test-456",
             )
         val response =
             RestAssured

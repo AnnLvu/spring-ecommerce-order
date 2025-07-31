@@ -25,10 +25,10 @@ class MemberAuthService(
         }
         val member =
             User(
-                email = userRequestDTO.email,
-                password = userRequestDTO.password,
-                name = userRequestDTO.name,
-                role = UserRole.USER,
+                userRequestDTO.email,
+                userRequestDTO.password,
+                userRequestDTO.name,
+                UserRole.USER,
             )
 
         member.cart = Cart(user = member)

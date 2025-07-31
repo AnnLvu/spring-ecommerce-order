@@ -23,10 +23,10 @@ class ProductDTOTest {
     fun `should pass validation for valid product`() {
         val dto =
             ProductDTO(
-                name = "Product-1",
-                price = 10.2,
-                imageUrl = "https://example.com/images/usb_c_hub.jpg",
-                quantity = 20,
+                "Product-1",
+                10.2,
+                "https://example.com/images/usb_c_hub.jpg",
+                20,
             )
 
         val violations = validator.validate(dto)
@@ -38,10 +38,10 @@ class ProductDTOTest {
     fun `should fail validation for invalid name - size`(name: String) {
         val dto =
             ProductDTO(
-                name = name,
-                price = 10.2,
-                imageUrl = "https://example.com/images/usb_c_hub.jpg",
-                quantity = 20,
+                name,
+                10.2,
+                "https://example.com/images/usb_c_hub.jpg",
+                20,
             )
         val violations = validator.validate(dto)
         assertThat(violations.firstOrNull()?.message).isEqualTo("name should be between 3 and 15")
@@ -61,10 +61,10 @@ class ProductDTOTest {
     fun `should fail validation for invalid name - characters`(name: String) {
         val dto =
             ProductDTO(
-                name = name,
-                price = 10.2,
-                imageUrl = "https://example.com/images/usb_c_hub.jpg",
-                quantity = 20,
+                name,
+                10.2,
+                "https://example.com/images/usb_c_hub.jpg",
+                20,
             )
         val violations = validator.validate(dto)
         assertThat(violations.firstOrNull()?.message).isEqualTo("Product name contains invalid characters")
@@ -75,10 +75,10 @@ class ProductDTOTest {
     fun `should fail validation for invalid price`(price: Double) {
         val dto =
             ProductDTO(
-                name = "Product-1",
-                price = price,
-                imageUrl = "https://example.com/images/usb_c_hub.jpg",
-                quantity = 20,
+                "Product-1",
+                price,
+                "https://example.com/images/usb_c_hub.jpg",
+                20,
             )
         val violations = validator.validate(dto)
         assertThat(violations.firstOrNull()?.message).isEqualTo("Product price must be greater than 0")
@@ -89,10 +89,10 @@ class ProductDTOTest {
     fun `should fail validation for invalid imageUrl`(imageUrl: String) {
         val dto =
             ProductDTO(
-                name = "Product-1",
-                price = 10.2,
-                imageUrl = imageUrl,
-                quantity = 10,
+                "Product-1",
+                10.2,
+                imageUrl,
+                10,
             )
         val violations = validator.validate(dto)
         assertThat(violations.firstOrNull()?.message)
@@ -104,10 +104,10 @@ class ProductDTOTest {
     fun `should fail validation for invalid quantity`(quantity: Int) {
         val dto =
             ProductDTO(
-                name = "Product-1",
-                price = 10.2,
-                imageUrl = "https://example.com/image.png",
-                quantity = quantity,
+                "Product-1",
+                10.2,
+                "https://example.com/image.png",
+                quantity,
             )
         val violations = validator.validate(dto)
         assertThat(violations.firstOrNull()?.message).isEqualTo("Quantity cannot be negative")
@@ -124,10 +124,10 @@ class ProductDTOTest {
     fun `should pass validation for valid imageUrl`(imageUrl: String) {
         val dto =
             ProductDTO(
-                name = "Product-1",
-                price = 10.2,
-                imageUrl = imageUrl,
-                quantity = 10,
+                "Product-1",
+                10.2,
+                imageUrl,
+                10,
             )
         val violations = validator.validate(dto)
         assertThat(violations).isEmpty()

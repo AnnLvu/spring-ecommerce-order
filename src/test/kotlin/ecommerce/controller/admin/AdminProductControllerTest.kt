@@ -37,10 +37,10 @@ class AdminProductControllerTest {
         val user =
             userRepository.save(
                 User(
-                    name = "testUser",
-                    email = "admin@testing.com",
-                    password = "testPassword",
-                    role = UserRole.ADMIN,
+                    "admin@testing.com",
+                    "testPassword",
+                    "testUser",
+                    UserRole.ADMIN,
                 ),
             )
         token = adminAuthService.login(LoginRequest(user.email, user.password))
@@ -57,9 +57,9 @@ class AdminProductControllerTest {
     fun create() {
         val actual =
             ProductDTO(
-                name = "test",
-                price = 10.0,
-                imageUrl = "http://localhost:8080/image/upload/product1.jpg",
+                "test",
+                10.0,
+                "http://localhost:8080/image/upload/product1.jpg",
             )
         val response =
             RestAssured
@@ -79,9 +79,9 @@ class AdminProductControllerTest {
     fun `throws error if validation fails create`() {
         val product =
             ProductDTO(
-                name = "shouldFailTheTest",
-                price = 10.0,
-                imageUrl = "http://localhost:8080/image/upload/product1.jpg",
+                "shouldFailTheTest",
+                10.0,
+                "http://localhost:8080/image/upload/product1.jpg",
             )
         val response =
             RestAssured
@@ -127,9 +127,9 @@ class AdminProductControllerTest {
                 .given().log().all()
                 .body(
                     ProductDTO(
-                        name = "Product2",
-                        price = 10.0,
-                        imageUrl = "http://localhost:8080/image/upload/product1.jpg",
+                        "Product2",
+                        10.0,
+                        "http://localhost:8080/image/upload/product1.jpg",
                     ),
                 )
                 .header("Authorization", token)
@@ -188,9 +188,9 @@ class AdminProductControllerTest {
     private fun createProduct(name: String): Product {
         return productRepository.save(
             Product(
-                name = name,
-                price = 10.0,
-                imageUrl = "url.com",
+                name,
+                10.0,
+                "url.com",
             ),
         )
     }

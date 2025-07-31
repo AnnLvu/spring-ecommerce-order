@@ -31,10 +31,10 @@ class AdminProductService(private val productRepository: ProductRepository) {
         val product =
             productRepository.save(
                 Product(
-                    name = productDTO.name,
-                    price = productDTO.price,
-                    quantity = productDTO.quantity,
-                    imageUrl = productDTO.imageUrl,
+                    productDTO.name,
+                    productDTO.price,
+                    productDTO.imageUrl,
+                    productDTO.quantity,
                 ),
             )
         return URI.create("/products/${product.id}")

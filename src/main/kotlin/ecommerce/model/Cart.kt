@@ -14,14 +14,14 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "carts")
 class Cart(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     var user: User,
     @OneToMany(mappedBy = "cart", cascade = [CascadeType.ALL], orphanRemoval = true)
     val items: MutableList<CartProduct> = mutableListOf(),
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0L,
 ) {
     fun addProduct(
         product: Product,
