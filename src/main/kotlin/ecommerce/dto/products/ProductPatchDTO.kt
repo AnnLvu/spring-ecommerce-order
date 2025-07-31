@@ -12,8 +12,6 @@ class ProductPatchDTO(
         message = "Product name contains invalid characters",
     )
     val name: String? = null,
-    @field:Length(min = 3, message = "Description must be between 3 and 255 characters")
-    val description: String? = null,
     @field:Positive(message = "Product price must be greater than 0")
     val price: Double? = null,
     @field:Pattern(
