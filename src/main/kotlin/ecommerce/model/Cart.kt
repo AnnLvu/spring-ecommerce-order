@@ -54,10 +54,6 @@ class Cart(
         }
     }
 
-    fun removeProduct(product: Product) {
-        items.removeIf { it.product == product }
-    }
-
     fun clear() {
         items.clear()
     }
