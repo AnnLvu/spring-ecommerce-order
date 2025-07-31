@@ -46,7 +46,7 @@ class GuestProductControllerTest {
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
-        assertThat(response.body().jsonPath().get<List<ProductResponseDTO>>("products")).hasSize(10)
+        assertThat(response.body().jsonPath().get<List<ProductResponseDTO>>("content")).hasSize(10)
     }
 
     @Test
@@ -58,7 +58,7 @@ class GuestProductControllerTest {
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
-        assertThat(response.body().jsonPath().get<List<ProductResponseDTO>>("products")).hasSize(5)
+        assertThat(response.body().jsonPath().get<List<ProductResponseDTO>>("content")).hasSize(5)
     }
 
     @ParameterizedTest

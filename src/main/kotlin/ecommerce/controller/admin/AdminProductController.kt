@@ -1,12 +1,12 @@
 package ecommerce.controller.admin
 
 import ecommerce.dto.products.ProductDTO
-import ecommerce.dto.products.ProductListResponse
 import ecommerce.dto.products.ProductPatchDTO
 import ecommerce.dto.products.ProductResponseDTO
 import ecommerce.dto.response.MessageResponse
 import ecommerce.service.AdminProductService
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -26,7 +26,7 @@ class AdminProductController(private val adminProductService: AdminProductServic
     fun getProducts(
         @RequestParam(value = "page", defaultValue = DEFAULT_PAGE.toString()) page: Int,
         @RequestParam(value = "perPage", defaultValue = PER_PAGE.toString()) perPage: Int,
-    ): ResponseEntity<ProductListResponse> {
+    ): ResponseEntity<Page<ProductResponseDTO>> {
         val productListResponse = adminProductService.getAllProducts(page, perPage)
         return ResponseEntity.ok().body(productListResponse)
     }

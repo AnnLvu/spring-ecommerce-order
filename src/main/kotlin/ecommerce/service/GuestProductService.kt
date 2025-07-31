@@ -1,8 +1,10 @@
 package ecommerce.service
 
-import ecommerce.dto.products.ProductListResponse
+import ecommerce.dto.products.ProductResponseDTO
+import ecommerce.model.Product
 import ecommerce.repository.ProductRepository
 import ecommerce.utils.extensions.getPaginatedDTOs
+import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 
 @Service
@@ -12,7 +14,7 @@ class GuestProductService(
     fun getListProducts(
         page: Int,
         perPage: Int,
-    ): ProductListResponse {
+    ): Page<ProductResponseDTO> {
         return productRepository.getPaginatedDTOs(page, perPage)
     }
 }

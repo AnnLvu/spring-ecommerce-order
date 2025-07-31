@@ -1,5 +1,7 @@
 package ecommerce.dto.products
 
+import org.springframework.data.domain.Page
+
 class ProductListResponse(
-    val products: List<ProductResponseDTO>,
+    val products: Page<ProductResponseDTO>,
 )
