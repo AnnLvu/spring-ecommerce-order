@@ -32,6 +32,7 @@ class MemberAuthService(
             )
 
         member.cart = Cart(user = member)
+        member.wishListItems = mutableListOf()
 
         val savedMember = userRepository.save(member)
 
