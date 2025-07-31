@@ -92,6 +92,14 @@ class GlobalExceptionHandler {
         return errorResponse(HttpStatus.CONFLICT, ex.message ?: "CONFLICT", request)
     }
 
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgumentException(
+        ex: IllegalArgumentException,
+        request: HttpServletRequest,
+    ): ResponseEntity<ErrorResponse> {
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.message ?: "BAD_REQUEST", request)
+    }
+
     private fun errorResponse(
         status: HttpStatus,
         message: Any,
