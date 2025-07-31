@@ -1,6 +1,7 @@
 package ecommerce.controller.admin
 
 import ecommerce.dto.products.ProductDTO
+import ecommerce.dto.products.ProductListResponse
 import ecommerce.dto.products.ProductPatchDTO
 import ecommerce.dto.products.ProductResponseDTO
 import ecommerce.dto.response.MessageResponse
@@ -15,14 +16,19 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/admin/products")
 class AdminProductController(private val adminProductService: AdminProductService) {
     @GetMapping("")
-    fun getProducts(): ResponseEntity<List<ProductResponseDTO>> {
-        return ResponseEntity.ok().body(adminProductService.getAllProducts())
+    fun getProducts(
+        @RequestParam(value = "page", defaultValue = DEFAULT_PAGE.toString()) page: Int,
+        @RequestParam(value = "perPage", defaultValue = PER_PAGE.toString()) perPage: Int,
+    ): ResponseEntity<ProductListResponse> {
+        val productListResponse = adminProductService.getAllProducts(page, perPage)
+        return ResponseEntity.ok().body(productListResponse)
     }
 
     @GetMapping("/{id}")
@@ -64,5 +70,10 @@ class AdminProductController(private val adminProductService: AdminProductServic
     ): ResponseEntity<String> {
         adminProductService.deleteProduct(id)
         return ResponseEntity.noContent().build()
+    }
+
+    companion object {
+        const val PER_PAGE = 10
+        const val DEFAULT_PAGE = 1
     }
 }

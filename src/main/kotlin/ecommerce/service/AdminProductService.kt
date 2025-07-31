@@ -1,21 +1,27 @@
 package ecommerce.service
 
+import ecommerce.controller.admin.AdminProductController.Companion.DEFAULT_PAGE
+import ecommerce.controller.admin.AdminProductController.Companion.PER_PAGE
 import ecommerce.dto.products.ProductDTO
+import ecommerce.dto.products.ProductListResponse
 import ecommerce.dto.products.ProductPatchDTO
 import ecommerce.dto.products.ProductResponseDTO
 import ecommerce.model.Product
 import ecommerce.repository.ProductRepository
 import ecommerce.utils.exception.DuplicateProductNameException
 import ecommerce.utils.exception.EntityNotFoundException
-import ecommerce.utils.toProductDTO
+import ecommerce.utils.extensions.getPaginatedDTOs
+import ecommerce.utils.extensions.toProductDTO
 import org.springframework.stereotype.Service
 import java.net.URI
 
 @Service
 class AdminProductService(private val productRepository: ProductRepository) {
-    fun getAllProducts(): List<ProductResponseDTO> {
-        val products = productRepository.findAll()
-        return products.map { it.toProductDTO() }
+    fun getAllProducts(
+        page: Int = DEFAULT_PAGE,
+        perPage: Int = PER_PAGE,
+    ): ProductListResponse {
+        return productRepository.getPaginatedDTOs(page, perPage)
     }
 
     fun getProductById(id: Long): ProductResponseDTO {

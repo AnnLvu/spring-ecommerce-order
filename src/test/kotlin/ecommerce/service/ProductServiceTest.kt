@@ -36,8 +36,8 @@ class ProductServiceTest {
                 imageUrl = "test.png",
             ),
         )
-        val products = adminProductService.getAllProducts()
-        assertThat(products.size).isEqualTo(1)
+        val productListResponse = adminProductService.getAllProducts()
+        assertThat(productListResponse.products.size).isEqualTo(1)
     }
 
     @Test

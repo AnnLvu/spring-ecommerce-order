@@ -1,5 +1,7 @@
 package ecommerce.controller.guest
 
+import ecommerce.controller.admin.AdminProductController.Companion.DEFAULT_PAGE
+import ecommerce.controller.admin.AdminProductController.Companion.PER_PAGE
 import ecommerce.dto.products.ProductListResponse
 import ecommerce.service.GuestProductService
 import org.springframework.http.ResponseEntity
@@ -20,10 +22,5 @@ class GuestProductController(
     ): ResponseEntity<ProductListResponse> {
         val productListResponse = guestProductService.getListProducts(page, perPage)
         return ResponseEntity.ok().body(productListResponse)
-    }
-
-    companion object {
-        private const val PER_PAGE = 10
-        private const val DEFAULT_PAGE = 1
     }
 }
