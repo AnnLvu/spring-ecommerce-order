@@ -20,8 +20,8 @@ class CartProduct(
     @JoinColumn(name = "cart_id", nullable = false)
     var cart: Cart,
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    var product: Product,
+    @JoinColumn(name = "option_id", nullable = false)
+    var option: Option,
     @Column(name = "quantity", nullable = false)
     var quantity: Int = 1,
     @Id

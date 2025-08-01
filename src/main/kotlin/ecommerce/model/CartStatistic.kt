@@ -18,8 +18,8 @@ class CartStatistic(
     @JoinColumn(name = "user_id", nullable = false)
     var user: User,
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    var product: Product,
+    @JoinColumn(name = "option_id", nullable = false)
+    var option: Option,
     @Column(name = "action", nullable = false)
     @Enumerated(EnumType.STRING)
     var action: CartAction,

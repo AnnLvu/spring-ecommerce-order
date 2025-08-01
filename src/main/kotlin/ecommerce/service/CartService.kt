@@ -5,10 +5,10 @@ import ecommerce.dto.cartProduct.CartProductResponse
 import ecommerce.enums.CartAction
 import ecommerce.model.Cart
 import ecommerce.model.CartStatistic
-import ecommerce.model.Product
+import ecommerce.model.Option
 import ecommerce.model.User
 import ecommerce.repository.CartStatisticRepository
-import ecommerce.repository.ProductRepository
+import ecommerce.repository.OptionRepository
 import ecommerce.utils.exception.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
@@ -16,20 +16,20 @@ import kotlin.Long
 
 @Service
 class CartService(
-    private val productRepository: ProductRepository,
     private val cartStatisticRepository: CartStatisticRepository,
+    private val optionRepository: OptionRepository,
 ) {
     fun getCartProducts(member: User): CartProductResponse {
         val cart = getCart(member)
         val products = cart.items
         return CartProductResponse(
             products.map {
-                val product = it.product
+                val option = it.option
                 CartProductDTO(
-                    product.id,
-                    product.name,
-                    product.price,
-                    product.imageUrl,
+                    option.id,
+                    option.name,
+                    option.price,
+                    option.product?.imageUrl ?: "",
                     it.quantity,
                 )
             },
@@ -39,18 +39,18 @@ class CartService(
     @Transactional
     fun addProductToCart(
         member: User,
-        productId: Long,
+        optionId: Long,
     ): Long {
         val cart = getCart(member)
-        val product = getValidProduct(productId)
+        val option = getValidProductOption(optionId)
 
-        if (product.quantity == 0) throw EntityNotFoundException("Product not found")
-        val addedItem = cart.addProduct(product)
+        if (option.quantity == 0) throw EntityNotFoundException("Product option not found")
+        val addedItem = cart.addProduct(option)
 
         cartStatisticRepository.save(
             CartStatistic(
                 member,
-                product,
+                option,
                 CartAction.ADD,
             ),
         )
@@ -61,16 +61,16 @@ class CartService(
     @Transactional
     fun removeProductFromCart(
         member: User,
-        productId: Long,
+        optionId: Long,
     ) {
         val cart = getCart(member)
-        val product = getValidProduct(productId)
+        val option = getValidProductOption(optionId)
 
-        cart.decrementProduct(product)
+        cart.decrementProduct(option)
         cartStatisticRepository.save(
             CartStatistic(
                 member,
-                product,
+                option,
                 CartAction.DELETE,
             ),
         )
@@ -89,7 +89,7 @@ class CartService(
                 cartStatisticRepository.save(
                     CartStatistic(
                         member,
-                        it.product,
+                        it.option,
                         CartAction.DELETE,
                     ),
                 )
@@ -103,9 +103,7 @@ class CartService(
         return member.cart ?: throw EntityNotFoundException("Cart not found")
     }
 
-    private fun getValidProduct(productID: Long): Product {
-        return productRepository.findById(productID).orElseThrow {
-            EntityNotFoundException("Product not found")
-        }
+    private fun getValidProductOption(optionId: Long): Option {
+        return optionRepository.findById(optionId).orElseThrow { EntityNotFoundException("Product option not found") }
     }
 }

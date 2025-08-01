@@ -15,14 +15,14 @@ interface CartStatisticRepository : JpaRepository<CartStatistic, Long> {
     @Query(
         """
     SELECT new ecommerce.dto.cartStatistics.TopAddedProductsDTO(
-        cs.product.name,
+        cs.option.name,
         COUNT(cs),
         MAX(cs.createdAt)
     )
     FROM CartStatistic cs
     WHERE cs.action = :action
       AND cs.createdAt >= :since
-    GROUP BY cs.product.name
+    GROUP BY cs.option.name
     ORDER BY COUNT(cs) DESC, MAX(cs.createdAt) DESC
     """,
     )

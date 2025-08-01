@@ -30,18 +30,18 @@ class CartController(
     @PostMapping("/{id}")
     fun addProduct(
         @LoginMember user: User,
-        @PathVariable("id") productID: Long,
+        @PathVariable("id") optionId: Long,
     ): ResponseEntity<MessageResponse> {
-        val id = cartService.addProductToCart(user, productID)
+        val id = cartService.addProductToCart(user, optionId)
         return ResponseEntity.created(URI.create("/cart/$id")).body(MessageResponse("Product added to cart"))
     }
 
     @DeleteMapping("/{id}")
     fun removeProduct(
         @LoginMember user: User,
-        @PathVariable("id") productID: Long,
+        @PathVariable("id") optionId: Long,
     ): ResponseEntity<Void> {
-        cartService.removeProductFromCart(user, productID)
+        cartService.removeProductFromCart(user, optionId)
         return ResponseEntity.noContent().build()
     }
 

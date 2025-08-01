@@ -17,29 +17,29 @@ class Cart(
     val id: Long = 0L,
 ) {
     fun addProduct(
-        product: Product,
+        option: Option,
         quantity: Int = 1,
     ): CartProduct {
-        val existing = findProduct(product)
+        val existing = findProduct(option)
         return if (existing != null) {
             existing.quantity += quantity
             existing
         } else {
-            val newItem = CartProduct(cart = this, product = product, quantity = quantity)
+            val newItem = CartProduct(this, option, quantity)
             items.add(newItem)
             newItem
         }
     }
 
     fun decrementProduct(
-        product: Product,
+        option: Option,
         decrement: Int = 1,
     ) {
         require(decrement > 0) { "Quantity to decrement must be greater than 0" }
 
         val existing =
-            findProduct(product)
-                ?: throw EntityNotFoundException("Product with id ${product.id} not found")
+            findProduct(option)
+                ?: throw EntityNotFoundException("Product option with id ${option.id} not found")
         if (existing.quantity > decrement) {
             existing.quantity -= decrement
         } else {
@@ -51,7 +51,7 @@ class Cart(
         items.clear()
     }
 
-    private fun findProduct(product: Product): CartProduct? {
-        return items.find { it.product == product }
+    private fun findProduct(option: Option): CartProduct? {
+        return items.find { it.option == option }
     }
 }

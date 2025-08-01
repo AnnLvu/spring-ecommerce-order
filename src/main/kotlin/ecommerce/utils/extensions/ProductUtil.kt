@@ -5,11 +5,10 @@ import ecommerce.model.Product
 
 fun Product.toProductDTO(): ProductResponseDTO {
     return ProductResponseDTO(
-        this.id,
-        this.name,
-        this.price,
-        this.imageUrl,
-        this.quantity,
-        this.createdAt,
+        id,
+        name,
+        imageUrl,
+        options.map { it.toDTO() },
+        createdAt,
     )
 }
