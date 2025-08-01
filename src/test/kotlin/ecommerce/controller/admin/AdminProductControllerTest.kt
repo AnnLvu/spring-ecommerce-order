@@ -174,8 +174,8 @@ class AdminProductControllerTest {
                             OptionDTO(
                                 "name",
                                 10.1,
-                                51
-                            )
+                                51,
+                            ),
                         ),
                     ),
                 )
