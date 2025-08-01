@@ -86,6 +86,7 @@ class AdminProductService(
         }
 
         productPatchDTO.optionsList?.let {
+            optionRepository.deleteAllById(existingProduct.options.map { it.id })
             existingProduct.options = getOptionMutableList(productPatchDTO.optionsList)
         }
     }
@@ -96,9 +97,9 @@ class AdminProductService(
         productRepository.delete(product)
     }
 
-    fun getProductOptions(productId: Long): List<Option> {
+    fun getProductOptions(productId: Long): ProductResponseDTO {
         val product = getValidProduct(productId)
-        return product.options
+        return product.toProductDTO()
     }
 
     fun createOption(
@@ -128,6 +129,7 @@ class AdminProductService(
         option.name = optionDTO.name
         option.price = optionDTO.price
         option.quantity = optionDTO.quantity
+        option.imageUrl = optionDTO.imageUrl
     }
 
     fun patchOption(
@@ -138,9 +140,10 @@ class AdminProductService(
         val product = getValidProduct(productId)
         val option = findOption(product, optionId)
 
-        optionPatchDTO.name?.let { product.name = it }
+        optionPatchDTO.name?.let { option.name = it }
         optionPatchDTO.price?.let { option.price = it }
         optionPatchDTO.quantity?.let { option.quantity = it }
+        optionPatchDTO.imageUrl?.let { option.imageUrl = it }
     }
 
     fun deleteOption(

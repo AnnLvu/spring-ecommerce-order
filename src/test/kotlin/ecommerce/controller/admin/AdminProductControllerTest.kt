@@ -2,6 +2,7 @@ package ecommerce.controller.admin
 
 import ecommerce.dto.auth.LoginRequest
 import ecommerce.dto.products.OptionDTO
+import ecommerce.dto.products.OptionPatchDTO
 import ecommerce.dto.products.ProductDTO
 import ecommerce.dto.products.ProductPatchDTO
 import ecommerce.enums.UserRole
@@ -222,16 +223,100 @@ class AdminProductControllerTest {
     }
 
     @Test
-    fun `Throws NotFoundException if No id provided`() {
+    fun options() {
+        val product = createProduct("options")
+        val response =
+            RestAssured
+                .given().log().all()
+                .header("Authorization", token)
+                .`when`().get("/api/admin/products/${product.id}/options")
+                .then().log().all().extract()
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
+    }
+
+    @Test
+    fun createOption() {
+        val product = createProduct("createOption")
+        val actual =
+            OptionDTO(
+                "test",
+                10.1,
+                51,
+                "http://localhost:8080/image/upload/product1.jpg",
+            )
+        val response =
+            RestAssured
+                .given().log().all()
+                .body(actual)
+                .header("Authorization", token)
+                .contentType(ContentType.JSON)
+                .`when`().post("/api/admin/products/${product.id}/options")
+                .then().log().all().extract()
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
+    }
+
+    @Test
+    fun updateOption() {
+        val product = createProduct("createOption")
+        val option = product.options[0]
+        val actual =
+            OptionDTO(
+                "test",
+                10.1,
+                51,
+                "http://localhost:8080/image/upload/product1.jpg",
+            )
+        val response =
+            RestAssured
+                .given().log().all()
+                .body(actual)
+                .header("Authorization", token)
+                .contentType(ContentType.JSON)
+                .`when`().put("/api/admin/products/${product.id}/options/${option.id}")
+                .then().log().all().extract()
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
+    }
+
+    @Test
+    fun patchOption() {
+        val product = createProduct("createOption")
+        val option = product.options[0]
+        val actual =
+            OptionPatchDTO(
+                "test",
+                10.1,
+                51,
+                "http://localhost:8080/image/upload/product1.jpg",
+            )
+        val response =
+            RestAssured
+                .given().log().all()
+                .body(actual)
+                .header("Authorization", token)
+                .contentType(ContentType.JSON)
+                .`when`().patch("/api/admin/products/${product.id}/options/${option.id}")
+                .then().log().all().extract()
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
+    }
+
+    @Test
+    fun deleteOption() {
+        val product = createProduct("createOption")
+        val option = product.options[0]
+
         val response =
             RestAssured
                 .given().log().all()
                 .header("Authorization", token)
                 .contentType(ContentType.JSON)
-                .`when`().get("/api/admin/products/")
+                .`when`().delete("/api/admin/products/${product.id}/options/${option.id}")
                 .then().log().all().extract()
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value())
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value())
     }
 
     private fun createProduct(name: String): Product {

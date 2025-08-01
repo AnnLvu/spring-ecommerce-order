@@ -6,7 +6,6 @@ import ecommerce.dto.products.ProductDTO
 import ecommerce.dto.products.ProductPatchDTO
 import ecommerce.dto.products.ProductResponseDTO
 import ecommerce.dto.response.MessageResponse
-import ecommerce.model.Option
 import ecommerce.service.AdminProductService
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -78,7 +77,7 @@ class AdminProductController(private val adminProductService: AdminProductServic
     @GetMapping("/{id}/options")
     fun options(
         @PathVariable("id") productId: Long,
-    ): ResponseEntity<List<Option>> {
+    ): ResponseEntity<ProductResponseDTO> {
         val options = adminProductService.getProductOptions(productId)
         return ResponseEntity.ok(options)
     }
@@ -113,7 +112,7 @@ class AdminProductController(private val adminProductService: AdminProductServic
     }
 
     @DeleteMapping("/{productId}/options/{optionId}")
-    fun patchOption(
+    fun deleteOption(
         @PathVariable("productId") productId: Long,
         @PathVariable("optionId") optionId: Long,
     ): ResponseEntity<Void> {

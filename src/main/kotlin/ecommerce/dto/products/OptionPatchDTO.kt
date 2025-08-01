@@ -13,6 +13,11 @@ class OptionPatchDTO(
     val price: Double? = null,
     @field:Range(min = MIN_QUANTITY, max = MAX_QUANTITY)
     val quantity: Int? = null,
+    @field:Pattern(
+        regexp = "^https?://.*\\.(png|jpg|jpeg|gif|webp)$",
+        message = "Image must be a valid URL ending in .png, .jpg, .jpeg, .gif, or .webp",
+    )
+    val imageUrl: String? = null,
 ) {
     companion object {
         private const val NAME_MAX_LENGTH = 50
