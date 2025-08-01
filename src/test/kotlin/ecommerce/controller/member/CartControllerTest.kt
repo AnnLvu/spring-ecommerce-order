@@ -2,6 +2,7 @@ package ecommerce.controller.member
 
 import ecommerce.dto.cartProduct.CartProductDTO
 import ecommerce.dto.user.UserRequestDTO
+import ecommerce.model.Option
 import ecommerce.model.Product
 import ecommerce.model.User
 import ecommerce.repository.CartProductRepository
@@ -42,9 +43,14 @@ class CartControllerTest {
             productRepository.save(
                 Product(
                     "addProduct",
-                    10.0,
                     "",
-                    10,
+                    mutableListOf(
+                        Option(
+                            "Hello",
+                            15.0,
+                            51,
+                        ),
+                    ),
                 ),
             )
         val userRequestDTO =

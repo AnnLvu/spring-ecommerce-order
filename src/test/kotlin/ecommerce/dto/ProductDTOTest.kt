@@ -1,5 +1,6 @@
 package ecommerce.dto
 
+import ecommerce.dto.products.OptionDTO
 import ecommerce.dto.products.ProductDTO
 import jakarta.validation.Validation
 import jakarta.validation.Validator
@@ -24,9 +25,14 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 "Product-1",
-                10.2,
                 "https://example.com/images/usb_c_hub.jpg",
-                20,
+                mutableListOf(
+                    OptionDTO(
+                        "name",
+                        10.2,
+                        50,
+                    ),
+                ),
             )
 
         val violations = validator.validate(dto)
@@ -39,9 +45,14 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name,
-                10.2,
                 "https://example.com/images/usb_c_hub.jpg",
-                20,
+                mutableListOf(
+                    OptionDTO(
+                        "name",
+                        10.2,
+                        50,
+                    ),
+                ),
             )
         val violations = validator.validate(dto)
         assertThat(violations.firstOrNull()?.message).isEqualTo("name should be between 3 and 15")
@@ -62,9 +73,14 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name,
-                10.2,
                 "https://example.com/images/usb_c_hub.jpg",
-                20,
+                mutableListOf(
+                    OptionDTO(
+                        "name",
+                        10.2,
+                        50,
+                    ),
+                ),
             )
         val violations = validator.validate(dto)
         assertThat(violations.firstOrNull()?.message).isEqualTo("Product name contains invalid characters")
@@ -76,9 +92,14 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 "Product-1",
-                price,
                 "https://example.com/images/usb_c_hub.jpg",
-                20,
+                mutableListOf(
+                    OptionDTO(
+                        "name",
+                        price,
+                        50,
+                    ),
+                ),
             )
         val violations = validator.validate(dto)
         assertThat(violations.firstOrNull()?.message).isEqualTo("Product price must be greater than 0")
@@ -90,9 +111,14 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 "Product-1",
-                10.2,
                 imageUrl,
-                10,
+                mutableListOf(
+                    OptionDTO(
+                        "name",
+                        10.2,
+                        50,
+                    ),
+                ),
             )
         val violations = validator.validate(dto)
         assertThat(violations.firstOrNull()?.message)
@@ -105,9 +131,14 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 "Product-1",
-                10.2,
                 "https://example.com/image.png",
-                quantity,
+                mutableListOf(
+                    OptionDTO(
+                        "name",
+                        10.2,
+                        quantity,
+                    ),
+                ),
             )
         val violations = validator.validate(dto)
         assertThat(violations.firstOrNull()?.message).isEqualTo("Quantity cannot be negative")
@@ -125,9 +156,14 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 "Product-1",
-                10.2,
                 imageUrl,
-                10,
+                mutableListOf(
+                    OptionDTO(
+                        "name",
+                        10.2,
+                        50,
+                    ),
+                ),
             )
         val violations = validator.validate(dto)
         assertThat(violations).isEmpty()

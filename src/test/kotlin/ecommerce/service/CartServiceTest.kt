@@ -50,9 +50,7 @@ class CartServiceTest {
             productRepository.save(
                 Product(
                     name = "testProduct",
-                    price = 10.0,
                     imageUrl = "testImageUrl",
-                    quantity = 10,
                 ),
             )
         user = userRepository.findByEmail("user@testing.com").orElse(null)

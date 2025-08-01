@@ -25,8 +25,8 @@ class GuestProductControllerTest {
             (0..20).map {
                 Product(
                     "name-$it",
-                    10.0,
                     "",
+                    mutableListOf(),
                 )
             }
         productRepository.saveAll(allProducts)

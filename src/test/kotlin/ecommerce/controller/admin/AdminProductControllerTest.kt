@@ -1,9 +1,11 @@
 package ecommerce.controller.admin
 
 import ecommerce.dto.auth.LoginRequest
+import ecommerce.dto.products.OptionDTO
 import ecommerce.dto.products.ProductDTO
 import ecommerce.dto.products.ProductPatchDTO
 import ecommerce.enums.UserRole
+import ecommerce.model.Option
 import ecommerce.model.Product
 import ecommerce.model.User
 import ecommerce.repository.ProductRepository
@@ -15,6 +17,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
@@ -58,8 +62,14 @@ class AdminProductControllerTest {
         val actual =
             ProductDTO(
                 "test",
-                10.0,
                 "http://localhost:8080/image/upload/product1.jpg",
+                mutableListOf(
+                    OptionDTO(
+                        "name",
+                        10.1,
+                        51,
+                    ),
+                ),
             )
         val response =
             RestAssured
@@ -70,8 +80,6 @@ class AdminProductControllerTest {
                 .`when`().post("/api/admin/products")
                 .then().log().all().extract()
 
-        val expected = productRepository.findByName("ControllerCre").orElse(null)
-
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
     }
 
@@ -80,8 +88,14 @@ class AdminProductControllerTest {
         val product =
             ProductDTO(
                 "shouldFailTheTest",
-                10.0,
                 "http://localhost:8080/image/upload/product1.jpg",
+                mutableListOf(
+                    OptionDTO(
+                        "name",
+                        10.1,
+                        51,
+                    ),
+                ),
             )
         val response =
             RestAssured
@@ -91,6 +105,33 @@ class AdminProductControllerTest {
                 .contentType(ContentType.JSON)
                 .`when`().post("/api/admin/products")
                 .then().log().all().extract()
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value())
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = [-1, 0])
+    fun `throws error if validation fails create for option`(quantity: Int) {
+        val actual =
+            ProductDTO(
+                "test",
+                "http://localhost:8080/image/upload/product1.jpg",
+                mutableListOf(
+                    OptionDTO(
+                        "name",
+                        10.1,
+                        quantity,
+                    ),
+                ),
+            )
+        val response =
+            RestAssured
+                .given().log().all()
+                .body(actual)
+                .header("Authorization", token)
+                .contentType(ContentType.JSON)
+                .`when`().post("/api/admin/products")
+                .then().log().all().extract()
+
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value())
     }
 
@@ -128,8 +169,14 @@ class AdminProductControllerTest {
                 .body(
                     ProductDTO(
                         "Product2",
-                        10.0,
                         "http://localhost:8080/image/upload/product1.jpg",
+                        mutableListOf(
+                            OptionDTO(
+                                "name",
+                                10.1,
+                                51
+                            )
+                        ),
                     ),
                 )
                 .header("Authorization", token)
@@ -148,7 +195,7 @@ class AdminProductControllerTest {
                 .given().log().all()
                 .body(
                     ProductPatchDTO(
-                        price = 19.0,
+                        imageUrl = "http://localhost:8080/image/upload/product1.jpg",
                     ),
                 )
                 .header("Authorization", token)
@@ -186,12 +233,23 @@ class AdminProductControllerTest {
     }
 
     private fun createProduct(name: String): Product {
-        return productRepository.save(
-            Product(
-                name,
-                10.0,
-                "url.com",
-            ),
-        )
+        val product =
+            productRepository.save(
+                Product(
+                    name,
+                    "url.com",
+                ),
+            )
+        product.options =
+            mutableListOf(
+                Option(
+                    "name",
+                    10.1,
+                    51,
+                    product,
+                ),
+            )
+        productRepository.flush()
+        return product
     }
 }
