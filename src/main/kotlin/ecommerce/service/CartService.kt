@@ -4,15 +4,15 @@ import ecommerce.dto.cartProduct.CartProductDTO
 import ecommerce.dto.cartProduct.CartProductResponse
 import ecommerce.enums.CartAction
 import ecommerce.model.Cart
+import ecommerce.model.CartProduct
 import ecommerce.model.CartStatistic
 import ecommerce.model.Option
 import ecommerce.model.User
 import ecommerce.repository.CartStatisticRepository
 import ecommerce.repository.OptionRepository
 import ecommerce.utils.exception.EntityNotFoundException
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
-import kotlin.Long
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CartService(
@@ -21,18 +21,8 @@ class CartService(
 ) {
     fun getCartProducts(member: User): CartProductResponse {
         val cart = getCart(member)
-        val products = cart.items
         return CartProductResponse(
-            products.map {
-                val option = it.option
-                CartProductDTO(
-                    option.id,
-                    option.name,
-                    option.price,
-                    option.product?.imageUrl ?: "",
-                    it.quantity,
-                )
-            },
+            cart.items.map { it.toDTO() },
         )
     }
 
@@ -44,7 +34,15 @@ class CartService(
         val cart = getCart(member)
         val option = getValidProductOption(optionId)
 
-        if (option.quantity == 0) throw EntityNotFoundException("Product option not found")
+        if (option.quantity == 0) {
+            throw IllegalStateException("Product option is out of stock")
+        }
+
+        val existingItem = cart.items.find { it.option == option }
+        if (existingItem != null && existingItem.quantity >= option.quantity) {
+            throw IllegalStateException("Cannot add more than available stock")
+        }
+
         val addedItem = cart.addProduct(option)
 
         cartStatisticRepository.save(
@@ -67,6 +65,7 @@ class CartService(
         val option = getValidProductOption(optionId)
 
         cart.decrementProduct(option)
+
         cartStatisticRepository.save(
             CartStatistic(
                 member,
@@ -86,12 +85,10 @@ class CartService(
 
         val stats =
             cart.items.map {
-                cartStatisticRepository.save(
-                    CartStatistic(
-                        member,
-                        it.option,
-                        CartAction.DELETE,
-                    ),
+                CartStatistic(
+                    member,
+                    it.option,
+                    CartAction.DELETE,
                 )
             }
 
@@ -104,6 +101,17 @@ class CartService(
     }
 
     private fun getValidProductOption(optionId: Long): Option {
-        return optionRepository.findById(optionId).orElseThrow { EntityNotFoundException("Product option not found") }
+        return optionRepository.findById(optionId)
+            .orElseThrow { EntityNotFoundException("Product option not found") }
+    }
+
+    private fun CartProduct.toDTO(): CartProductDTO {
+        return CartProductDTO(
+            option.id,
+            option.name,
+            option.price,
+            option.imageUrl,
+            quantity,
+        )
     }
 }
