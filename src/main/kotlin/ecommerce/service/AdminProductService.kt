@@ -2,21 +2,31 @@ package ecommerce.service
 
 import ecommerce.controller.admin.AdminProductController.Companion.DEFAULT_PAGE
 import ecommerce.controller.admin.AdminProductController.Companion.PER_PAGE
+import ecommerce.dto.products.OptionDTO
+import ecommerce.dto.products.OptionPatchDTO
 import ecommerce.dto.products.ProductDTO
 import ecommerce.dto.products.ProductPatchDTO
 import ecommerce.dto.products.ProductResponseDTO
+import ecommerce.model.Option
 import ecommerce.model.Product
+import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
 import ecommerce.utils.exception.DuplicateProductNameException
 import ecommerce.utils.exception.EntityNotFoundException
 import ecommerce.utils.extensions.getPaginatedDTOs
+import ecommerce.utils.extensions.toEntity
 import ecommerce.utils.extensions.toProductDTO
+import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 import java.net.URI
 
 @Service
-class AdminProductService(private val productRepository: ProductRepository) {
+@Transactional
+class AdminProductService(
+    private val productRepository: ProductRepository,
+    private val optionRepository: OptionRepository,
+) {
     fun getAllProducts(
         page: Int = DEFAULT_PAGE,
         perPage: Int = PER_PAGE,
@@ -38,11 +48,12 @@ class AdminProductService(private val productRepository: ProductRepository) {
             productRepository.save(
                 Product(
                     productDTO.name,
-                    productDTO.price,
                     productDTO.imageUrl,
-                    productDTO.quantity,
                 ),
             )
+
+        product.options = getOptionMutableList(productDTO.optionsList, product)
+
         return URI.create("/products/${product.id}")
     }
 
@@ -57,12 +68,12 @@ class AdminProductService(private val productRepository: ProductRepository) {
             throw DuplicateProductNameException(productDTO.name)
         }
 
-        product.name = productDTO.name
-        product.price = productDTO.price
-        product.quantity = productDTO.quantity
-        product.imageUrl = productDTO.imageUrl
+        product.options.clear()
 
-        productRepository.save(product)
+        product.name = productDTO.name
+        product.imageUrl = productDTO.imageUrl
+        val newOptions = getOptionMutableList(productDTO.optionsList, product)
+        product.options.addAll(newOptions)
     }
 
     fun patchProduct(
@@ -78,19 +89,78 @@ class AdminProductService(private val productRepository: ProductRepository) {
             existingProduct.name = newName
         }
 
-        productPatchDTO.price?.let {
-            existingProduct.price = it
-        }
-
         productPatchDTO.imageUrl?.let {
             existingProduct.imageUrl = it
         }
 
-        productPatchDTO.quantity?.let {
-            existingProduct.quantity = it
+        productPatchDTO.optionsList?.let {
+            existingProduct.options = getOptionMutableList(productPatchDTO.optionsList, existingProduct)
+        }
+    }
+
+    fun deleteProduct(id: Long) {
+        val product = getValidProduct(id)
+
+        optionRepository.deleteAllByProductId(id)
+        productRepository.delete(product)
+    }
+
+    fun getProductOptions(productId: Long): List<Option> {
+        val product = getValidProduct(productId)
+        return product.options
+    }
+
+    fun createOption(
+        productId: Long,
+        optionDTO: OptionDTO,
+    ): URI {
+        val product = getValidProduct(productId)
+
+        if (product.options.find { it.name == optionDTO.name } != null) {
+            throw DuplicateProductNameException("Duplicate option not accepted")
         }
 
-        productRepository.save(existingProduct)
+        val newOption = optionRepository.save(optionDTO.toEntity(product))
+        product.options.add(newOption)
+
+        return URI.create("/products/${product.id}/options/${newOption.id}")
+    }
+
+    fun updateOption(
+        productId: Long,
+        optionId: Long,
+        optionDTO: OptionDTO,
+    ) {
+        val product = getValidProduct(productId)
+        val option = findOption(product, optionId)
+
+        option.name = optionDTO.name
+        option.price = optionDTO.price
+        option.quantity = optionDTO.quantity
+    }
+
+    fun patchOption(
+        productId: Long,
+        optionId: Long,
+        optionPatchDTO: OptionPatchDTO,
+    ) {
+        val product = getValidProduct(productId)
+        val option = findOption(product, optionId)
+
+        optionPatchDTO.name?.let { product.name = it }
+        optionPatchDTO.price?.let { option.price = it }
+        optionPatchDTO.quantity?.let { option.quantity = it }
+    }
+
+    fun deleteOption(
+        productId: Long,
+        optionId: Long,
+    ) {
+        val product = getValidProduct(productId)
+        val option = findOption(product, optionId)
+        product.options.remove(option)
+
+        optionRepository.delete(option)
     }
 
     private fun isDuplicateProductName(
@@ -101,12 +171,21 @@ class AdminProductService(private val productRepository: ProductRepository) {
         return oldProduct != null && oldProduct.id != id
     }
 
-    private fun getValidProduct(productId: Long): Product {
-        return productRepository.findById(productId).orElseThrow { EntityNotFoundException("Product with id $productId not found") }
+    private fun getOptionMutableList(
+        option: MutableList<OptionDTO>,
+        product: Product,
+    ): MutableList<Option> {
+        return option.map { it.toEntity(product) }.toMutableList()
     }
 
-    fun deleteProduct(id: Long) {
-        val product = getValidProduct(id)
-        productRepository.delete(product)
+    private fun findOption(
+        product: Product,
+        optionId: Long,
+    ): Option {
+        return product.options.find { it.id == optionId } ?: throw EntityNotFoundException("Option not found")
+    }
+
+    private fun getValidProduct(productId: Long): Product {
+        return productRepository.findById(productId).orElseThrow { EntityNotFoundException("Product with id $productId not found") }
     }
 }

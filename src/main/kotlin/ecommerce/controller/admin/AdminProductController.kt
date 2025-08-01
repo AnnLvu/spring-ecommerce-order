@@ -1,9 +1,12 @@
 package ecommerce.controller.admin
 
+import ecommerce.dto.products.OptionDTO
+import ecommerce.dto.products.OptionPatchDTO
 import ecommerce.dto.products.ProductDTO
 import ecommerce.dto.products.ProductPatchDTO
 import ecommerce.dto.products.ProductResponseDTO
 import ecommerce.dto.response.MessageResponse
+import ecommerce.model.Option
 import ecommerce.service.AdminProductService
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -67,8 +70,54 @@ class AdminProductController(private val adminProductService: AdminProductServic
     @DeleteMapping("/{id}")
     fun delete(
         @PathVariable("id") id: Long,
-    ): ResponseEntity<String> {
+    ): ResponseEntity<Void> {
         adminProductService.deleteProduct(id)
+        return ResponseEntity.noContent().build()
+    }
+
+    @GetMapping("/{id}/options")
+    fun options(
+        @PathVariable("id") productId: Long,
+    ): ResponseEntity<List<Option>> {
+        val options = adminProductService.getProductOptions(productId)
+        return ResponseEntity.ok(options)
+    }
+
+    @PostMapping("/{id}/options")
+    fun createOption(
+        @PathVariable("id") productId: Long,
+        @RequestBody @Valid optionDTO: OptionDTO,
+    ): ResponseEntity<MessageResponse> {
+        val uri = adminProductService.createOption(productId, optionDTO)
+        return ResponseEntity.created(uri).body(MessageResponse("Option created"))
+    }
+
+    @PutMapping("/{productId}/options/{optionId}")
+    fun updateOption(
+        @PathVariable("productId") productId: Long,
+        @PathVariable("optionId") optionId: Long,
+        @RequestBody @Valid optionDTO: OptionDTO,
+    ): ResponseEntity<MessageResponse> {
+        adminProductService.updateOption(productId, optionId, optionDTO)
+        return ResponseEntity.ok(MessageResponse("Option updated"))
+    }
+
+    @PatchMapping("/{productId}/options/{optionId}")
+    fun patchOption(
+        @PathVariable("productId") productId: Long,
+        @PathVariable("optionId") optionId: Long,
+        @RequestBody @Valid patchDTO: OptionPatchDTO,
+    ): ResponseEntity<MessageResponse> {
+        adminProductService.patchOption(productId, optionId, patchDTO)
+        return ResponseEntity.ok(MessageResponse("Option updated"))
+    }
+
+    @DeleteMapping("/{productId}/options/{optionId}")
+    fun patchOption(
+        @PathVariable("productId") productId: Long,
+        @PathVariable("optionId") optionId: Long,
+    ): ResponseEntity<Void> {
+        adminProductService.deleteOption(productId, optionId)
         return ResponseEntity.noContent().build()
     }
 
