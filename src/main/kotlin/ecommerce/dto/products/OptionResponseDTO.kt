@@ -5,4 +5,5 @@ class OptionResponseDTO(
     val name: String,
     val price: Double,
     val quantity: Int,
+    val imageUrl: String,
 )
