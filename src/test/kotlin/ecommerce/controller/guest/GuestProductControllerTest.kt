@@ -1,6 +1,7 @@
 package ecommerce.controller.guest
 
 import ecommerce.dto.products.ProductResponseDTO
+import ecommerce.model.Option
 import ecommerce.model.Product
 import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
@@ -29,7 +30,14 @@ class GuestProductControllerTest {
             (0..20).map {
                 Product(
                     "name-$it",
-                    mutableListOf(),
+                    mutableListOf(
+                        Option(
+                            "option-$it",
+                            10.0,
+                            51,
+                            "http://localhost:8080/image/upload/product1.jpg",
+                        ),
+                    ),
                 )
             }
         productRepository.saveAll(allProducts)

@@ -48,11 +48,9 @@ class AdminProductService(
             productRepository.save(
                 Product(
                     productDTO.name,
+                    getOptionMutableList(productDTO.optionsList),
                 ),
             )
-
-        product.options = getOptionMutableList(productDTO.optionsList)
-
         return URI.create("/products/${product.id}")
     }
 
@@ -165,8 +163,7 @@ class AdminProductService(
     }
 
     private fun getOptionMutableList(option: MutableList<OptionDTO>): MutableList<Option> {
-        val options = option.map { it.toEntity() }.toMutableList()
-        return optionRepository.saveAll(options)
+        return option.map { it.toEntity() }.toMutableList()
     }
 
     private fun findOption(

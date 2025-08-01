@@ -46,12 +46,6 @@ class CartControllerTest {
     @BeforeEach
     fun beforeInit() {
         token = memberAuthService.signUp(UserRequestDTO("user", "user.test@test.com", "hello123")).token
-        product =
-            productRepository.save(
-                Product(
-                    "test",
-                ),
-            )
         val options =
             mutableListOf(
                 Option(
@@ -67,8 +61,13 @@ class CartControllerTest {
                     "http://localhost:8080/image/upload/product1.jpg",
                 ),
             )
-        optionRepository.saveAll(options)
-        product.options = options
+        product =
+            productRepository.save(
+                Product(
+                    "test",
+                    options,
+                ),
+            )
     }
 
     @AfterEach

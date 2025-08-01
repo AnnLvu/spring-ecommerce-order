@@ -16,7 +16,7 @@ class Product(
     var name: String,
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "product_id")
-    var options: MutableList<Option> = mutableListOf(),
+    var options: MutableList<Option>,
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime = LocalDateTime.now(),
     @Id
@@ -24,6 +24,7 @@ class Product(
     val id: Long = 0L,
 ) {
     init {
+        require(options.isNotEmpty()) { "at least one option must be specified" }
         require(options.distinct().size == options.size) { "Options must be distinct" }
     }
 }

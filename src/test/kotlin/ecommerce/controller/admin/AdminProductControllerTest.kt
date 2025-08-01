@@ -56,8 +56,8 @@ class AdminProductControllerTest {
 
     @AfterEach
     fun initAfter() {
-        val user = userRepository.findByEmail("admin@testing.com").orElseThrow()
-        userRepository.delete(user)
+        optionRepository.deleteAll()
+        userRepository.deleteAll()
         productRepository.deleteAll()
     }
 
@@ -71,7 +71,7 @@ class AdminProductControllerTest {
                         "name",
                         10.1,
                         51,
-                        imageUrl = "http://localhost:8080/image/upload/product1.jpg",
+                        "http://localhost:8080/image/upload/product1.jpg",
                     ),
                 ),
             )
@@ -198,9 +198,7 @@ class AdminProductControllerTest {
             RestAssured
                 .given().log().all()
                 .body(
-                    ProductPatchDTO(
-                        imageUrl = "http://localhost:8080/image/upload/product1.jpg",
-                    ),
+                    ProductPatchDTO("hello"),
                 )
                 .header("Authorization", token)
                 .contentType(ContentType.JSON)
@@ -237,18 +235,18 @@ class AdminProductControllerTest {
     }
 
     private fun createProduct(name: String): Product {
-        val product =
-            productRepository.save(Product(name))
-        val options =
-            mutableListOf(
-                Option(
-                    "name",
-                    10.1,
-                    51,
-                    "http://localhost:8080/image/upload/product1.jpg",
+        return productRepository.save(
+            Product(
+                name,
+                mutableListOf(
+                    Option(
+                        "name",
+                        10.1,
+                        51,
+                        "http://localhost:8080/image/upload/product1.jpg",
+                    ),
                 ),
-            )
-        product.options = optionRepository.saveAll(options)
-        return product
+            ),
+        )
     }
 }
