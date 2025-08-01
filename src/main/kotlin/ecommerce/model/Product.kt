@@ -5,11 +5,9 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.Table
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "products")
 class Product(
     @Column(name = "name", nullable = false, unique = true)
     var name: String,

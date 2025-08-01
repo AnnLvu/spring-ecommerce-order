@@ -10,12 +10,10 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.Table
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "cart_statistics")
-class CartStatistics(
+class CartStatistic(
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     var user: User,
