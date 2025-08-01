@@ -94,20 +94,27 @@ class CartControllerTest {
 
     @Test
     fun `addProduct two products`() {
-        RestAssured
-            .given().log().all()
-            .header("Authorization", token)
-            .`when`().post("/api/member/cart/${product.id}")
-            .then().log().all().extract()
-
-        val response =
+        repeat(2) {
             RestAssured
                 .given().log().all()
                 .header("Authorization", token)
                 .`when`().post("/api/member/cart/${product.id}")
                 .then().log().all().extract()
+        }
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
+        val response =
+            RestAssured
+                .given().log().all()
+                .header("Authorization", token)
+                .`when`().get("/api/member/cart")
+                .then().log().all().extract()
+
+        assertThat(
+            response.body().jsonPath().getList(
+                "products",
+                CartProductDTO::class.java,
+            ).firstOrNull()?.quantity,
+        ).isEqualTo(2)
     }
 
     @Test
@@ -126,6 +133,18 @@ class CartControllerTest {
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value())
+    }
+
+    @Test
+    fun `throes error for empty cart removeProduct`() {
+        val response =
+            RestAssured
+                .given().log().all()
+                .header("Authorization", token)
+                .`when`().delete("/api/member/cart/${product.id}")
+                .then().log().all().extract()
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value())
     }
 
     @Test

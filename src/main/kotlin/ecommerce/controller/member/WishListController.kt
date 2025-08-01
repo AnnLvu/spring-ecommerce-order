@@ -43,7 +43,7 @@ class WishListController(private val wishListService: WishListService) {
         @LoginMember member: User,
         @PathVariable("productId") productID: Long,
     ): ResponseEntity<Void> {
-        wishListService.removeProduct(member, productID)
+        wishListService.moveToCart(member, productID)
         return ResponseEntity.ok().build()
     }
 
