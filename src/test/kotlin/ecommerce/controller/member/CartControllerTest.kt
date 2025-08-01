@@ -4,13 +4,14 @@ import ecommerce.dto.cartProduct.CartProductDTO
 import ecommerce.dto.user.UserRequestDTO
 import ecommerce.model.Option
 import ecommerce.model.Product
-import ecommerce.model.User
 import ecommerce.repository.CartProductRepository
 import ecommerce.repository.CartStatisticRepository
+import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
 import ecommerce.repository.UserRepository
 import ecommerce.service.MemberAuthService
 import io.restassured.RestAssured
+import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -21,61 +22,82 @@ import org.springframework.http.HttpStatus
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class CartControllerTest {
-    private lateinit var token: String
-    private lateinit var user: User
-    private lateinit var product: Product
-
-    @Autowired
-    private lateinit var cartStatisticRepository: CartStatisticRepository
-
-    @Autowired
-    private lateinit var cartProductRepository: CartProductRepository
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
+    lateinit var token: String
+    lateinit var product: Product
 
     @Autowired
     lateinit var memberAuthService: MemberAuthService
 
-    @BeforeEach
-    fun initBefore() {
-        val product = Product("addProduct", "https://cdn.example.com/images/tshirts/classic-white.png", mutableListOf())
-        val option = Option("Hello", 15.0, 51)
-        option.product = product
-        product.options.add(option)
-        this.product = productRepository.save(product)
-
-        val userRequestDTO =
-            UserRequestDTO(
-                "testUser",
-                "user@testing.com",
-                "testPassword",
-            )
-        token = memberAuthService.signUp(userRequestDTO).token
-        user = userRepository.findByEmail(userRequestDTO.email).orElse(null)
-    }
-
-    @AfterEach
-    fun initAfter() {
-        cartStatisticRepository.deleteAll()
-        cartProductRepository.deleteAll()
-        userRepository.deleteAll()
-        productRepository.deleteAll()
-    }
-
     @Autowired
     lateinit var productRepository: ProductRepository
 
+    @Autowired
+    lateinit var userRepository: UserRepository
+
+    @Autowired
+    lateinit var optionRepository: OptionRepository
+
+    @Autowired
+    lateinit var cartStatisticRepository: CartStatisticRepository
+
+    @Autowired
+    lateinit var cartProductRepository: CartProductRepository
+
+    @BeforeEach
+    fun beforeInit() {
+        token = memberAuthService.signUp(UserRequestDTO("user", "user.test@test.com", "hello123")).token
+        product =
+            productRepository.save(
+                Product(
+                    "test",
+                ),
+            )
+        val options =
+            mutableListOf(
+                Option(
+                    "hello-1",
+                    10.0,
+                    51,
+                    "http://localhost:8080/image/upload/product1.jpg",
+                ),
+                Option(
+                    "hello-2",
+                    10.0,
+                    51,
+                    "http://localhost:8080/image/upload/product1.jpg",
+                ),
+            )
+        optionRepository.saveAll(options)
+        product.options = options
+    }
+
+    @AfterEach
+    fun afterInit() {
+        cartStatisticRepository.deleteAll()
+        cartProductRepository.deleteAll()
+        optionRepository.deleteAll()
+        productRepository.deleteAll()
+        userRepository.deleteAll()
+    }
+
     @Test
     fun getCartItems() {
+        RestAssured
+            .given().log().all()
+            .header("Authorization", token)
+            .contentType(ContentType.JSON)
+            .`when`().post("/api/member/cart/${product.options.first().id}")
+            .then().log().all().extract()
         val response =
             RestAssured
                 .given().log().all()
                 .header("Authorization", token)
+                .contentType(ContentType.JSON)
                 .`when`().get("/api/member/cart")
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
+        assertThat(response.body().jsonPath().getList("products", CartProductDTO::class.java).size).isEqualTo(1)
     }
 
     @Test
@@ -84,35 +106,33 @@ class CartControllerTest {
             RestAssured
                 .given().log().all()
                 .header("Authorization", token)
-                .`when`().post("/api/member/cart/${product.id}")
+                .contentType(ContentType.JSON)
+                .`when`().post("/api/member/cart/${product.options.first().id}")
                 .then().log().all().extract()
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
-    }
-
-    @Test
-    fun `addProduct two products`() {
-        repeat(2) {
+        val cartProductsResponse =
             RestAssured
                 .given().log().all()
                 .header("Authorization", token)
-                .`when`().post("/api/member/cart/${product.id}")
+                .contentType(ContentType.JSON)
+                .`when`().get("/api/member/cart")
                 .then().log().all().extract()
-        }
 
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
+        assertThat(cartProductsResponse.body().jsonPath().getList("products", CartProductDTO::class.java).size).isEqualTo(1)
+    }
+
+    @Test
+    fun `throws error for invalid product for addProduct`() {
         val response =
             RestAssured
                 .given().log().all()
                 .header("Authorization", token)
-                .`when`().get("/api/member/cart")
+                .contentType(ContentType.JSON)
+                .`when`().post("/api/member/cart/-1")
                 .then().log().all().extract()
 
-        assertThat(
-            response.body().jsonPath().getList(
-                "products",
-                CartProductDTO::class.java,
-            ).firstOrNull()?.quantity,
-        ).isEqualTo(2)
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value())
     }
 
     @Test
@@ -120,57 +140,69 @@ class CartControllerTest {
         RestAssured
             .given().log().all()
             .header("Authorization", token)
-            .`when`().post("/api/member/cart/${product.id}")
+            .contentType(ContentType.JSON)
+            .`when`().post("/api/member/cart/${product.options.first().id}")
             .then().log().all().extract()
 
         val response =
             RestAssured
                 .given().log().all()
                 .header("Authorization", token)
-                .`when`().delete("/api/member/cart/${product.id}")
+                .contentType(ContentType.JSON)
+                .`when`().delete("/api/member/cart/${product.options.first().id}")
                 .then().log().all().extract()
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value())
-    }
-
-    @Test
-    fun `throes error for empty cart removeProduct`() {
-        val response =
+        val cartProductsResponse =
             RestAssured
                 .given().log().all()
                 .header("Authorization", token)
-                .`when`().delete("/api/member/cart/${product.id}")
+                .contentType(ContentType.JSON)
+                .`when`().get("/api/member/cart")
                 .then().log().all().extract()
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value())
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value())
+        assertThat(cartProductsResponse.body().jsonPath().getList("products", CartProductDTO::class.java).size).isZero
     }
 
     @Test
     fun clearCart() {
-        // Add product
         RestAssured
             .given().log().all()
             .header("Authorization", token)
-            .`when`().post("/api/member/cart/${product.id}")
+            .contentType(ContentType.JSON)
+            .`when`().post("/api/member/cart/${product.options.first().id}")
             .then().log().all().extract()
 
-        // Clear Cart
-        val deleteResponse =
-            RestAssured
-                .given().log().all()
-                .header("Authorization", token)
-                .`when`().delete("/api/member/cart/clear")
-                .then().log().all().extract()
-
-        // Get ALl products
         val response =
             RestAssured
                 .given().log().all()
                 .header("Authorization", token)
+                .contentType(ContentType.JSON)
+                .`when`().delete("/api/member/cart/clear")
+                .then().log().all().extract()
+
+        val cartProductsResponse =
+            RestAssured
+                .given().log().all()
+                .header("Authorization", token)
+                .contentType(ContentType.JSON)
                 .`when`().get("/api/member/cart")
                 .then().log().all().extract()
 
-        assertThat(deleteResponse.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value())
-        assertThat(response.body().jsonPath().get<List<CartProductDTO>>("products").size).isZero
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value())
+        assertThat(cartProductsResponse.body().jsonPath().getList("products", CartProductDTO::class.java).size).isZero
+    }
+
+    @Test
+    fun `throws error for empty cart in clearCart`() {
+        val response =
+            RestAssured
+                .given().log().all()
+                .header("Authorization", token)
+                .contentType(ContentType.JSON)
+                .`when`().delete("/api/member/cart/clear")
+                .then().log().all().extract()
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value())
     }
 }

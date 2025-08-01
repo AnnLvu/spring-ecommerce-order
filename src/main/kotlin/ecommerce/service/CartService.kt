@@ -34,15 +34,6 @@ class CartService(
         val cart = getCart(member)
         val option = getValidProductOption(optionId)
 
-        if (option.quantity == 0) {
-            throw IllegalStateException("Product option is out of stock")
-        }
-
-        val existingItem = cart.items.find { it.option == option }
-        if (existingItem != null && existingItem.quantity >= option.quantity) {
-            throw IllegalStateException("Cannot add more than available stock")
-        }
-
         val addedItem = cart.addProduct(option)
 
         cartStatisticRepository.save(
