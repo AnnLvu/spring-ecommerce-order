@@ -4,10 +4,10 @@ import ecommerce.dto.cartProduct.CartProductDTO
 import ecommerce.dto.cartProduct.CartProductResponse
 import ecommerce.enums.CartAction
 import ecommerce.model.Cart
-import ecommerce.model.CartStatistics
+import ecommerce.model.CartStatistic
 import ecommerce.model.Product
 import ecommerce.model.User
-import ecommerce.repository.CartStatisticsRepository
+import ecommerce.repository.CartStatisticRepository
 import ecommerce.repository.ProductRepository
 import ecommerce.utils.exception.EntityNotFoundException
 import jakarta.transaction.Transactional
@@ -17,7 +17,7 @@ import kotlin.Long
 @Service
 class CartService(
     private val productRepository: ProductRepository,
-    private val cartStatisticsRepository: CartStatisticsRepository,
+    private val cartStatisticRepository: CartStatisticRepository,
 ) {
     fun getCartProducts(member: User): CartProductResponse {
         val cart = getCart(member)
@@ -47,8 +47,8 @@ class CartService(
         if (product.quantity == 0) throw EntityNotFoundException("Product not found")
         val addedItem = cart.addProduct(product)
 
-        cartStatisticsRepository.save(
-            CartStatistics(
+        cartStatisticRepository.save(
+            CartStatistic(
                 member,
                 product,
                 CartAction.ADD,
@@ -67,8 +67,8 @@ class CartService(
         val product = getValidProduct(productId)
 
         cart.decrementProduct(product)
-        cartStatisticsRepository.save(
-            CartStatistics(
+        cartStatisticRepository.save(
+            CartStatistic(
                 member,
                 product,
                 CartAction.DELETE,
@@ -86,8 +86,8 @@ class CartService(
 
         val stats =
             cart.items.map {
-                cartStatisticsRepository.save(
-                    CartStatistics(
+                cartStatisticRepository.save(
+                    CartStatistic(
                         member,
                         it.product,
                         CartAction.DELETE,
@@ -95,7 +95,7 @@ class CartService(
                 )
             }
 
-        cartStatisticsRepository.saveAll(stats)
+        cartStatisticRepository.saveAll(stats)
         cart.clear()
     }
 
