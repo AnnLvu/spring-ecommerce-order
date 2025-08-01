@@ -1,7 +1,5 @@
 package ecommerce.dto.products
 
-import jakarta.validation.Valid
-import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import org.hibernate.validator.constraints.Length
@@ -13,12 +11,6 @@ data class ProductDTO(
         message = "Product name contains invalid characters",
     )
     val name: String,
-    @field:NotBlank(message = "Image URL cannot be blank")
-    @field:Pattern(
-        regexp = "^https?://.*\\.(png|jpg|jpeg|gif|webp)$",
-        message = "Image must be a valid URL ending in .png, .jpg, .jpeg, .gif, or .webp",
-    )
-    val imageUrl: String,
     @field:Size(min = 1, message = "At least one option required")
-    val optionsList: MutableList<@Valid OptionDTO>,
+    val optionsList: MutableList<OptionDTO>,
 )
