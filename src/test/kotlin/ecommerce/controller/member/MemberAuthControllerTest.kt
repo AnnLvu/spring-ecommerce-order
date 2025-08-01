@@ -4,7 +4,6 @@ import ecommerce.dto.auth.LoginRequest
 import ecommerce.dto.user.UserRequestDTO
 import ecommerce.model.User
 import ecommerce.repository.UserRepository
-import ecommerce.service.MemberAuthService
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions.assertThat
@@ -15,9 +14,6 @@ import org.springframework.http.HttpStatus
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class MemberAuthControllerTest {
-    @Autowired
-    private lateinit var memberAuthService: MemberAuthService
-
     @Autowired
     private lateinit var userRepository: UserRepository
 
