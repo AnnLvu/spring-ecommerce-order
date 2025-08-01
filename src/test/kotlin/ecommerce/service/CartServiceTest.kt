@@ -3,7 +3,7 @@ package ecommerce.service
 import ecommerce.dto.user.UserRequestDTO
 import ecommerce.model.Product
 import ecommerce.model.User
-import ecommerce.repository.CartStatisticsRepository
+import ecommerce.repository.CartStatisticRepository
 import ecommerce.repository.ProductRepository
 import ecommerce.repository.UserRepository
 import ecommerce.utils.exception.EntityNotFoundException
@@ -35,7 +35,7 @@ class CartServiceTest {
     lateinit var productRepository: ProductRepository
 
     @Autowired
-    lateinit var cartStatisticsRepository: CartStatisticsRepository
+    lateinit var cartStatisticRepository: CartStatisticRepository
 
     @BeforeEach
     fun initBefore() {
@@ -60,7 +60,7 @@ class CartServiceTest {
 
     @AfterEach
     fun initAfter() {
-        cartStatisticsRepository.deleteAll()
+        cartStatisticRepository.deleteAll()
         userRepository.deleteAll()
         productRepository.deleteAll()
     }
