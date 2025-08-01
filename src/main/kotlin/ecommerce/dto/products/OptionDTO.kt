@@ -11,10 +11,8 @@ class OptionDTO(
     @field:Pattern(regexp = "^[a-zA-Z0-9 ()\\[\\]+\\-&/_]+$")
     @field:Size(min = 1, max = NAME_MAX_LENGTH)
     val name: String,
-    @field:NotBlank
-    @field:Positive
+    @field:Positive(message = "Options price should be greater than 0")
     val price: Double,
-    @field:NotBlank
     @field:Range(min = MIN_QUANTITY, max = MAX_QUANTITY)
     val quantity: Int,
 ) {

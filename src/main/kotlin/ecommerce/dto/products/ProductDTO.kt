@@ -20,6 +20,5 @@ data class ProductDTO(
     )
     val imageUrl: String,
     @field:Size(min = 1, message = "At least one option required")
-    @Valid
-    val optionsList: MutableList<OptionDTO>,
+    val optionsList: MutableList<@Valid OptionDTO>,
 )

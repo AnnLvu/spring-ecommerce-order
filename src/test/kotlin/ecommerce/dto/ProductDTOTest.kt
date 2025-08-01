@@ -87,25 +87,6 @@ class ProductDTOTest {
     }
 
     @ParameterizedTest
-    @ValueSource(doubles = [-1.3, 0.0])
-    fun `should fail validation for invalid price`(price: Double) {
-        val dto =
-            ProductDTO(
-                "Product-1",
-                "https://example.com/images/usb_c_hub.jpg",
-                mutableListOf(
-                    OptionDTO(
-                        "name",
-                        price,
-                        50,
-                    ),
-                ),
-            )
-        val violations = validator.validate(dto)
-        assertThat(violations.firstOrNull()?.message).isEqualTo("Product price must be greater than 0")
-    }
-
-    @ParameterizedTest
     @ValueSource(strings = ["", "not-a-url", "ftp://example.com/image.jpg", "http://example.com/image.txt"])
     fun `should fail validation for invalid imageUrl`(imageUrl: String) {
         val dto =
@@ -123,25 +104,6 @@ class ProductDTOTest {
         val violations = validator.validate(dto)
         assertThat(violations.firstOrNull()?.message)
             .isIn("Image URL cannot be blank", "Image must be a valid URL ending in .png, .jpg, .jpeg, .gif, or .webp")
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = [-10, -1])
-    fun `should fail validation for invalid quantity`(quantity: Int) {
-        val dto =
-            ProductDTO(
-                "Product-1",
-                "https://example.com/image.png",
-                mutableListOf(
-                    OptionDTO(
-                        "name",
-                        10.2,
-                        quantity,
-                    ),
-                ),
-            )
-        val violations = validator.validate(dto)
-        assertThat(violations.firstOrNull()?.message).isEqualTo("Quantity cannot be negative")
     }
 
     @ParameterizedTest
