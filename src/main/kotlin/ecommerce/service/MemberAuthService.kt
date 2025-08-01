@@ -7,6 +7,7 @@ import ecommerce.dto.user.UserRequestDTO
 import ecommerce.enums.UserRole
 import ecommerce.model.Cart
 import ecommerce.model.User
+import ecommerce.repository.CartRepository
 import ecommerce.repository.UserRepository
 import ecommerce.utils.exception.UserAlreadyExistsException
 import ecommerce.utils.infrastructure.JwtProvider
@@ -16,6 +17,7 @@ import java.net.URI
 @Service
 class MemberAuthService(
     private val userRepository: UserRepository,
+    private val cartRepository: CartRepository,
     private val jwtProvider: JwtProvider,
     private val loginService: LoginService,
 ) {
@@ -31,7 +33,7 @@ class MemberAuthService(
                 UserRole.USER,
             )
 
-        member.cart = Cart(user = member)
+        member.cart = cartRepository.save(Cart())
         member.wishListItems = mutableListOf()
 
         val savedMember = userRepository.save(member)
