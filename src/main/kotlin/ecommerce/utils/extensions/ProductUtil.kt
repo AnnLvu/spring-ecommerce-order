@@ -7,7 +7,6 @@ fun Product.toProductDTO(): ProductResponseDTO {
     return ProductResponseDTO(
         id,
         name,
-        imageUrl,
         options.map { it.toDTO() },
         createdAt,
     )
