@@ -4,7 +4,8 @@ import ecommerce.dto.cartProduct.CartProductDTO
 import ecommerce.dto.user.UserRequestDTO
 import ecommerce.model.Product
 import ecommerce.model.User
-import ecommerce.repository.CartStatisticsRepository
+import ecommerce.repository.CartProductRepository
+import ecommerce.repository.CartStatisticRepository
 import ecommerce.repository.ProductRepository
 import ecommerce.repository.UserRepository
 import ecommerce.service.MemberAuthService
@@ -21,9 +22,13 @@ import org.springframework.http.HttpStatus
 class CartControllerTest {
     private lateinit var token: String
     private lateinit var user: User
+    private lateinit var product: Product
 
     @Autowired
-    private lateinit var cartStatisticsRepository: CartStatisticsRepository
+    private lateinit var cartStatisticRepository: CartStatisticRepository
+
+    @Autowired
+    private lateinit var cartProductRepository: CartProductRepository
 
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -33,6 +38,15 @@ class CartControllerTest {
 
     @BeforeEach
     fun initBefore() {
+        product =
+            productRepository.save(
+                Product(
+                    "addProduct",
+                    10.0,
+                    "",
+                    10,
+                ),
+            )
         val userRequestDTO =
             UserRequestDTO(
                 "testUser",
@@ -45,7 +59,8 @@ class CartControllerTest {
 
     @AfterEach
     fun initAfter() {
-        cartStatisticsRepository.deleteAll()
+        cartStatisticRepository.deleteAll()
+        cartProductRepository.deleteAll()
         userRepository.deleteAll()
         productRepository.deleteAll()
     }
@@ -67,15 +82,24 @@ class CartControllerTest {
 
     @Test
     fun addProduct() {
-        val product =
-            productRepository.save(
-                Product(
-                    "addProduct",
-                    10.0,
-                    "",
-                    10,
-                ),
-            )
+        val response =
+            RestAssured
+                .given().log().all()
+                .header("Authorization", token)
+                .`when`().post("/api/member/cart/${product.id}")
+                .then().log().all().extract()
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
+    }
+
+    @Test
+    fun `addProduct two products`() {
+        RestAssured
+            .given().log().all()
+            .header("Authorization", token)
+            .`when`().post("/api/member/cart/${product.id}")
+            .then().log().all().extract()
+
         val response =
             RestAssured
                 .given().log().all()
@@ -88,16 +112,6 @@ class CartControllerTest {
 
     @Test
     fun removeProduct() {
-        val product =
-            productRepository.save(
-                Product(
-                    "addProduct",
-                    10.0,
-                    "",
-                    10,
-                ),
-            )
-
         RestAssured
             .given().log().all()
             .header("Authorization", token)
@@ -116,16 +130,6 @@ class CartControllerTest {
 
     @Test
     fun clearCart() {
-        val product =
-            productRepository.save(
-                Product(
-                    "addProduct",
-                    10.0,
-                    "",
-                    10,
-                ),
-            )
-
         // Add product
         RestAssured
             .given().log().all()
