@@ -1,9 +1,11 @@
 package ecommerce.service
 
 import ecommerce.dto.user.UserRequestDTO
+import ecommerce.model.Option
 import ecommerce.model.Product
 import ecommerce.model.User
 import ecommerce.repository.CartStatisticRepository
+import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
 import ecommerce.repository.UserRepository
 import ecommerce.utils.exception.EntityNotFoundException
@@ -37,6 +39,9 @@ class CartServiceTest {
     @Autowired
     lateinit var cartStatisticRepository: CartStatisticRepository
 
+    @Autowired
+    lateinit var optionRepository: OptionRepository
+
     @BeforeEach
     fun initBefore() {
         memberAuthService.signUp(
@@ -51,8 +56,19 @@ class CartServiceTest {
                 Product(
                     name = "testProduct",
                     imageUrl = "testImageUrl",
+                    options = mutableListOf(),
                 ),
             )
+        val option =
+            Option(
+                name = "defaultOption",
+                price = 100.0,
+                quantity = 10,
+                product = product,
+            )
+
+        optionRepository.save(option)
+        product.options.add(option)
         user = userRepository.findByEmail("user@testing.com").orElse(null)
     }
 
