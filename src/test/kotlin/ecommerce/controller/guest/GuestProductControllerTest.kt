@@ -2,6 +2,7 @@ package ecommerce.controller.guest
 
 import ecommerce.dto.products.ProductResponseDTO
 import ecommerce.model.Product
+import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
 import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
@@ -19,13 +20,15 @@ class GuestProductControllerTest {
     @Autowired
     private lateinit var productRepository: ProductRepository
 
+    @Autowired
+    private lateinit var optionRepository: OptionRepository
+
     @BeforeEach
     fun initBefore() {
         val allProducts =
             (0..20).map {
                 Product(
                     "name-$it",
-                    "",
                     mutableListOf(),
                 )
             }
@@ -34,6 +37,7 @@ class GuestProductControllerTest {
 
     @AfterEach
     fun initAfter() {
+        optionRepository.deleteAll()
         productRepository.deleteAll()
     }
 

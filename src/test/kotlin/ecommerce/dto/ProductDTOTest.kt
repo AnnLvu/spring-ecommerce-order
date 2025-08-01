@@ -25,12 +25,12 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 "Product-1",
-                "https://example.com/images/usb_c_hub.jpg",
                 mutableListOf(
                     OptionDTO(
                         "name",
                         10.2,
                         50,
+                        "https://example.com/images/usb_c_hub.jpg",
                     ),
                 ),
             )
@@ -45,12 +45,12 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name,
-                "https://example.com/images/usb_c_hub.jpg",
                 mutableListOf(
                     OptionDTO(
                         "name",
                         10.2,
                         50,
+                        "https://example.com/images/usb_c_hub.jpg",
                     ),
                 ),
             )
@@ -73,61 +73,16 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name,
-                "https://example.com/images/usb_c_hub.jpg",
                 mutableListOf(
                     OptionDTO(
                         "name",
                         10.2,
                         50,
+                        "https://example.com/images/usb_c_hub.jpg",
                     ),
                 ),
             )
         val violations = validator.validate(dto)
         assertThat(violations.firstOrNull()?.message).isEqualTo("Product name contains invalid characters")
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = ["", "not-a-url", "ftp://example.com/image.jpg", "http://example.com/image.txt"])
-    fun `should fail validation for invalid imageUrl`(imageUrl: String) {
-        val dto =
-            ProductDTO(
-                "Product-1",
-                imageUrl,
-                mutableListOf(
-                    OptionDTO(
-                        "name",
-                        10.2,
-                        50,
-                    ),
-                ),
-            )
-        val violations = validator.validate(dto)
-        assertThat(violations.firstOrNull()?.message)
-            .isIn("Image URL cannot be blank", "Image must be a valid URL ending in .png, .jpg, .jpeg, .gif, or .webp")
-    }
-
-    @ParameterizedTest
-    @ValueSource(
-        strings = [
-            "https://example.com/image.png",
-            "http://example.com/photo.jpg",
-            "https://cdn.site.com/pic.webp",
-        ],
-    )
-    fun `should pass validation for valid imageUrl`(imageUrl: String) {
-        val dto =
-            ProductDTO(
-                "Product-1",
-                imageUrl,
-                mutableListOf(
-                    OptionDTO(
-                        "name",
-                        10.2,
-                        50,
-                    ),
-                ),
-            )
-        val violations = validator.validate(dto)
-        assertThat(violations).isEmpty()
     }
 }

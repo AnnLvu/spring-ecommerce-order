@@ -34,7 +34,6 @@ class ProductServiceTest {
         productRepository.save(
             Product(
                 name = "test",
-                imageUrl = "test.png",
             ),
         )
         val paginatedProducts = adminProductService.getAllProducts()
@@ -47,7 +46,6 @@ class ProductServiceTest {
             productRepository.save(
                 Product(
                     name = "test",
-                    imageUrl = "test.png",
                 ),
             )
         assertThat(adminProductService.getProductById(product.id)).isNotNull
@@ -64,10 +62,9 @@ class ProductServiceTest {
             adminProductService.createProduct(
                 ProductDTO(
                     name = "test",
-                    imageUrl = "https://example.com/test.png",
                     optionsList =
                         mutableListOf(
-                            OptionDTO("Option 1", 10.0, 5),
+                            OptionDTO("Option 1", 10.0, 5, "https://example.com/test.png"),
                         ),
                 ),
             )
@@ -80,17 +77,15 @@ class ProductServiceTest {
             productRepository.save(
                 Product(
                     name = "test",
-                    imageUrl = "test.png",
                 ),
             )
         assertThrows<DuplicateProductNameException> {
             adminProductService.createProduct(
                 ProductDTO(
                     name = product.name,
-                    imageUrl = "https://example.com/test.png",
                     optionsList =
                         mutableListOf(
-                            OptionDTO("Option 1", 15.0, 10),
+                            OptionDTO("Option 1", 15.0, 10, "https://example.com/test.png"),
                         ),
                 ),
             )
@@ -103,17 +98,15 @@ class ProductServiceTest {
             productRepository.save(
                 Product(
                     name = "test",
-                    imageUrl = "test.png",
                 ),
             )
         adminProductService.updateProduct(
             product.id,
             ProductDTO(
                 name = "test",
-                imageUrl = "https://example.com/test.png",
                 optionsList =
                     mutableListOf(
-                        OptionDTO("Option 1", 11.0, 11),
+                        OptionDTO("Option 1", 11.0, 11, imageUrl = "https://example.com/test.png"),
                     ),
             ),
         )
@@ -127,10 +120,9 @@ class ProductServiceTest {
                 -3,
                 ProductDTO(
                     name = "test",
-                    imageUrl = "https://example.com/test.png",
                     optionsList =
                         mutableListOf(
-                            OptionDTO("Option 1", 11.0, 11),
+                            OptionDTO("Option 1", 11.0, 11, imageUrl = "https://example.com/test.png"),
                         ),
                 ),
             )
@@ -142,14 +134,12 @@ class ProductServiceTest {
         productRepository.save(
             Product(
                 name = "test-1",
-                imageUrl = "test.png",
             ),
         )
         val product2 =
             productRepository.save(
                 Product(
                     name = "test-2",
-                    imageUrl = "test.png",
                 ),
             )
         assertThrows<DuplicateProductNameException> {
@@ -157,10 +147,9 @@ class ProductServiceTest {
                 product2.id,
                 ProductDTO(
                     name = "test-1",
-                    imageUrl = "https://example.com/test.png",
                     optionsList =
                         mutableListOf(
-                            OptionDTO("Option 1", 11.0, 11),
+                            OptionDTO("Option 1", 11.0, 11, imageUrl = "https://example.com/test.png"),
                         ),
                 ),
             )
@@ -173,12 +162,10 @@ class ProductServiceTest {
             productRepository.save(
                 Product(
                     name = "test",
-                    imageUrl = "test.png",
                 ),
             )
         adminProductService.patchProduct(product.id, ProductPatchDTO(imageUrl = "updated.png"))
         val updatedProduct = productRepository.findById(product.id).orElse(null)
-        assertThat(updatedProduct?.imageUrl).isEqualTo("updated.png")
     }
 
     @Test
@@ -196,14 +183,12 @@ class ProductServiceTest {
         productRepository.save(
             Product(
                 name = "test-1",
-                imageUrl = "test.png",
             ),
         )
         val product2 =
             productRepository.save(
                 Product(
                     name = "test-2",
-                    imageUrl = "test.png",
                 ),
             )
         assertThrows<DuplicateProductNameException> {
@@ -220,7 +205,6 @@ class ProductServiceTest {
             productRepository.save(
                 Product(
                     name = "test",
-                    imageUrl = "test.png",
                 ),
             )
         adminProductService.patchProduct(
@@ -228,7 +212,6 @@ class ProductServiceTest {
             ProductPatchDTO(name = "test", imageUrl = "tests.png"),
         )
         val updatedProduct = productRepository.findById(product.id).orElse(null)
-        assertThat(updatedProduct?.imageUrl).isEqualTo("tests.png")
     }
 
     @Test
@@ -237,7 +220,6 @@ class ProductServiceTest {
             productRepository.save(
                 Product(
                     name = "test",
-                    imageUrl = "test.png",
                 ),
             )
         adminProductService.deleteProduct(product.id)

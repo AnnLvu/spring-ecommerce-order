@@ -8,6 +8,7 @@ import ecommerce.enums.UserRole
 import ecommerce.model.Option
 import ecommerce.model.Product
 import ecommerce.model.User
+import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
 import ecommerce.repository.UserRepository
 import ecommerce.service.AdminAuthService
@@ -36,6 +37,9 @@ class AdminProductControllerTest {
     @Autowired
     private lateinit var userRepository: UserRepository
 
+    @Autowired
+    private lateinit var optionRepository: OptionRepository
+
     @BeforeEach
     fun initBefore() {
         val user =
@@ -62,12 +66,12 @@ class AdminProductControllerTest {
         val actual =
             ProductDTO(
                 "test",
-                "http://localhost:8080/image/upload/product1.jpg",
                 mutableListOf(
                     OptionDTO(
                         "name",
                         10.1,
                         51,
+                        imageUrl = "http://localhost:8080/image/upload/product1.jpg",
                     ),
                 ),
             )
@@ -88,12 +92,12 @@ class AdminProductControllerTest {
         val product =
             ProductDTO(
                 "shouldFailTheTest",
-                "http://localhost:8080/image/upload/product1.jpg",
                 mutableListOf(
                     OptionDTO(
                         "name",
                         10.1,
                         51,
+                        "http://localhost:8080/image/upload/product1.jpg",
                     ),
                 ),
             )
@@ -114,12 +118,12 @@ class AdminProductControllerTest {
         val actual =
             ProductDTO(
                 "test",
-                "http://localhost:8080/image/upload/product1.jpg",
                 mutableListOf(
                     OptionDTO(
                         "name",
                         10.1,
                         quantity,
+                        "http://localhost:8080/image/upload/product1.jpg",
                     ),
                 ),
             )
@@ -169,12 +173,12 @@ class AdminProductControllerTest {
                 .body(
                     ProductDTO(
                         "Product2",
-                        "http://localhost:8080/image/upload/product1.jpg",
                         mutableListOf(
                             OptionDTO(
                                 "name",
                                 10.1,
                                 51,
+                                "http://localhost:8080/image/upload/product1.jpg",
                             ),
                         ),
                     ),
@@ -234,22 +238,17 @@ class AdminProductControllerTest {
 
     private fun createProduct(name: String): Product {
         val product =
-            productRepository.save(
-                Product(
-                    name,
-                    "url.com",
-                ),
-            )
-        product.options =
+            productRepository.save(Product(name))
+        val options =
             mutableListOf(
                 Option(
                     "name",
                     10.1,
                     51,
-                    product,
+                    "http://localhost:8080/image/upload/product1.jpg",
                 ),
             )
-        productRepository.flush()
+        product.options = optionRepository.saveAll(options)
         return product
     }
 }
