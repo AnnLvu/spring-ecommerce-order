@@ -2,12 +2,9 @@ package ecommerce.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
 
 @Entity
 class Option(
@@ -17,9 +14,8 @@ class Option(
     var price: Double,
     @Column(name = "quantity", nullable = false)
     var quantity: Int,
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    var product: Product? = null,
+    @Column(name = "image_url", nullable = false)
+    var imageUrl: String,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
@@ -29,7 +25,8 @@ class Option(
         require(price >= MIN_PRICE) { "price must be greater than 0.01" }
         require(name.trim().isNotEmpty()) { "name must not be empty" }
         require(name.length <= NAME_MAX_LENGTH) { "name must be less than 50 characters" }
-        require(name.matches(PATTERN)) { "name must match pattern" }
+        require(name.matches(NAME_PATTERN)) { "name must match pattern" }
+        require(imageUrl.matches(URL_PATTERN)) { "image URL must valid url" }
     }
 
     companion object {
@@ -37,6 +34,7 @@ class Option(
         private const val MIN_PRICE = 0.01
         private const val MIN_QUANTITY = 1
         private const val MAX_QUANTITY = 100_000_000
-        private val PATTERN = Regex("^[a-zA-Z0-9 ()\\[\\]+\\-&/_]+$")
+        private val NAME_PATTERN = Regex("^[a-zA-Z0-9 ()\\[\\]+\\-&/_]+$")
+        private val URL_PATTERN = Regex("^https?://.*\\.(png|jpg|jpeg|gif|webp)$")
     }
 }
