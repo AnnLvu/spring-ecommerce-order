@@ -48,11 +48,10 @@ class AdminProductService(
             productRepository.save(
                 Product(
                     productDTO.name,
-                    productDTO.imageUrl,
                 ),
             )
 
-        product.options = getOptionMutableList(productDTO.optionsList, product)
+        product.options = getOptionMutableList(productDTO.optionsList)
 
         return URI.create("/products/${product.id}")
     }
@@ -71,8 +70,7 @@ class AdminProductService(
         product.options.clear()
 
         product.name = productDTO.name
-        product.imageUrl = productDTO.imageUrl
-        val newOptions = getOptionMutableList(productDTO.optionsList, product)
+        val newOptions = getOptionMutableList(productDTO.optionsList)
         product.options.addAll(newOptions)
     }
 
@@ -89,19 +87,14 @@ class AdminProductService(
             existingProduct.name = newName
         }
 
-        productPatchDTO.imageUrl?.let {
-            existingProduct.imageUrl = it
-        }
-
         productPatchDTO.optionsList?.let {
-            existingProduct.options = getOptionMutableList(productPatchDTO.optionsList, existingProduct)
+            existingProduct.options = getOptionMutableList(productPatchDTO.optionsList)
         }
     }
 
     fun deleteProduct(id: Long) {
         val product = getValidProduct(id)
 
-        optionRepository.deleteAllByProductId(id)
         productRepository.delete(product)
     }
 
@@ -120,7 +113,7 @@ class AdminProductService(
             throw DuplicateProductNameException("Duplicate option not accepted")
         }
 
-        val newOption = optionRepository.save(optionDTO.toEntity(product))
+        val newOption = optionRepository.save(optionDTO.toEntity())
         product.options.add(newOption)
 
         return URI.create("/products/${product.id}/options/${newOption.id}")
@@ -171,11 +164,9 @@ class AdminProductService(
         return oldProduct != null && oldProduct.id != id
     }
 
-    private fun getOptionMutableList(
-        option: MutableList<OptionDTO>,
-        product: Product,
-    ): MutableList<Option> {
-        return option.map { it.toEntity(product) }.toMutableList()
+    private fun getOptionMutableList(option: MutableList<OptionDTO>): MutableList<Option> {
+        val options = option.map { it.toEntity() }.toMutableList()
+        return optionRepository.saveAll(options)
     }
 
     private fun findOption(
