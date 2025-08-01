@@ -39,20 +39,12 @@ class CartControllerTest {
 
     @BeforeEach
     fun initBefore() {
-        product =
-            productRepository.save(
-                Product(
-                    "addProduct",
-                    "",
-                    mutableListOf(
-                        Option(
-                            "Hello",
-                            15.0,
-                            51,
-                        ),
-                    ),
-                ),
-            )
+        val product = Product("addProduct", "https://cdn.example.com/images/tshirts/classic-white.png", mutableListOf())
+        val option = Option("Hello", 15.0, 51)
+        option.product = product
+        product.options.add(option)
+        this.product = productRepository.save(product)
+
         val userRequestDTO =
             UserRequestDTO(
                 "testUser",

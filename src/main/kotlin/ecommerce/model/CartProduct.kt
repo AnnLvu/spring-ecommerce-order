@@ -13,7 +13,8 @@ import jakarta.persistence.UniqueConstraint
 
 @Entity
 @Table(
-    uniqueConstraints = [UniqueConstraint(columnNames = ["cart_id", "product_id"])],
+    name = "cart_products",
+    uniqueConstraints = [UniqueConstraint(columnNames = ["cart_id", "option_id"])],
 )
 class CartProduct(
     @ManyToOne(fetch = FetchType.LAZY)
