@@ -26,12 +26,13 @@ abstract class BaseAuthInterceptor(
         jwtProvider.validateToken(token)
 
         val payload = jwtProvider.getPayload(token)
-        request.setAttribute("email", payload.email)
 
         val user =
             userRepository.findByEmail(payload.email).orElseThrow {
                 throw UnauthorisedUserException("User not found")
             }
+
+        request.setAttribute("email", payload.email)
 
         return handleAuthenticatedRequest(request, response, handler, user)
     }
