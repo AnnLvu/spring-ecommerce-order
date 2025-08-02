@@ -3,7 +3,7 @@
 ## Controller
 ### Admin
 #### AdminProductController
-- [x] `GET /api/admin/products` all products
+- [x] `GET /api/admin/products` all products (paginated)
 - [x] `GET /api/admin/products/:id` product by ID
 - [x] `POST /api/admin/products` Create a Product
 - [x] `PUT /api/admin/products/:id` update the whole product by ID
@@ -11,10 +11,18 @@
 - [x] `DELETE /api/admin/products/:id` delete the product by ID
 #### AdminAuthController
 - [x] `POST /api/admin/auth/signIn`
-
+#### Product Option
+- [x] `GET /api/admin/products/:id/options` get all options of a product
+- [x] `POST /api/admin/products/:id/options` create a new option
+- [x] `PUT /api/admin/products/:productId/options/:optionId` update the whole option
+- [x] `PATCH /api/admin/products/:productId/options/:optionId`  update one or more fields of option
+- [x] `DELETE /api/admin/products/:productId/options/:optionId` delete an option 
+#### AdminCartStatisticsController
+- [x] `GET /api/admin/cart-statistics/top-products` get top added products
+- [x] `GET /api/admin/cart-statistics/members-added-cart`  get members who added products to cart
 ### Guest
 #### GuestProductController
-- [x] `GET /api/products` all products
+- [x] `GET /api/products` all products (public, paginated)
 
 ### Member
 #### AuthController
@@ -22,8 +30,9 @@
 - [x] `POST /api/member/auth/signIn` checks and returns JWT token
 #### CartController
 - [x] `GET /api/member/cart` getCartProducts
-- [x] `POST /api/member/cart/:id` incrementCartProduct
-- [x] `DELETE /api/member/cart/:id` decrementCartProduct
+- [x] `POST /api/member/cart/:id` add (or increment) option in cart
+- [x] `DELETE /api/member/cart/:id` decrement or remove option from cart
+- [x] `DELETE /api/member/cart/clear` clear entire cart
 
 ## Config
 ### AuthInterceptor
@@ -34,62 +43,82 @@
 ### AdminAuthService
 - [x] `signIn(loginRequest: LoginRequest)`: String
 ### AdminProductService
-- [x] `getAllProducts()`: List<ProductDTO>
-- [x] `getProductById(id: Long)`: ProductDTO
-- [x] `createProduct(product: ProductDTO):`  Void
+- [x] `getAllProducts()`: (page: Int = 1, perPage: Int = 10): Page<ProductResponseDTO>
+- [x] `getProductById(id: Long)`: ProductResponseDTO
+- [x] `createProduct(product: ProductDTO):`  URI
 - [x] `updateProduct(id: Long, product: ProductDTO)`: Void
+- [x] `patchProduct(id: Long, productPatchDTO: ProductPatchDTO)`
 - [x] `fun deleteProduct(id: Long)`: Void
+- [x] `getProductOptions(productId: Long`:  ProductResponseDTO
+- [x] `createOption(productId: Long, optionDTO: OptionDTO)`: URI
+- [x] `updateOption(productId: Long, optionId: Long, optionDTO: OptionDTO)`
+- [x] `patchOption(productId: Long, optionId: Long, patchDTO: OptionPatchDTO)`
+- [x] `deleteOption(productId: Long, optionId: Long)`
 ### AdminStatisticsService
-- [x] `getTopAddedProducts(limit: Int = 5)`: List<TopAddedProductsDTO>
-- [x] `getMembersWhoAddedToCart(days: Int = 7)`: List<MembersWhoAddedToCartDTO>
+- [x] `getTopAddedProducts()`: List<TopAddedProductsDTO>
+- [x] `getMembersWhoAddedToCart()`: List<MembersWhoAddedToCartDTO>
 ### CartService
-- [x] `getCartProducts(userID: Long?, productID: Long)`: List<CartProductResponseDTO>
-- [x] `addProductToCart(userID: Long?, productID: Long)`: Long
-- [x] `removeProductFromCart(userID: Long?, productID: Long)`: Void
+- [x] `getCartProducts(member: User)`: CartProductResponse
+- [x] `addProductToCart(member: User, optionId: Long)`: Long
+- [x] `removeProductFromCart(member: User, optionId: Long)`: Void
+- [x] `clearCart(member: User)`
 ### LoginService
-- [x] `fun signIn(loginRequest: LoginRequest, expectedRole: UserRole = UserRole.USER): String`: String
+- [x] `fun login(loginRequest: LoginRequest, expectedRole: UserRole = UserRole.USER)`: String
 ### MemberAuthService
 - [x] `signUp(user: UserRequestDTO)`: UserCreateResponse
-- [x] `fun logIn(loginRequest: LoginRequest)`: String
+- [x] `fun login(loginRequest: LoginRequest)`: String
+### GuestProductService
+- [x] `getListProducts(page: Int, perPage: Int)`: Page<ProductResponseDTO> 
 
-## JPA Entities
+## Model
 ### Cart
 #### Columns
 - [x] id: Long
-- [x] user: User `OneToOne`
 - [x] items: MutableList<CartProduct> `OneToMany`
 #### Methods
-- [x] `fun addProduct(product: Product, quantity: Int = 1)`: CartProduct
-- [x] `fun decrementProduct(product: Product, decrement: Int = 1)`
-- [x] `fun removeProduct(product: Product)`
+- [x] `addProduct(option: Option, quantity: Int = 1)`
+- [x] `fun decrementProduct(option: Option, decrement: Int = 1)`
 - [x] `fun clear()`
 ### CartProduct
 #### Columns
 - [x] id: Long
-- [x] cart: Cart
-- [x] product: Product
+- [x] cart: Cart (ManyToOne)
+- [x] option: Option (ManyToOne)
 - [x] quantity: Int
 ### CartStatistics
 #### Columns
 - [x] id: Long
 - [x] user: User `ManyToOne`
 - [x] product: Product `ManyToOne`
-- [x] action: CartAction
+- [x] action: CartAction (Enum)
+- [x] createdAt: LocalDateTime
 ### Product
 #### Columns
+- [x] id: Long
+- [x] name: String (unique)
+- [x] options: List<Option> (OneToMany)
+- [x] createdAt: LocalDateTime
+- [x] Validations:
+  - must have at least one unique option
+### User
+- [x] id: Long
+- [x] email: String (unique)
+- [x] password: String
+- [x] name: String
+- [x] role: UserRole (Enum)
+- [x] cart: Cart? `OneToOne`
+
+### Option
 - [x] id: Long
 - [x] name: String
 - [x] price: Double
 - [x] quantity: Int
 - [x] imageUrl: String
-- [x] createdAt: LocalDateTime
-### User
-- [x] id: Long
-- [x] email: String
-- [x] password: String
-- [x] name: String
-- [x] role: UserRole
-- [x] cart: Cart? `OneToOne`
+- [x] Validations:
+  - [x] name: not blank, max 50, matches pattern
+  - [x] price ≥ 0.01
+  - [x] quantity in 1..100_000_000
+  - [x] valid image URL
 
 ## Repository
 ### CartProductRepository
@@ -97,6 +126,7 @@
 ### CartStatisticsRepository
 ### ProductRepository
 ### UserRepository
+### OptionRepository
 
 ## DTO
 ### Auth
@@ -105,88 +135,49 @@
 #### LoginRequest
 - email: String
 - password: String
-### Cart
-#### CartDTO
-- id: Long
-- userId: Long
-### CartProduct
+
+### cartProduct
 #### CartProductDTO
-- id: Long
-- cartId: Long
-- productID: Long
-- quantity: Int
-### CartStatistics
+#### CartProductResponse
+
+### cartStatistics
 #### MembersWhoAddedToCartDTO
-- id: Long
-- name: String
-- email: String
-#### TopAddedProductsDTO
-- name: String
-- count: Int
-- createdAt: String
-### Error
+#### TopAddedProductDto
+
+### error
 #### ErrorResponse
-- timestamp: Instant = Instant.now()
-- status: Int
-- error: String
-- message: Any
-- path: String? = null
-### Products
+
+### products
+#### OptionDTO
+#### OptionPatchDTO
+#### OptionResponseDTO
 #### ProductDTO
-- Validation for product modal
-- [x] `name`: Not blank, Maximum of 15, Minimum of 1, starts with http or https
-- [x] `description`: Not blank, Minimum of 3
-- [x] `price`: is Positive
-- [x] `imageUrl` Not Blank, Follows pattern
-- [x] `quantity` Cannot be negative (0 included)
 #### ProductPatchDTO
-- Same as `ProductDTO` but allowed null
-### User
-#### UserRequestDTO
-- Validation for user Modal
-- [x] `email`: Not blank and should be email
-- [x] `password`: Not blank and min length of 6
-- [x] `name`: Not blank
-- [x] `role`: should be admin or user `[Default = user]`
+#### ProductResponseDTO
 
+### response
+#### MessageResponse
+#### TokenResponse
+
+### user
 #### UserCreateResponse
-- uri: URI
-- token: String
+#### UserRequestDTO
 
-#### UserDTO
-- id: Long? = null
-- email: String
-- password: String
-- name: String
-- role: UserRole
-## Infrastructure
-### JwtProvider
-- [x] `createToken`: String
-- [x] `getPayload`: AuthTokenPayload
-- [x] `validateToken`: Boolean
-
-## Mapper
-### CartProductMapper
-### CartProductResponseMapper
-### CartRowMapper
-### MembersWhoAddedToCartMapper
-### ProductRowMapper
-### TopAddedProductsMapper
-### UserRowMapper
-
-## Advice
-### GlobalExceptionHandler
-- `handleEmptyResult` -> if no element is found with the ID
-- `handleHttpMessageNotReadable` -> if there is a missing field
-- `handleDuplicateProductName` -> if name is already taken
-- `handleValidationException` -> if there is error for validation
-
-## exception
+## utils
+### annotation
+### exception
 - `DuplicateProductNameException`
 - `EntityNotFoundException`
 - `UserAlreadyExistsException`
 - `UserCredentialException`
-
+- `CartOperationException`
+- `UnauthorisedUserException`
+### extensions
+### infrastructure
+#### JwtProvider
+- [x] `createToken`: String
+- [x] `getPayload`: AuthTokenPayload
+- [x] `validateToken`: Boolean
 
 ## enums
 ### UserRoles
@@ -196,28 +187,6 @@
 ### CartActions
 - [x] ADD
 - [x] DELETE
-
-## Schema
-### Products
-- id, name, price, image_url, quantity
-- [x] name is `UNIQUE`
-
-### Users
-- id, email, password, name, role
-- [x] email is unique
-
-### Cart
-- id
-- user_id (FK)
-
-### CartProducts
-- id, quantity
-- cart_id (FK)
-- product_id (FK)
-
-### CartStatistics
-- id, created_at, action
-- user_id, product_id (FK)
 
 
 ## Tests
@@ -239,6 +208,5 @@
 - [x] ProductRepositoryTest
 - [x] UserRepositoryTest
 ### Service
-- [x] CartServiceTest
 - [x] MemberAuthServiceTest
 - [x] ProductServiceTest
