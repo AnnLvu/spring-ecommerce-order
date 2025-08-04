@@ -1,10 +1,10 @@
 package ecommerce.controller.admin
 
-import ecommerce.dto.products.OptionDTO
-import ecommerce.dto.products.OptionPatchDTO
-import ecommerce.dto.products.ProductDTO
-import ecommerce.dto.products.ProductPatchDTO
-import ecommerce.dto.products.ProductResponseDTO
+import ecommerce.dto.products.OptionDto
+import ecommerce.dto.products.OptionPatchDto
+import ecommerce.dto.products.ProductDto
+import ecommerce.dto.products.ProductPatchDto
+import ecommerce.dto.products.ProductResponseDto
 import ecommerce.dto.response.MessageResponse
 import ecommerce.service.AdminProductService
 import jakarta.validation.Valid
@@ -28,7 +28,7 @@ class AdminProductController(private val adminProductService: AdminProductServic
     fun getProducts(
         @RequestParam(value = "page", defaultValue = DEFAULT_PAGE.toString()) page: Int,
         @RequestParam(value = "perPage", defaultValue = PER_PAGE.toString()) perPage: Int,
-    ): ResponseEntity<Page<ProductResponseDTO>> {
+    ): ResponseEntity<Page<ProductResponseDto>> {
         val productListResponse = adminProductService.getAllProducts(page, perPage)
         return ResponseEntity.ok().body(productListResponse)
     }
@@ -36,13 +36,13 @@ class AdminProductController(private val adminProductService: AdminProductServic
     @GetMapping("/{id}")
     fun getProductById(
         @PathVariable("id") id: Long,
-    ): ResponseEntity<ProductResponseDTO> {
+    ): ResponseEntity<ProductResponseDto> {
         return ResponseEntity.ok().body(adminProductService.getProductById(id))
     }
 
     @PostMapping("")
     fun create(
-        @RequestBody @Valid product: ProductDTO,
+        @RequestBody @Valid product: ProductDto,
     ): ResponseEntity<MessageResponse> {
         val uri = adminProductService.createProduct(product)
         return ResponseEntity.created(uri).body(MessageResponse("Product created"))
@@ -51,7 +51,7 @@ class AdminProductController(private val adminProductService: AdminProductServic
     @PutMapping("/{id}")
     fun update(
         @PathVariable("id") id: Long,
-        @RequestBody @Valid newProduct: ProductDTO,
+        @RequestBody @Valid newProduct: ProductDto,
     ): ResponseEntity<MessageResponse> {
         adminProductService.updateProduct(id, newProduct)
         return ResponseEntity.ok().body(MessageResponse("Product updated"))
@@ -60,7 +60,7 @@ class AdminProductController(private val adminProductService: AdminProductServic
     @PatchMapping("/{id}")
     fun edit(
         @PathVariable("id") id: Long,
-        @RequestBody @Valid patchProduct: ProductPatchDTO,
+        @RequestBody @Valid patchProduct: ProductPatchDto,
     ): ResponseEntity<MessageResponse> {
         adminProductService.patchProduct(id, patchProduct)
         return ResponseEntity.ok().body(MessageResponse("Product updated"))
@@ -77,7 +77,7 @@ class AdminProductController(private val adminProductService: AdminProductServic
     @GetMapping("/{id}/options")
     fun options(
         @PathVariable("id") productId: Long,
-    ): ResponseEntity<ProductResponseDTO> {
+    ): ResponseEntity<ProductResponseDto> {
         val options = adminProductService.getProductOptions(productId)
         return ResponseEntity.ok(options)
     }
@@ -85,9 +85,9 @@ class AdminProductController(private val adminProductService: AdminProductServic
     @PostMapping("/{id}/options")
     fun createOption(
         @PathVariable("id") productId: Long,
-        @RequestBody @Valid optionDTO: OptionDTO,
+        @RequestBody @Valid optionDto: OptionDto,
     ): ResponseEntity<MessageResponse> {
-        val uri = adminProductService.createOption(productId, optionDTO)
+        val uri = adminProductService.createOption(productId, optionDto)
         return ResponseEntity.created(uri).body(MessageResponse("Option created"))
     }
 
@@ -95,9 +95,9 @@ class AdminProductController(private val adminProductService: AdminProductServic
     fun updateOption(
         @PathVariable("productId") productId: Long,
         @PathVariable("optionId") optionId: Long,
-        @RequestBody @Valid optionDTO: OptionDTO,
+        @RequestBody @Valid optionDto: OptionDto,
     ): ResponseEntity<MessageResponse> {
-        adminProductService.updateOption(productId, optionId, optionDTO)
+        adminProductService.updateOption(productId, optionId, optionDto)
         return ResponseEntity.ok(MessageResponse("Option updated"))
     }
 
@@ -105,9 +105,9 @@ class AdminProductController(private val adminProductService: AdminProductServic
     fun patchOption(
         @PathVariable("productId") productId: Long,
         @PathVariable("optionId") optionId: Long,
-        @RequestBody @Valid patchDTO: OptionPatchDTO,
+        @RequestBody @Valid patchDto: OptionPatchDto,
     ): ResponseEntity<MessageResponse> {
-        adminProductService.patchOption(productId, optionId, patchDTO)
+        adminProductService.patchOption(productId, optionId, patchDto)
         return ResponseEntity.ok(MessageResponse("Option updated"))
     }
 

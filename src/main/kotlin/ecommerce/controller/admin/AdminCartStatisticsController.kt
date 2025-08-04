@@ -1,7 +1,7 @@
 package ecommerce.controller.admin
 
-import ecommerce.dto.cartStatistics.MembersWhoAddedToCartDTO
-import ecommerce.dto.cartStatistics.TopAddedProductsDTO
+import ecommerce.dto.cartStatistics.MembersWhoAddedToCartDto
+import ecommerce.dto.cartStatistics.TopAddedProductsDto
 import ecommerce.service.AdminStatisticsService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -14,13 +14,13 @@ class AdminCartStatisticsController(
     private val adminStatisticsService: AdminStatisticsService,
 ) {
     @GetMapping("/top-products")
-    fun getTopAddedProducts(): ResponseEntity<List<TopAddedProductsDTO>> {
+    fun getTopAddedProducts(): ResponseEntity<List<TopAddedProductsDto>> {
         val res = adminStatisticsService.getTopAddedProducts()
         return ResponseEntity.ok().body(res)
     }
 
     @GetMapping("/members-added-cart")
-    fun getMembersWhoAddedToCart(): ResponseEntity<List<MembersWhoAddedToCartDTO>> {
+    fun getMembersWhoAddedToCart(): ResponseEntity<List<MembersWhoAddedToCartDto>> {
         val res = adminStatisticsService.getMembersWhoAddedToCart()
         return ResponseEntity.ok().body(res)
     }

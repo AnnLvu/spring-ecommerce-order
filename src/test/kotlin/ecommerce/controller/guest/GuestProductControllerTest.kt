@@ -1,6 +1,6 @@
 package ecommerce.controller.guest
 
-import ecommerce.dto.products.ProductResponseDTO
+import ecommerce.dto.products.ProductResponseDto
 import ecommerce.model.Option
 import ecommerce.model.Product
 import ecommerce.repository.OptionRepository
@@ -58,7 +58,7 @@ class GuestProductControllerTest {
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
-        assertThat(response.body().jsonPath().get<List<ProductResponseDTO>>("content")).hasSize(10)
+        assertThat(response.body().jsonPath().get<List<ProductResponseDto>>("content")).hasSize(10)
     }
 
     @Test
@@ -70,7 +70,7 @@ class GuestProductControllerTest {
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
-        assertThat(response.body().jsonPath().get<List<ProductResponseDTO>>("content")).hasSize(5)
+        assertThat(response.body().jsonPath().get<List<ProductResponseDto>>("content")).hasSize(5)
     }
 
     @ParameterizedTest

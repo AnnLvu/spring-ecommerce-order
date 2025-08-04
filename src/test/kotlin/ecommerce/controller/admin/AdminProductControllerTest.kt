@@ -1,10 +1,10 @@
 package ecommerce.controller.admin
 
 import ecommerce.dto.auth.LoginRequest
-import ecommerce.dto.products.OptionDTO
-import ecommerce.dto.products.OptionPatchDTO
-import ecommerce.dto.products.ProductDTO
-import ecommerce.dto.products.ProductPatchDTO
+import ecommerce.dto.products.OptionDto
+import ecommerce.dto.products.OptionPatchDto
+import ecommerce.dto.products.ProductDto
+import ecommerce.dto.products.ProductPatchDto
 import ecommerce.enums.UserRole
 import ecommerce.model.Option
 import ecommerce.model.Product
@@ -65,10 +65,10 @@ class AdminProductControllerTest {
     @Test
     fun create() {
         val actual =
-            ProductDTO(
+            ProductDto(
                 "test",
                 mutableListOf(
-                    OptionDTO(
+                    OptionDto(
                         "name",
                         10.1,
                         51,
@@ -91,10 +91,10 @@ class AdminProductControllerTest {
     @Test
     fun `throws error if validation fails create`() {
         val product =
-            ProductDTO(
+            ProductDto(
                 "shouldFailTheTest",
                 mutableListOf(
-                    OptionDTO(
+                    OptionDto(
                         "name",
                         10.1,
                         51,
@@ -117,10 +117,10 @@ class AdminProductControllerTest {
     @ValueSource(ints = [-1, 0])
     fun `throws error if validation fails create for option`(quantity: Int) {
         val actual =
-            ProductDTO(
+            ProductDto(
                 "test",
                 mutableListOf(
-                    OptionDTO(
+                    OptionDto(
                         "name",
                         10.1,
                         quantity,
@@ -172,10 +172,10 @@ class AdminProductControllerTest {
             RestAssured
                 .given().log().all()
                 .body(
-                    ProductDTO(
+                    ProductDto(
                         "Product2",
                         mutableListOf(
-                            OptionDTO(
+                            OptionDto(
                                 "name",
                                 10.1,
                                 51,
@@ -199,7 +199,7 @@ class AdminProductControllerTest {
             RestAssured
                 .given().log().all()
                 .body(
-                    ProductPatchDTO("hello"),
+                    ProductPatchDto("hello"),
                 )
                 .header("Authorization", token)
                 .contentType(ContentType.JSON)
@@ -239,7 +239,7 @@ class AdminProductControllerTest {
     fun createOption() {
         val product = createProduct("createOption")
         val actual =
-            OptionDTO(
+            OptionDto(
                 "test",
                 10.1,
                 51,
@@ -262,7 +262,7 @@ class AdminProductControllerTest {
         val product = createProduct("createOption")
         val option = product.options[0]
         val actual =
-            OptionDTO(
+            OptionDto(
                 "test",
                 10.1,
                 51,
@@ -285,7 +285,7 @@ class AdminProductControllerTest {
         val product = createProduct("createOption")
         val option = product.options[0]
         val actual =
-            OptionPatchDTO(
+            OptionPatchDto(
                 "test",
                 10.1,
                 51,

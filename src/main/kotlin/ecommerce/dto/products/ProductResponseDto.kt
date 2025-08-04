@@ -2,9 +2,9 @@ package ecommerce.dto.products
 
 import java.time.LocalDateTime
 
-class ProductResponseDTO(
+class ProductResponseDto(
     val id: Long,
     val name: String,
-    val options: List<OptionResponseDTO>,
+    val options: List<OptionResponseDto>,
     val createdAt: LocalDateTime,
 )

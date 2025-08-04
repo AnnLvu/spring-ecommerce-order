@@ -1,7 +1,7 @@
 package ecommerce.repository
 
-import ecommerce.dto.cartStatistics.MembersWhoAddedToCartDTO
-import ecommerce.dto.cartStatistics.TopAddedProductsDTO
+import ecommerce.dto.cartStatistics.MembersWhoAddedToCartDto
+import ecommerce.dto.cartStatistics.TopAddedProductsDto
 import ecommerce.enums.CartAction
 import ecommerce.model.CartStatistic
 import org.springframework.data.jpa.repository.JpaRepository
@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 interface CartStatisticRepository : JpaRepository<CartStatistic, Long> {
     @Query(
         """
-    SELECT new ecommerce.dto.cartStatistics.TopAddedProductsDTO(
+    SELECT new ecommerce.dto.cartStatistics.TopAddedProductsDto(
         cs.option.name,
         COUNT(cs),
         MAX(cs.createdAt)
@@ -30,11 +30,11 @@ interface CartStatisticRepository : JpaRepository<CartStatistic, Long> {
         @Param("action") action: CartAction,
         @Param("since") since: LocalDateTime,
         pageable: org.springframework.data.domain.Pageable,
-    ): List<TopAddedProductsDTO>
+    ): List<TopAddedProductsDto>
 
     @Query(
         """
-    SELECT new ecommerce.dto.cartStatistics.MembersWhoAddedToCartDTO(
+    SELECT new ecommerce.dto.cartStatistics.MembersWhoAddedToCartDto(
         cs.user.id,
         cs.user.name,
         cs.user.email
@@ -47,5 +47,5 @@ interface CartStatisticRepository : JpaRepository<CartStatistic, Long> {
     )
     fun findActiveUsersSince(
         @Param("since") since: LocalDateTime,
-    ): List<MembersWhoAddedToCartDTO>
+    ): List<MembersWhoAddedToCartDto>
 }

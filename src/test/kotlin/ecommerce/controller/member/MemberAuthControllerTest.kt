@@ -1,7 +1,7 @@
 package ecommerce.controller.member
 
 import ecommerce.dto.auth.LoginRequest
-import ecommerce.dto.user.UserRequestDTO
+import ecommerce.dto.user.UserRequestDto
 import ecommerce.model.User
 import ecommerce.repository.UserRepository
 import io.restassured.RestAssured
@@ -20,7 +20,7 @@ class MemberAuthControllerTest {
     @Test
     fun `sign-up User`() {
         val user =
-            UserRequestDTO(
+            UserRequestDto(
                 "test",
                 "temp@temp.com",
                 "test-456",

@@ -1,6 +1,6 @@
 package ecommerce.dto.products
 
-class OptionResponseDTO(
+class OptionResponseDto(
     val id: Long,
     val name: String,
     val price: Double,

@@ -2,7 +2,7 @@ package ecommerce.controller.guest
 
 import ecommerce.controller.admin.AdminProductController.Companion.DEFAULT_PAGE
 import ecommerce.controller.admin.AdminProductController.Companion.PER_PAGE
-import ecommerce.dto.products.ProductResponseDTO
+import ecommerce.dto.products.ProductResponseDto
 import ecommerce.service.GuestProductService
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
@@ -20,7 +20,7 @@ class GuestProductController(
     fun listProducts(
         @RequestParam(value = "page", defaultValue = DEFAULT_PAGE.toString()) page: Int,
         @RequestParam(value = "perPage", defaultValue = PER_PAGE.toString()) perPage: Int,
-    ): ResponseEntity<Page<ProductResponseDTO>> {
+    ): ResponseEntity<Page<ProductResponseDto>> {
         val productListResponse = guestProductService.getListProducts(page, perPage)
         return ResponseEntity.ok().body(productListResponse)
     }

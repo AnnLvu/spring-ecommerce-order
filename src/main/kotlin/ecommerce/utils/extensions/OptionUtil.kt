@@ -1,10 +1,10 @@
 package ecommerce.utils.extensions
 
-import ecommerce.dto.products.OptionDTO
-import ecommerce.dto.products.OptionResponseDTO
+import ecommerce.dto.products.OptionDto
+import ecommerce.dto.products.OptionResponseDto
 import ecommerce.model.Option
 
-fun OptionDTO.toEntity(): Option {
+fun OptionDto.toEntity(): Option {
     return Option(
         name,
         price,
@@ -13,8 +13,8 @@ fun OptionDTO.toEntity(): Option {
     )
 }
 
-fun Option.toDTO(): OptionResponseDTO {
-    return OptionResponseDTO(
+fun Option.toDto(): OptionResponseDto {
+    return OptionResponseDto(
         id,
         name,
         price,

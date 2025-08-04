@@ -1,25 +1,23 @@
 package ecommerce.dto.products
 
-import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.Size
 import org.hibernate.validator.constraints.Range
 
-class OptionDTO(
-    @field:NotBlank
+class OptionPatchDto(
     @field:Pattern(regexp = "^[a-zA-Z0-9 ()\\[\\]+\\-&/_]+$")
     @field:Size(min = 1, max = NAME_MAX_LENGTH)
-    val name: String,
-    @field:Positive(message = "Options price should be greater than 0")
-    val price: Double,
+    val name: String? = null,
+    @field:Positive
+    val price: Double? = null,
     @field:Range(min = MIN_QUANTITY, max = MAX_QUANTITY)
-    val quantity: Int,
+    val quantity: Int? = null,
     @field:Pattern(
         regexp = "^https?://.*\\.(png|jpg|jpeg|gif|webp)$",
         message = "Image must be a valid URL ending in .png, .jpg, .jpeg, .gif, or .webp",
     )
-    val imageUrl: String,
+    val imageUrl: String? = null,
 ) {
     companion object {
         private const val NAME_MAX_LENGTH = 50

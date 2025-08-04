@@ -1,7 +1,7 @@
 package ecommerce.service
 
 import ecommerce.dto.auth.LoginRequest
-import ecommerce.dto.user.UserRequestDTO
+import ecommerce.dto.user.UserRequestDto
 import ecommerce.enums.UserRole
 import ecommerce.model.User
 import ecommerce.repository.UserRepository
@@ -23,32 +23,32 @@ class MemberAuthServiceTest {
 
     @Test
     fun `throws error if already exists signUp`() {
-        val userDTO =
-            UserRequestDTO(
+        val userDto =
+            UserRequestDto(
                 name = "test",
                 password = "test123",
                 email = "signUpError@test.com",
             )
         val member =
             User(
-                email = userDTO.email,
-                password = userDTO.password,
-                name = userDTO.name,
+                email = userDto.email,
+                password = userDto.password,
+                name = userDto.name,
                 role = UserRole.USER,
             )
         userRepository.save(member)
-        assertThrows<UserAlreadyExistsException> { memberAuthService.signUp(userDTO) }
+        assertThrows<UserAlreadyExistsException> { memberAuthService.signUp(userDto) }
     }
 
     @Test
     fun signUp() {
-        val userDTO =
-            UserRequestDTO(
+        val userDto =
+            UserRequestDto(
                 name = "test",
                 password = "test123",
                 email = "signUp@test.com",
             )
-        val result = memberAuthService.signUp(userDTO)
+        val result = memberAuthService.signUp(userDto)
         assertThat(result.token).isNotEmpty
         assertThat(result.uri).isNotNull
     }

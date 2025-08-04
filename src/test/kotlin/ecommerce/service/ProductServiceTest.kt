@@ -1,9 +1,9 @@
 package ecommerce.service
 
-import ecommerce.dto.products.OptionDTO
-import ecommerce.dto.products.OptionPatchDTO
-import ecommerce.dto.products.ProductDTO
-import ecommerce.dto.products.ProductPatchDTO
+import ecommerce.dto.products.OptionDto
+import ecommerce.dto.products.OptionPatchDto
+import ecommerce.dto.products.ProductDto
+import ecommerce.dto.products.ProductPatchDto
 import ecommerce.model.Option
 import ecommerce.model.Product
 import ecommerce.repository.OptionRepository
@@ -61,11 +61,11 @@ class ProductServiceTest {
     fun create() {
         val uri =
             adminProductService.createProduct(
-                ProductDTO(
+                ProductDto(
                     name = "test",
                     optionsList =
                         mutableListOf(
-                            OptionDTO("Option 1", 10.0, 5, "https://example.com/test.png"),
+                            OptionDto("Option 1", 10.0, 5, "https://example.com/test.png"),
                         ),
                 ),
             )
@@ -77,11 +77,11 @@ class ProductServiceTest {
         val product = createProduct()
         assertThrows<DuplicateProductNameException> {
             adminProductService.createProduct(
-                ProductDTO(
+                ProductDto(
                     name = product.name,
                     optionsList =
                         mutableListOf(
-                            OptionDTO("Option 1", 15.0, 10, "https://example.com/test.png"),
+                            OptionDto("Option 1", 15.0, 10, "https://example.com/test.png"),
                         ),
                 ),
             )
@@ -93,11 +93,11 @@ class ProductServiceTest {
         val product = createProduct()
         adminProductService.updateProduct(
             product.id,
-            ProductDTO(
+            ProductDto(
                 name = "test",
                 optionsList =
                     mutableListOf(
-                        OptionDTO("Option 1", 11.0, 11, "https://example.com/test.png"),
+                        OptionDto("Option 1", 11.0, 11, "https://example.com/test.png"),
                     ),
             ),
         )
@@ -109,11 +109,11 @@ class ProductServiceTest {
         assertThrows<EntityNotFoundException> {
             adminProductService.updateProduct(
                 -3,
-                ProductDTO(
+                ProductDto(
                     name = "test",
                     optionsList =
                         mutableListOf(
-                            OptionDTO("Option 1", 11.0, 11, "https://example.com/test.png"),
+                            OptionDto("Option 1", 11.0, 11, "https://example.com/test.png"),
                         ),
                 ),
             )
@@ -127,10 +127,10 @@ class ProductServiceTest {
         assertThrows<DuplicateProductNameException> {
             adminProductService.updateProduct(
                 product2.id,
-                ProductDTO(
+                ProductDto(
                     product1.name,
                     mutableListOf(
-                        OptionDTO("Option 1", 11.0, 11, "https://example.com/test.png"),
+                        OptionDto("Option 1", 11.0, 11, "https://example.com/test.png"),
                     ),
                 ),
             )
@@ -142,7 +142,7 @@ class ProductServiceTest {
         val product = createProduct()
         adminProductService.patchProduct(
             product.id,
-            ProductPatchDTO("updated", mutableListOf(OptionDTO("Option 1", 10.0, 5, "https://example.com/test.png"))),
+            ProductPatchDto("updated", mutableListOf(OptionDto("Option 1", 10.0, 5, "https://example.com/test.png"))),
         )
         val updatedProduct = productRepository.findById(product.id).orElse(null)
         assertThat(updatedProduct.name).isEqualTo("updated")
@@ -153,7 +153,7 @@ class ProductServiceTest {
         assertThrows<EntityNotFoundException> {
             adminProductService.patchProduct(
                 -3,
-                ProductPatchDTO("test"),
+                ProductPatchDto("test"),
             )
         }
     }
@@ -165,7 +165,7 @@ class ProductServiceTest {
         assertThrows<DuplicateProductNameException> {
             adminProductService.patchProduct(
                 product2.id,
-                ProductPatchDTO(product1.name),
+                ProductPatchDto(product1.name),
             )
         }
     }
@@ -176,7 +176,7 @@ class ProductServiceTest {
         assertDoesNotThrow {
             adminProductService.patchProduct(
                 product.id,
-                ProductPatchDTO(product.name),
+                ProductPatchDto(product.name),
             )
         }
     }
@@ -206,7 +206,7 @@ class ProductServiceTest {
         val uri =
             adminProductService.createOption(
                 product.id,
-                OptionDTO(
+                OptionDto(
                     "option",
                     10.1,
                     51,
@@ -224,7 +224,7 @@ class ProductServiceTest {
         assertThrows<IllegalArgumentException> {
             adminProductService.createOption(
                 product.id,
-                OptionDTO(
+                OptionDto(
                     "test",
                     10.1,
                     quantity,
@@ -241,7 +241,7 @@ class ProductServiceTest {
         assertThrows<IllegalArgumentException> {
             adminProductService.createOption(
                 product.id,
-                OptionDTO(
+                OptionDto(
                     "test",
                     price,
                     51,
@@ -263,7 +263,7 @@ class ProductServiceTest {
         assertThrows<IllegalArgumentException> {
             adminProductService.createOption(
                 product.id,
-                OptionDTO(
+                OptionDto(
                     name,
                     10.1,
                     51,
@@ -285,7 +285,7 @@ class ProductServiceTest {
         assertThrows<IllegalArgumentException> {
             adminProductService.createOption(
                 product.id,
-                OptionDTO(
+                OptionDto(
                     name,
                     10.1,
                     51,
@@ -309,7 +309,7 @@ class ProductServiceTest {
         assertDoesNotThrow {
             adminProductService.createOption(
                 product.id,
-                OptionDTO(
+                OptionDto(
                     name,
                     10.1,
                     51,
@@ -331,7 +331,7 @@ class ProductServiceTest {
         assertThrows<IllegalArgumentException> {
             adminProductService.createOption(
                 product.id,
-                OptionDTO(
+                OptionDto(
                     name,
                     10.1,
                     51,
@@ -354,7 +354,7 @@ class ProductServiceTest {
         assertThrows<IllegalArgumentException> {
             adminProductService.createOption(
                 product.id,
-                OptionDTO(
+                OptionDto(
                     "test",
                     10.1,
                     51,
@@ -370,7 +370,7 @@ class ProductServiceTest {
         adminProductService.updateOption(
             product.id,
             product.options[0].id,
-            OptionDTO(
+            OptionDto(
                 "test",
                 10.2,
                 52,
@@ -391,7 +391,7 @@ class ProductServiceTest {
             adminProductService.updateOption(
                 -1,
                 product.options[0].id,
-                OptionDTO(
+                OptionDto(
                     "test",
                     10.2,
                     52,
@@ -408,7 +408,7 @@ class ProductServiceTest {
             adminProductService.updateOption(
                 product.id,
                 -1,
-                OptionDTO(
+                OptionDto(
                     "test",
                     10.2,
                     52,
@@ -424,7 +424,7 @@ class ProductServiceTest {
         adminProductService.patchOption(
             product.id,
             product.options[0].id,
-            OptionPatchDTO(
+            OptionPatchDto(
                 "tester",
                 10.2,
                 52,
@@ -445,7 +445,7 @@ class ProductServiceTest {
             adminProductService.updateOption(
                 -1,
                 product.options[0].id,
-                OptionDTO(
+                OptionDto(
                     "test",
                     10.2,
                     52,
@@ -462,7 +462,7 @@ class ProductServiceTest {
             adminProductService.updateOption(
                 product.id,
                 -1,
-                OptionDTO(
+                OptionDto(
                     "test",
                     10.2,
                     52,
@@ -489,7 +489,7 @@ class ProductServiceTest {
             adminProductService.updateOption(
                 -1,
                 product.options[0].id,
-                OptionDTO(
+                OptionDto(
                     "test",
                     10.2,
                     52,
@@ -506,7 +506,7 @@ class ProductServiceTest {
             adminProductService.updateOption(
                 product.id,
                 -1,
-                OptionDTO(
+                OptionDto(
                     "test",
                     10.2,
                     52,

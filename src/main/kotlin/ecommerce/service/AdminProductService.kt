@@ -2,20 +2,20 @@ package ecommerce.service
 
 import ecommerce.controller.admin.AdminProductController.Companion.DEFAULT_PAGE
 import ecommerce.controller.admin.AdminProductController.Companion.PER_PAGE
-import ecommerce.dto.products.OptionDTO
-import ecommerce.dto.products.OptionPatchDTO
-import ecommerce.dto.products.ProductDTO
-import ecommerce.dto.products.ProductPatchDTO
-import ecommerce.dto.products.ProductResponseDTO
+import ecommerce.dto.products.OptionDto
+import ecommerce.dto.products.OptionPatchDto
+import ecommerce.dto.products.ProductDto
+import ecommerce.dto.products.ProductPatchDto
+import ecommerce.dto.products.ProductResponseDto
 import ecommerce.model.Option
 import ecommerce.model.Product
 import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
 import ecommerce.utils.exception.DuplicateProductNameException
 import ecommerce.utils.exception.EntityNotFoundException
-import ecommerce.utils.extensions.getPaginatedDTOs
+import ecommerce.utils.extensions.getPaginatedDtos
 import ecommerce.utils.extensions.toEntity
-import ecommerce.utils.extensions.toProductDTO
+import ecommerce.utils.extensions.toProductDto
 import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
@@ -30,25 +30,25 @@ class AdminProductService(
     fun getAllProducts(
         page: Int = DEFAULT_PAGE,
         perPage: Int = PER_PAGE,
-    ): Page<ProductResponseDTO> {
-        return productRepository.getPaginatedDTOs(page, perPage)
+    ): Page<ProductResponseDto> {
+        return productRepository.getPaginatedDtos(page, perPage)
     }
 
-    fun getProductById(id: Long): ProductResponseDTO {
+    fun getProductById(id: Long): ProductResponseDto {
         val product = getValidProduct(id)
-        return product.toProductDTO()
+        return product.toProductDto()
     }
 
-    fun createProduct(productDTO: ProductDTO): URI {
-        if (productRepository.existsByName(productDTO.name)) {
-            throw DuplicateProductNameException(productDTO.name)
+    fun createProduct(productDto: ProductDto): URI {
+        if (productRepository.existsByName(productDto.name)) {
+            throw DuplicateProductNameException(productDto.name)
         }
 
         val product =
             productRepository.save(
                 Product(
-                    productDTO.name,
-                    getOptionMutableList(productDTO.optionsList),
+                    productDto.name,
+                    getOptionMutableList(productDto.optionsList),
                 ),
             )
         return URI.create("/products/${product.id}")
@@ -56,38 +56,38 @@ class AdminProductService(
 
     fun updateProduct(
         id: Long,
-        productDTO: ProductDTO,
+        productDto: ProductDto,
     ) {
         val product =
             getValidProduct(id)
 
-        if (isDuplicateProductName(id, productDTO.name)) {
-            throw DuplicateProductNameException(productDTO.name)
+        if (isDuplicateProductName(id, productDto.name)) {
+            throw DuplicateProductNameException(productDto.name)
         }
 
         product.options.clear()
 
-        product.name = productDTO.name
-        val newOptions = getOptionMutableList(productDTO.optionsList)
+        product.name = productDto.name
+        val newOptions = getOptionMutableList(productDto.optionsList)
         product.options.addAll(newOptions)
     }
 
     fun patchProduct(
         id: Long,
-        productPatchDTO: ProductPatchDTO,
+        productPatchDto: ProductPatchDto,
     ) {
         val existingProduct = getValidProduct(id)
 
-        productPatchDTO.name?.let { newName ->
+        productPatchDto.name?.let { newName ->
             if (newName != existingProduct.name && isDuplicateProductName(id, newName)) {
                 throw DuplicateProductNameException(newName)
             }
             existingProduct.name = newName
         }
 
-        productPatchDTO.optionsList?.let {
+        productPatchDto.optionsList?.let {
             optionRepository.deleteAllById(existingProduct.options.map { it.id })
-            existingProduct.options = getOptionMutableList(productPatchDTO.optionsList)
+            existingProduct.options = getOptionMutableList(productPatchDto.optionsList)
         }
     }
 
@@ -97,22 +97,22 @@ class AdminProductService(
         productRepository.delete(product)
     }
 
-    fun getProductOptions(productId: Long): ProductResponseDTO {
+    fun getProductOptions(productId: Long): ProductResponseDto {
         val product = getValidProduct(productId)
-        return product.toProductDTO()
+        return product.toProductDto()
     }
 
     fun createOption(
         productId: Long,
-        optionDTO: OptionDTO,
+        optionDto: OptionDto,
     ): URI {
         val product = getValidProduct(productId)
 
-        if (product.options.find { it.name == optionDTO.name } != null) {
+        if (product.options.find { it.name == optionDto.name } != null) {
             throw DuplicateProductNameException("Duplicate option not accepted")
         }
 
-        val newOption = optionRepository.save(optionDTO.toEntity())
+        val newOption = optionRepository.save(optionDto.toEntity())
         product.options.add(newOption)
 
         return URI.create("/products/${product.id}/options/${newOption.id}")
@@ -121,29 +121,29 @@ class AdminProductService(
     fun updateOption(
         productId: Long,
         optionId: Long,
-        optionDTO: OptionDTO,
+        optionDto: OptionDto,
     ) {
         val product = getValidProduct(productId)
         val option = findOption(product, optionId)
 
-        option.name = optionDTO.name
-        option.price = optionDTO.price
-        option.quantity = optionDTO.quantity
-        option.imageUrl = optionDTO.imageUrl
+        option.name = optionDto.name
+        option.price = optionDto.price
+        option.quantity = optionDto.quantity
+        option.imageUrl = optionDto.imageUrl
     }
 
     fun patchOption(
         productId: Long,
         optionId: Long,
-        optionPatchDTO: OptionPatchDTO,
+        optionPatchDto: OptionPatchDto,
     ) {
         val product = getValidProduct(productId)
         val option = findOption(product, optionId)
 
-        optionPatchDTO.name?.let { option.name = it }
-        optionPatchDTO.price?.let { option.price = it }
-        optionPatchDTO.quantity?.let { option.quantity = it }
-        optionPatchDTO.imageUrl?.let { option.imageUrl = it }
+        optionPatchDto.name?.let { option.name = it }
+        optionPatchDto.price?.let { option.price = it }
+        optionPatchDto.quantity?.let { option.quantity = it }
+        optionPatchDto.imageUrl?.let { option.imageUrl = it }
     }
 
     fun deleteOption(
@@ -165,7 +165,7 @@ class AdminProductService(
         return oldProduct != null && oldProduct.id != id
     }
 
-    private fun getOptionMutableList(option: MutableList<OptionDTO>): MutableList<Option> {
+    private fun getOptionMutableList(option: MutableList<OptionDto>): MutableList<Option> {
         return option.map { it.toEntity() }.toMutableList()
     }
 

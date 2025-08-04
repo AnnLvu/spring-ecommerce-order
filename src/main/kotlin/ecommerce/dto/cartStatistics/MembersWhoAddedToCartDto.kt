@@ -1,6 +1,6 @@
 package ecommerce.dto.cartStatistics
 
-class MembersWhoAddedToCartDTO(
+class MembersWhoAddedToCartDto(
     val id: Long,
     val name: String,
     val email: String,

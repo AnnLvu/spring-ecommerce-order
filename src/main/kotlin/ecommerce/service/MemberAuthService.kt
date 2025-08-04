@@ -3,7 +3,7 @@ package ecommerce.service
 import ecommerce.dto.auth.AuthTokenPayload
 import ecommerce.dto.auth.LoginRequest
 import ecommerce.dto.user.UserCreateResponse
-import ecommerce.dto.user.UserRequestDTO
+import ecommerce.dto.user.UserRequestDto
 import ecommerce.enums.UserRole
 import ecommerce.model.Cart
 import ecommerce.model.User
@@ -21,15 +21,15 @@ class MemberAuthService(
     private val jwtProvider: JwtProvider,
     private val loginService: LoginService,
 ) {
-    fun signUp(userRequestDTO: UserRequestDTO): UserCreateResponse {
-        if (userRepository.existsByEmail(userRequestDTO.email)) {
-            throw UserAlreadyExistsException(userRequestDTO.email)
+    fun signUp(userRequestDto: UserRequestDto): UserCreateResponse {
+        if (userRepository.existsByEmail(userRequestDto.email)) {
+            throw UserAlreadyExistsException(userRequestDto.email)
         }
         val member =
             User(
-                userRequestDTO.email,
-                userRequestDTO.password,
-                userRequestDTO.name,
+                userRequestDto.email,
+                userRequestDto.password,
+                userRequestDto.name,
                 UserRole.USER,
             )
 

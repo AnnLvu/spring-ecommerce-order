@@ -1,13 +1,13 @@
 package ecommerce.utils.extensions
 
-import ecommerce.dto.products.ProductResponseDTO
+import ecommerce.dto.products.ProductResponseDto
 import ecommerce.model.Product
 
-fun Product.toProductDTO(): ProductResponseDTO {
-    return ProductResponseDTO(
+fun Product.toProductDto(): ProductResponseDto {
+    return ProductResponseDto(
         id,
         name,
-        options.map { it.toDTO() },
+        options.map { it.toDto() },
         createdAt,
     )
 }

@@ -1,6 +1,6 @@
 package ecommerce.dto
 
-import ecommerce.dto.user.UserRequestDTO
+import ecommerce.dto.user.UserRequestDto
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import org.assertj.core.api.Assertions.assertThat
@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class UserRequestDTOTest {
+class UserRequestDtoTest {
     private lateinit var validator: Validator
 
     @BeforeEach
@@ -22,7 +22,7 @@ class UserRequestDTOTest {
     @Test
     fun `should pass validation for valid user`() {
         val dto =
-            UserRequestDTO(
+            UserRequestDto(
                 "John Doe",
                 "user@example.com",
                 "securePass",
@@ -36,7 +36,7 @@ class UserRequestDTOTest {
     @ValueSource(strings = ["", "   "])
     fun `should fail validation when name is blank`(name: String) {
         val dto =
-            UserRequestDTO(
+            UserRequestDto(
                 name,
                 "user@example.com",
                 "securePass",
@@ -50,7 +50,7 @@ class UserRequestDTOTest {
     @ValueSource(strings = ["   ", "user@", "user.com", "user@.com"])
     fun `should fail validation when email is invalid`(email: String) {
         val dto =
-            UserRequestDTO(
+            UserRequestDto(
                 "John Doe",
                 email,
                 "securePass",
@@ -65,7 +65,7 @@ class UserRequestDTOTest {
     @ValueSource(strings = ["", "123", "abc12"])
     fun `should fail validation when password is too short`(password: String) {
         val dto =
-            UserRequestDTO(
+            UserRequestDto(
                 "John Doe",
                 "user@example.com",
                 password,

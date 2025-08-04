@@ -1,7 +1,7 @@
 package ecommerce.dto
 
-import ecommerce.dto.products.OptionDTO
-import ecommerce.dto.products.ProductDTO
+import ecommerce.dto.products.OptionDto
+import ecommerce.dto.products.ProductDto
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import org.assertj.core.api.Assertions.assertThat
@@ -12,7 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class ProductDTOTest {
+class ProductDtoTest {
     private lateinit var validator: Validator
 
     @BeforeEach
@@ -23,10 +23,10 @@ class ProductDTOTest {
     @Test
     fun `should pass validation for valid product`() {
         val dto =
-            ProductDTO(
+            ProductDto(
                 "Product-1",
                 mutableListOf(
-                    OptionDTO(
+                    OptionDto(
                         "name",
                         10.2,
                         50,
@@ -43,10 +43,10 @@ class ProductDTOTest {
     @ValueSource(strings = ["12", "HelloWorldHelloWorld"])
     fun `should fail validation for invalid name - size`(name: String) {
         val dto =
-            ProductDTO(
+            ProductDto(
                 name,
                 mutableListOf(
-                    OptionDTO(
+                    OptionDto(
                         "name",
                         10.2,
                         50,
@@ -71,10 +71,10 @@ class ProductDTOTest {
     )
     fun `should fail validation for invalid name - characters`(name: String) {
         val dto =
-            ProductDTO(
+            ProductDto(
                 name,
                 mutableListOf(
-                    OptionDTO(
+                    OptionDto(
                         "name",
                         10.2,
                         50,

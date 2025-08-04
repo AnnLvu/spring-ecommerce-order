@@ -2,7 +2,7 @@ package ecommerce.controller.member
 
 import ecommerce.dto.auth.LoginRequest
 import ecommerce.dto.response.TokenResponse
-import ecommerce.dto.user.UserRequestDTO
+import ecommerce.dto.user.UserRequestDto
 import ecommerce.service.MemberAuthService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -18,9 +18,9 @@ class MemberAuthController(
 ) {
     @PostMapping("/sign-up")
     fun signUp(
-        @RequestBody @Valid userDTO: UserRequestDTO,
+        @RequestBody @Valid userDto: UserRequestDto,
     ): ResponseEntity<TokenResponse> {
-        val userCreateResponse = memberAuthService.signUp(userDTO)
+        val userCreateResponse = memberAuthService.signUp(userDto)
         return ResponseEntity.created(userCreateResponse.uri)
             .body(TokenResponse(userCreateResponse.token))
     }

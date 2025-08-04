@@ -43,20 +43,20 @@
 ### AdminAuthService
 - [x] `signIn(loginRequest: LoginRequest)`: String
 ### AdminProductService
-- [x] `getAllProducts()`: (page: Int = 1, perPage: Int = 10): Page<ProductResponseDTO>
-- [x] `getProductById(id: Long)`: ProductResponseDTO
-- [x] `createProduct(product: ProductDTO):`  URI
-- [x] `updateProduct(id: Long, product: ProductDTO)`: Void
-- [x] `patchProduct(id: Long, productPatchDTO: ProductPatchDTO)`
+- [x] `getAllProducts()`: (page: Int = 1, perPage: Int = 10): Page<ProductResponseDto>
+- [x] `getProductById(id: Long)`: ProductResponseDto
+- [x] `createProduct(product: ProductDto):`  URI
+- [x] `updateProduct(id: Long, product: ProductDto)`: Void
+- [x] `patchProduct(id: Long, productPatchDto: ProductPatchDto)`
 - [x] `fun deleteProduct(id: Long)`: Void
-- [x] `getProductOptions(productId: Long`:  ProductResponseDTO
-- [x] `createOption(productId: Long, optionDTO: OptionDTO)`: URI
-- [x] `updateOption(productId: Long, optionId: Long, optionDTO: OptionDTO)`
-- [x] `patchOption(productId: Long, optionId: Long, patchDTO: OptionPatchDTO)`
+- [x] `getProductOptions(productId: Long`:  ProductResponseDto
+- [x] `createOption(productId: Long, optionDto: OptionDto)`: URI
+- [x] `updateOption(productId: Long, optionId: Long, optionDto: OptionDto)`
+- [x] `patchOption(productId: Long, optionId: Long, patchDto: OptionPatchDto)`
 - [x] `deleteOption(productId: Long, optionId: Long)`
 ### AdminStatisticsService
-- [x] `getTopAddedProducts()`: List<TopAddedProductsDTO>
-- [x] `getMembersWhoAddedToCart()`: List<MembersWhoAddedToCartDTO>
+- [x] `getTopAddedProducts()`: List<TopAddedProductsDto>
+- [x] `getMembersWhoAddedToCart()`: List<MembersWhoAddedToCartDto>
 ### CartService
 - [x] `getCartProducts(member: User)`: CartProductResponse
 - [x] `addProductToCart(member: User, optionId: Long)`: Long
@@ -65,10 +65,10 @@
 ### LoginService
 - [x] `fun login(loginRequest: LoginRequest, expectedRole: UserRole = UserRole.USER)`: String
 ### MemberAuthService
-- [x] `signUp(user: UserRequestDTO)`: UserCreateResponse
+- [x] `signUp(user: UserRequestDto)`: UserCreateResponse
 - [x] `fun login(loginRequest: LoginRequest)`: String
 ### GuestProductService
-- [x] `getListProducts(page: Int, perPage: Int)`: Page<ProductResponseDTO> 
+- [x] `getListProducts(page: Int, perPage: Int)`: Page<ProductResponseDto> 
 
 ## Model
 ### Cart
@@ -128,7 +128,7 @@
 ### UserRepository
 ### OptionRepository
 
-## DTO
+## Dto
 ### Auth
 #### AuthTokenPayload
 - email: String
@@ -137,23 +137,23 @@
 - password: String
 
 ### cartProduct
-#### CartProductDTO
+#### CartProductDto
 #### CartProductResponse
 
 ### cartStatistics
-#### MembersWhoAddedToCartDTO
+#### MembersWhoAddedToCartDto
 #### TopAddedProductDto
 
 ### error
 #### ErrorResponse
 
 ### products
-#### OptionDTO
-#### OptionPatchDTO
-#### OptionResponseDTO
-#### ProductDTO
-#### ProductPatchDTO
-#### ProductResponseDTO
+#### OptionDto
+#### OptionPatchDto
+#### OptionResponseDto
+#### ProductDto
+#### ProductPatchDto
+#### ProductResponseDto
 
 ### response
 #### MessageResponse
@@ -161,7 +161,7 @@
 
 ### user
 #### UserCreateResponse
-#### UserRequestDTO
+#### UserRequestDto
 
 ## utils
 ### annotation
@@ -199,9 +199,9 @@
 #### Member
 - [x] CartControllerTest
 - [x] MemberAuthControllerTest
-### DTO
-- [x] ProductDTOTest
-- [x] UserRequestDTOTest
+### Dto
+- [x] ProductDtoTest
+- [x] UserRequestDtoTest
 ### Repository
 - [x] CartRepositoryTest
 - [x] CartStatisticsRepositoryTest
