@@ -1,4 +1,4 @@
-package ecommerce.utils.annotations
+package ecommerce.annotations
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)

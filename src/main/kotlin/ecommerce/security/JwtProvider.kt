@@ -1,4 +1,4 @@
-package ecommerce.utils.infrastructure
+package ecommerce.security
 
 import ecommerce.dto.auth.AuthTokenPayload
 import ecommerce.exception.UnauthorisedUserException

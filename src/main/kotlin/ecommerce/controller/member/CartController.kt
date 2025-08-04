@@ -4,7 +4,7 @@ import ecommerce.dto.cartProduct.CartProductResponse
 import ecommerce.dto.response.MessageResponse
 import ecommerce.model.User
 import ecommerce.service.CartService
-import ecommerce.utils.annotations.LoginMember
+import ecommerce.annotations.LoginMember
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping

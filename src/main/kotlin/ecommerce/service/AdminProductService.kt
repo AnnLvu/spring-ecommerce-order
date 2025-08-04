@@ -13,9 +13,9 @@ import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
 import ecommerce.exception.DuplicateProductNameException
 import ecommerce.exception.EntityNotFoundException
-import ecommerce.utils.extensions.getPaginatedDtos
-import ecommerce.utils.extensions.toEntity
-import ecommerce.utils.extensions.toProductDto
+import ecommerce.extensions.getPaginatedDtos
+import ecommerce.extensions.toEntity
+import ecommerce.extensions.toProductDto
 import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service

@@ -1,4 +1,4 @@
-package ecommerce.utils.extensions
+package ecommerce.extensions
 
 import ecommerce.dto.products.ProductResponseDto
 import ecommerce.model.Product

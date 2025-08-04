@@ -5,7 +5,7 @@ import ecommerce.dto.auth.LoginRequest
 import ecommerce.enums.UserRole
 import ecommerce.repository.UserRepository
 import ecommerce.exception.UserCredentialException
-import ecommerce.utils.infrastructure.JwtProvider
+import ecommerce.security.JwtProvider
 import org.springframework.stereotype.Service
 
 @Service

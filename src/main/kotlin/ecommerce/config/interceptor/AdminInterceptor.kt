@@ -4,7 +4,7 @@ import ecommerce.enums.UserRole
 import ecommerce.model.User
 import ecommerce.repository.UserRepository
 import ecommerce.exception.UnauthorisedUserException
-import ecommerce.utils.infrastructure.JwtProvider
+import ecommerce.security.JwtProvider
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.stereotype.Component
