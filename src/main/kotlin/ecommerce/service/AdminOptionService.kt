@@ -3,6 +3,7 @@ package ecommerce.service
 import AdminBaseService
 import ecommerce.dto.options.OptionPatchDto
 import ecommerce.dto.options.OptionRequestDto
+import ecommerce.dto.products.CreateOptionResult
 import ecommerce.dto.products.ProductResponseDto
 import ecommerce.exception.DuplicateProductNameException
 import ecommerce.extensions.toEntity
@@ -28,7 +29,7 @@ class AdminOptionService(
     fun createOption(
         productId: Long,
         optionDto: OptionRequestDto,
-    ): URI {
+    ): CreateOptionResult {
         val product = getValidProduct(productId)
 
         if (product.options.any { it.name == optionDto.name }) {
@@ -38,7 +39,7 @@ class AdminOptionService(
         val newOption = optionRepository.save(optionDto.toEntity())
         product.options.add(newOption)
 
-        return URI.create("/products/${product.id}/options/${newOption.id}")
+        return CreateOptionResult(newOption.id, newOption.name)
     }
 
     fun updateOption(

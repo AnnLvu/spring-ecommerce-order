@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.net.URI
 
 @RestController
 @RequestMapping("/api/admin/products")
@@ -90,7 +91,8 @@ class AdminProductController(private val adminProductService: AdminProductServic
         @PathVariable("id") productId: Long,
         @RequestBody @Valid optionDto: OptionRequestDto,
     ): ResponseEntity<MessageResponseDto> {
-        val uri = adminOptionService.createOption(productId, optionDto)
+        val result = adminOptionService.createOption(productId, optionDto)
+        val uri = URI.create("/products/${productId}/options/${result.id}")
         return ResponseEntity.created(uri).body(MessageResponseDto("Option created"))
     }
 
