@@ -16,9 +16,9 @@ import ecommerce.exception.EntityNotFoundException
 import ecommerce.extensions.getPaginatedDtos
 import ecommerce.extensions.toEntity
 import ecommerce.extensions.toProductDto
-import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.net.URI
 
 @Service
