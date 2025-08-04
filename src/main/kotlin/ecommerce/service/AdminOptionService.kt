@@ -1,8 +1,8 @@
 package ecommerce.service
 
 import AdminBaseService
-import ecommerce.dto.products.OptionPatchDto
-import ecommerce.dto.products.OptionRequestDto
+import ecommerce.dto.options.OptionPatchDto
+import ecommerce.dto.options.OptionRequestDto
 import ecommerce.dto.products.ProductResponseDto
 import ecommerce.exception.DuplicateProductNameException
 import ecommerce.extensions.toEntity

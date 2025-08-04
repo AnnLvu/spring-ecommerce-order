@@ -1,6 +1,6 @@
 package ecommerce.dto
 
-import ecommerce.dto.products.OptionRequestDto
+import ecommerce.dto.options.OptionRequestDto
 import ecommerce.dto.products.ProductRequestDto
 import jakarta.validation.Validation
 import jakarta.validation.Validator

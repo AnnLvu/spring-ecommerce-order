@@ -1,7 +1,7 @@
 package ecommerce.service
 
-import ecommerce.dto.products.OptionRequestDto
-import ecommerce.dto.products.OptionPatchDto
+import ecommerce.dto.options.OptionRequestDto
+import ecommerce.dto.options.OptionPatchDto
 import ecommerce.dto.products.ProductRequestDto
 import ecommerce.dto.products.ProductPatchDto
 import ecommerce.model.Option

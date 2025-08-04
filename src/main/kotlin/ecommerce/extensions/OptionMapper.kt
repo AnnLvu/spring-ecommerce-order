@@ -1,7 +1,7 @@
 package ecommerce.extensions
 
-import ecommerce.dto.products.OptionRequestDto
-import ecommerce.dto.products.OptionResponseDto
+import ecommerce.dto.options.OptionRequestDto
+import ecommerce.dto.options.OptionResponseDto
 import ecommerce.model.Option
 
 fun OptionRequestDto.toEntity(): Option {

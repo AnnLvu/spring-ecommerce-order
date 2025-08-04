@@ -1,4 +1,4 @@
-import ecommerce.dto.products.OptionRequestDto
+import ecommerce.dto.options.OptionRequestDto
 import ecommerce.exception.EntityNotFoundException
 import ecommerce.extensions.toEntity
 import ecommerce.model.Option

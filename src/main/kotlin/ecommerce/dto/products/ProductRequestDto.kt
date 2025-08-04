@@ -1,5 +1,6 @@
 package ecommerce.dto.products
 
+import ecommerce.dto.options.OptionRequestDto
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import org.hibernate.validator.constraints.Length

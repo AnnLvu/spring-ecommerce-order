@@ -1,4 +1,4 @@
-package ecommerce.dto.products
+package ecommerce.dto.options
 
 class OptionResponseDto(
     val id: Long,

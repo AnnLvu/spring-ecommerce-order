@@ -1,4 +1,4 @@
-package ecommerce.dto.products
+package ecommerce.dto.options
 
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern

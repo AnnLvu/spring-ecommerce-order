@@ -1,4 +1,4 @@
-package ecommerce.dto.products
+package ecommerce.dto.options
 
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Positive
