@@ -25,6 +25,9 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class ProductServiceTest {
     @Autowired
+    private lateinit var adminOptionService: AdminOptionService
+
+    @Autowired
     private lateinit var productRepository: ProductRepository
 
     @Autowired
@@ -196,7 +199,7 @@ class ProductServiceTest {
     @Test
     fun getProductOptions() {
         val product = createProduct()
-        val response = adminProductService.getProductOptions(product.id)
+        val response = adminOptionService.getProductOptions(product.id)
         assertThat(response.options).isNotEmpty
     }
 
@@ -204,7 +207,7 @@ class ProductServiceTest {
     fun createOption() {
         val product = createProduct()
         val uri =
-            adminProductService.createOption(
+            adminOptionService.createOption(
                 product.id,
                 OptionRequestDto(
                     "option",
@@ -222,7 +225,7 @@ class ProductServiceTest {
     fun `throws error if quantity not valid`(quantity: Int) {
         val product = createProduct()
         assertThrows<IllegalArgumentException> {
-            adminProductService.createOption(
+            adminOptionService.createOption(
                 product.id,
                 OptionRequestDto(
                     "test",
@@ -239,7 +242,7 @@ class ProductServiceTest {
     fun `throws error if price not valid`(price: Double) {
         val product = createProduct()
         assertThrows<IllegalArgumentException> {
-            adminProductService.createOption(
+            adminOptionService.createOption(
                 product.id,
                 OptionRequestDto(
                     "test",
@@ -261,7 +264,7 @@ class ProductServiceTest {
     fun `throws error if name is blank`(name: String) {
         val product = createProduct()
         assertThrows<IllegalArgumentException> {
-            adminProductService.createOption(
+            adminOptionService.createOption(
                 product.id,
                 OptionRequestDto(
                     name,
@@ -283,7 +286,7 @@ class ProductServiceTest {
     fun `throws error if name is length is above max limit`(name: String) {
         val product = createProduct()
         assertThrows<IllegalArgumentException> {
-            adminProductService.createOption(
+            adminOptionService.createOption(
                 product.id,
                 OptionRequestDto(
                     name,
@@ -307,7 +310,7 @@ class ProductServiceTest {
     fun `excepts in range names`(name: String) {
         val product = createProduct()
         assertDoesNotThrow {
-            adminProductService.createOption(
+            adminOptionService.createOption(
                 product.id,
                 OptionRequestDto(
                     name,
@@ -329,7 +332,7 @@ class ProductServiceTest {
     fun `throws invalid name error`(name: String) {
         val product = createProduct()
         assertThrows<IllegalArgumentException> {
-            adminProductService.createOption(
+            adminOptionService.createOption(
                 product.id,
                 OptionRequestDto(
                     name,
@@ -352,7 +355,7 @@ class ProductServiceTest {
     fun `throws invalid url error`(imageUrl: String) {
         val product = createProduct()
         assertThrows<IllegalArgumentException> {
-            adminProductService.createOption(
+            adminOptionService.createOption(
                 product.id,
                 OptionRequestDto(
                     "test",
@@ -367,7 +370,7 @@ class ProductServiceTest {
     @Test
     fun updateOption() {
         val product = createProduct()
-        adminProductService.updateOption(
+        adminOptionService.updateOption(
             product.id,
             product.options[0].id,
             OptionRequestDto(
@@ -388,7 +391,7 @@ class ProductServiceTest {
     fun `throws for invalid product updateOption`() {
         val product = createProduct()
         assertThrows<EntityNotFoundException> {
-            adminProductService.updateOption(
+            adminOptionService.updateOption(
                 -1,
                 product.options[0].id,
                 OptionRequestDto(
@@ -405,7 +408,7 @@ class ProductServiceTest {
     fun `throws for invalid option id updateOption`() {
         val product = createProduct()
         assertThrows<EntityNotFoundException> {
-            adminProductService.updateOption(
+            adminOptionService.updateOption(
                 product.id,
                 -1,
                 OptionRequestDto(
@@ -421,7 +424,7 @@ class ProductServiceTest {
     @Test
     fun patchOption() {
         val product = createProduct()
-        adminProductService.patchOption(
+        adminOptionService.patchOption(
             product.id,
             product.options[0].id,
             OptionPatchDto(
@@ -442,7 +445,7 @@ class ProductServiceTest {
     fun `throws for invalid product patchOption`() {
         val product = createProduct()
         assertThrows<EntityNotFoundException> {
-            adminProductService.updateOption(
+            adminOptionService.updateOption(
                 -1,
                 product.options[0].id,
                 OptionRequestDto(
@@ -459,7 +462,7 @@ class ProductServiceTest {
     fun `throws for invalid option id patchOption`() {
         val product = createProduct()
         assertThrows<EntityNotFoundException> {
-            adminProductService.updateOption(
+            adminOptionService.updateOption(
                 product.id,
                 -1,
                 OptionRequestDto(
@@ -475,7 +478,7 @@ class ProductServiceTest {
     @Test
     fun deleteOption() {
         val product = createProduct()
-        adminProductService.deleteOption(
+        adminOptionService.deleteOption(
             product.id,
             product.options[0].id,
         )
@@ -486,7 +489,7 @@ class ProductServiceTest {
     fun `throws for invalid product deleteOption`() {
         val product = createProduct()
         assertThrows<EntityNotFoundException> {
-            adminProductService.updateOption(
+            adminOptionService.updateOption(
                 -1,
                 product.options[0].id,
                 OptionRequestDto(
@@ -503,7 +506,7 @@ class ProductServiceTest {
     fun `throws for invalid option id deleteOption`() {
         val product = createProduct()
         assertThrows<EntityNotFoundException> {
-            adminProductService.updateOption(
+            adminOptionService.updateOption(
                 product.id,
                 -1,
                 OptionRequestDto(
