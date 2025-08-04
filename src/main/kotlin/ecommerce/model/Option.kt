@@ -10,12 +10,16 @@ import jakarta.persistence.Id
 class Option(
     @Column(name = "name", nullable = false)
     var name: String,
+
     @Column(name = "price", nullable = false)
     var price: Double,
+
     @Column(name = "quantity", nullable = false)
     var quantity: Int,
+
     @Column(name = "image_url", nullable = false)
     var imageUrl: String,
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,

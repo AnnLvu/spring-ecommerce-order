@@ -14,11 +14,14 @@ import java.time.LocalDateTime
 class Product(
     @Column(name = "name", nullable = false, unique = true)
     var name: String,
+
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "product_id")
     var options: MutableList<Option>,
+
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime = LocalDateTime.now(),
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,

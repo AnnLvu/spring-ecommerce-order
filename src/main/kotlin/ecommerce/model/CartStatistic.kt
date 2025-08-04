@@ -17,14 +17,18 @@ class CartStatistic(
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     var user: User,
+
     @ManyToOne
     @JoinColumn(name = "option_id", nullable = false)
     var option: Option,
+
     @Column(name = "action", nullable = false)
     @Enumerated(EnumType.STRING)
     var action: CartAction,
+
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime = LocalDateTime.now(),
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
