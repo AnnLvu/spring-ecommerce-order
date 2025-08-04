@@ -1,6 +1,6 @@
 package ecommerce.model
 
-import ecommerce.utils.exception.EntityNotFoundException
+import ecommerce.exception.EntityNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test

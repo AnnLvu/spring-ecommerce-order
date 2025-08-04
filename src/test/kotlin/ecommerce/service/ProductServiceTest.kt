@@ -8,8 +8,8 @@ import ecommerce.model.Option
 import ecommerce.model.Product
 import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
-import ecommerce.utils.exception.DuplicateProductNameException
-import ecommerce.utils.exception.EntityNotFoundException
+import ecommerce.exception.DuplicateProductNameException
+import ecommerce.exception.EntityNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test

@@ -10,7 +10,7 @@ import ecommerce.model.Option
 import ecommerce.model.User
 import ecommerce.repository.CartStatisticRepository
 import ecommerce.repository.OptionRepository
-import ecommerce.utils.exception.EntityNotFoundException
+import ecommerce.exception.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

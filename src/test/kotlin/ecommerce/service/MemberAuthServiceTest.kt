@@ -5,8 +5,8 @@ import ecommerce.dto.user.UserRequestDto
 import ecommerce.enums.UserRole
 import ecommerce.model.User
 import ecommerce.repository.UserRepository
-import ecommerce.utils.exception.UserAlreadyExistsException
-import ecommerce.utils.exception.UserCredentialException
+import ecommerce.exception.UserAlreadyExistsException
+import ecommerce.exception.UserCredentialException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

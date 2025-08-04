@@ -4,7 +4,7 @@ import ecommerce.enums.UserRole
 import ecommerce.model.User
 import ecommerce.repository.UserRepository
 import ecommerce.utils.annotations.LoginMember
-import ecommerce.utils.exception.UnauthorisedUserException
+import ecommerce.exception.UnauthorisedUserException
 import org.springframework.core.MethodParameter
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest

@@ -9,7 +9,7 @@ import ecommerce.model.Cart
 import ecommerce.model.User
 import ecommerce.repository.CartRepository
 import ecommerce.repository.UserRepository
-import ecommerce.utils.exception.UserAlreadyExistsException
+import ecommerce.exception.UserAlreadyExistsException
 import ecommerce.utils.infrastructure.JwtProvider
 import org.springframework.stereotype.Service
 import java.net.URI

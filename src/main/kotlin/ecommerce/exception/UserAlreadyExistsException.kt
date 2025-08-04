@@ -1,4 +1,4 @@
-package ecommerce.utils.exception
+package ecommerce.exception
 
 import java.lang.RuntimeException
 

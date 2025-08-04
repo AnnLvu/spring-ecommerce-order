@@ -3,7 +3,7 @@ package ecommerce.config.interceptor
 import ecommerce.enums.UserRole
 import ecommerce.model.User
 import ecommerce.repository.UserRepository
-import ecommerce.utils.exception.UnauthorisedUserException
+import ecommerce.exception.UnauthorisedUserException
 import ecommerce.utils.infrastructure.JwtProvider
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

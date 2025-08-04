@@ -11,8 +11,8 @@ import ecommerce.model.Option
 import ecommerce.model.Product
 import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
-import ecommerce.utils.exception.DuplicateProductNameException
-import ecommerce.utils.exception.EntityNotFoundException
+import ecommerce.exception.DuplicateProductNameException
+import ecommerce.exception.EntityNotFoundException
 import ecommerce.utils.extensions.getPaginatedDtos
 import ecommerce.utils.extensions.toEntity
 import ecommerce.utils.extensions.toProductDto
