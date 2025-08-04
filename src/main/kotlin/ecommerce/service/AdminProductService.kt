@@ -1,7 +1,7 @@
 package ecommerce.service
 
-import ecommerce.controller.admin.AdminProductController.Companion.DEFAULT_PAGE
-import ecommerce.controller.admin.AdminProductController.Companion.PER_PAGE
+import ecommerce.config.PaginationConstants.DEFAULT_PAGE
+import ecommerce.config.PaginationConstants.PER_PAGE
 import ecommerce.dto.products.OptionRequestDto
 import ecommerce.dto.products.OptionPatchDto
 import ecommerce.dto.products.ProductRequestDto

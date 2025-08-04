@@ -1,7 +1,7 @@
 package ecommerce.controller.guest
 
-import ecommerce.controller.admin.AdminProductController.Companion.DEFAULT_PAGE
-import ecommerce.controller.admin.AdminProductController.Companion.PER_PAGE
+import ecommerce.config.PaginationConstants.DEFAULT_PAGE
+import ecommerce.config.PaginationConstants.PER_PAGE
 import ecommerce.dto.products.ProductResponseDto
 import ecommerce.service.GuestProductService
 import org.springframework.data.domain.Page

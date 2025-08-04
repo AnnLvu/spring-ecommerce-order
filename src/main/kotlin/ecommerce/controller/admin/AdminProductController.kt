@@ -1,5 +1,7 @@
 package ecommerce.controller.admin
 
+import ecommerce.config.PaginationConstants.DEFAULT_PAGE
+import ecommerce.config.PaginationConstants.PER_PAGE
 import ecommerce.dto.products.OptionRequestDto
 import ecommerce.dto.products.OptionPatchDto
 import ecommerce.dto.products.ProductRequestDto
@@ -118,10 +120,5 @@ class AdminProductController(private val adminProductService: AdminProductServic
     ): ResponseEntity<Void> {
         adminProductService.deleteOption(productId, optionId)
         return ResponseEntity.noContent().build()
-    }
-
-    companion object {
-        const val PER_PAGE = 10
-        const val DEFAULT_PAGE = 1
     }
 }
