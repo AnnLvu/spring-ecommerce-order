@@ -4,6 +4,7 @@ import ecommerce.dto.cartStatistics.MembersWhoAddedToCartDto
 import ecommerce.dto.cartStatistics.TopAddedProductsDto
 import ecommerce.enums.CartAction
 import ecommerce.model.CartStatistic
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -29,7 +30,7 @@ interface CartStatisticRepository : JpaRepository<CartStatistic, Long> {
     fun findTopProducts(
         @Param("action") action: CartAction,
         @Param("since") since: LocalDateTime,
-        pageable: org.springframework.data.domain.Pageable,
+        pageable: Pageable,
     ): List<TopAddedProductsDto>
 
     @Query(
