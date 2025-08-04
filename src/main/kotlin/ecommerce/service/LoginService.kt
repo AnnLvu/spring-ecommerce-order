@@ -3,8 +3,8 @@ package ecommerce.service
 import ecommerce.dto.auth.AuthTokenPayload
 import ecommerce.dto.auth.LoginRequestDto
 import ecommerce.enums.UserRole
-import ecommerce.repository.UserRepository
 import ecommerce.exception.UserCredentialException
+import ecommerce.repository.UserRepository
 import ecommerce.security.JwtProvider
 import org.springframework.stereotype.Service
 

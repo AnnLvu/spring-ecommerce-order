@@ -2,10 +2,10 @@ package ecommerce.controller.admin
 
 import ecommerce.config.PaginationConstants.DEFAULT_PAGE
 import ecommerce.config.PaginationConstants.PER_PAGE
-import ecommerce.dto.options.OptionRequestDto
 import ecommerce.dto.options.OptionPatchDto
-import ecommerce.dto.products.ProductRequestDto
+import ecommerce.dto.options.OptionRequestDto
 import ecommerce.dto.products.ProductPatchDto
+import ecommerce.dto.products.ProductRequestDto
 import ecommerce.dto.products.ProductResponseDto
 import ecommerce.dto.response.MessageResponseDto
 import ecommerce.service.AdminOptionService
@@ -92,7 +92,7 @@ class AdminProductController(private val adminProductService: AdminProductServic
         @RequestBody @Valid optionDto: OptionRequestDto,
     ): ResponseEntity<MessageResponseDto> {
         val result = adminOptionService.createOption(productId, optionDto)
-        val uri = URI.create("/products/${productId}/options/${result.id}")
+        val uri = URI.create("/products/$productId/options/${result.id}")
         return ResponseEntity.created(uri).body(MessageResponseDto("Option created"))
     }
 

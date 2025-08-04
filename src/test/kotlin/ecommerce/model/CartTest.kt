@@ -6,14 +6,12 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
 class CartTest {
-
     private fun createOption(
         name: String = "Test Option",
         price: Double = 10.0,
         quantity: Int = 5,
-        imageUrl: String = "http://localhost/image.png"
+        imageUrl: String = "http://localhost/image.png",
     ) = Option(name, price, quantity, imageUrl)
-
 
     @Test
     fun `addProduct should add a new product when cart is empty`() {

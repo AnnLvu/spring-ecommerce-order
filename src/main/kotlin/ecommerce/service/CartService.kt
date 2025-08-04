@@ -3,6 +3,7 @@ package ecommerce.service
 import ecommerce.dto.cartProduct.CartProductRequestDto
 import ecommerce.dto.cartProduct.CartProductResponse
 import ecommerce.enums.CartAction
+import ecommerce.exception.EntityNotFoundException
 import ecommerce.model.Cart
 import ecommerce.model.CartProduct
 import ecommerce.model.CartStatistic
@@ -10,7 +11,6 @@ import ecommerce.model.Option
 import ecommerce.model.User
 import ecommerce.repository.CartStatisticRepository
 import ecommerce.repository.OptionRepository
-import ecommerce.exception.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

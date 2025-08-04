@@ -5,15 +5,15 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
 class OptionTest {
-
     @Test
     fun `should create option with valid data`() {
-        val option = Option(
-            "Valid Product Name",
-            10.0,
-            5,
-            "http://localhost/product1.png"
-        )
+        val option =
+            Option(
+                "Valid Product Name",
+                10.0,
+                5,
+                "http://localhost/product1.png",
+            )
 
         assertThat(option.name).isEqualTo("Valid Product Name")
         assertThat(option.price).isEqualTo(10.0)

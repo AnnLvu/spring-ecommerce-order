@@ -12,7 +12,6 @@ import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.net.URI
 
 @Service
 @Transactional
@@ -20,7 +19,6 @@ class AdminOptionService(
     productRepository: ProductRepository,
     optionRepository: OptionRepository,
 ) : AdminBaseService(productRepository, optionRepository) {
-
     fun getProductOptions(productId: Long): ProductResponseDto {
         val product = getValidProduct(productId)
         return product.toProductDto()

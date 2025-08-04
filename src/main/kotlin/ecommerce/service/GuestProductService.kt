@@ -1,8 +1,8 @@
 package ecommerce.service
 
 import ecommerce.dto.products.ProductResponseDto
-import ecommerce.repository.ProductRepository
 import ecommerce.extensions.getPaginatedDtos
+import ecommerce.repository.ProductRepository
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 

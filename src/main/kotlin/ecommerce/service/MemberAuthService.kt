@@ -5,11 +5,11 @@ import ecommerce.dto.auth.LoginRequestDto
 import ecommerce.dto.user.UserCreateResponseDto
 import ecommerce.dto.user.UserRequestDto
 import ecommerce.enums.UserRole
+import ecommerce.exception.UserAlreadyExistsException
 import ecommerce.model.Cart
 import ecommerce.model.User
 import ecommerce.repository.CartRepository
 import ecommerce.repository.UserRepository
-import ecommerce.exception.UserAlreadyExistsException
 import ecommerce.security.JwtProvider
 import org.springframework.stereotype.Service
 import java.net.URI

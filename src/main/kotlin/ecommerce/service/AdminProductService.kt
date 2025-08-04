@@ -3,15 +3,15 @@ package ecommerce.service
 import AdminBaseService
 import ecommerce.config.PaginationConstants.DEFAULT_PAGE
 import ecommerce.config.PaginationConstants.PER_PAGE
-import ecommerce.dto.products.ProductRequestDto
 import ecommerce.dto.products.ProductPatchDto
+import ecommerce.dto.products.ProductRequestDto
 import ecommerce.dto.products.ProductResponseDto
-import ecommerce.model.Product
-import ecommerce.repository.OptionRepository
-import ecommerce.repository.ProductRepository
 import ecommerce.exception.DuplicateProductNameException
 import ecommerce.extensions.getPaginatedDtos
 import ecommerce.extensions.toProductDto
+import ecommerce.model.Product
+import ecommerce.repository.OptionRepository
+import ecommerce.repository.ProductRepository
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,7 +23,6 @@ class AdminProductService(
     productRepository: ProductRepository,
     optionRepository: OptionRepository,
 ) : AdminBaseService(productRepository, optionRepository) {
-
     fun getAllProducts(
         page: Int = DEFAULT_PAGE,
         perPage: Int = PER_PAGE,
@@ -41,12 +40,13 @@ class AdminProductService(
             throw DuplicateProductNameException(productDto.name)
         }
 
-        val product = productRepository.save(
-            Product(
-                productDto.name,
-                getOptionMutableList(productDto.optionsList),
+        val product =
+            productRepository.save(
+                Product(
+                    productDto.name,
+                    getOptionMutableList(productDto.optionsList),
+                ),
             )
-        )
         return URI.create("/products/${product.id}")
     }
 
@@ -90,4 +90,3 @@ class AdminProductService(
         productRepository.delete(product)
     }
 }
-

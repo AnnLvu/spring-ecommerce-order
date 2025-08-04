@@ -6,19 +6,18 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
 class ProductTest {
-
-    private fun createOption(name: String = "Option1") =
-        Option(name, 10.0, 5, "http://localhost/product.png")
+    private fun createOption(name: String = "Option1") = Option(name, 10.0, 5, "http://localhost/product.png")
 
     @Test
     fun `should create product with valid options`() {
         val option1 = createOption("Option1")
         val option2 = createOption("Option2")
 
-        val product = Product(
-            "Product Name",
-            mutableListOf(option1, option2)
-        )
+        val product =
+            Product(
+                "Product Name",
+                mutableListOf(option1, option2),
+            )
 
         assertThat(product.name).isEqualTo("Product Name")
         assertThat(product.options).containsExactly(option1, option2)
@@ -30,7 +29,7 @@ class ProductTest {
         assertThatThrownBy {
             Product(
                 "Product Name",
-                mutableListOf()
+                mutableListOf(),
             )
         }
             .isInstanceOf(IllegalArgumentException::class.java)
@@ -44,7 +43,7 @@ class ProductTest {
         assertThatThrownBy {
             Product(
                 "Product Name",
-                mutableListOf(option, option)
+                mutableListOf(option, option),
             )
         }
             .isInstanceOf(IllegalArgumentException::class.java)
