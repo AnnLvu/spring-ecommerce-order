@@ -2,7 +2,7 @@ package ecommerce.dto.error
 
 import java.time.Instant
 
-class ErrorResponse(
+class ErrorResponseDto(
     val timestamp: Instant = Instant.now(),
     val status: Int,
     val error: String,

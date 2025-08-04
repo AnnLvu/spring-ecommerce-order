@@ -1,11 +1,11 @@
 package ecommerce.controller.admin
 
-import ecommerce.dto.products.OptionDto
+import ecommerce.dto.products.OptionRequestDto
 import ecommerce.dto.products.OptionPatchDto
-import ecommerce.dto.products.ProductDto
+import ecommerce.dto.products.ProductRequestDto
 import ecommerce.dto.products.ProductPatchDto
 import ecommerce.dto.products.ProductResponseDto
-import ecommerce.dto.response.MessageResponse
+import ecommerce.dto.response.MessageResponseDto
 import ecommerce.service.AdminProductService
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -42,28 +42,28 @@ class AdminProductController(private val adminProductService: AdminProductServic
 
     @PostMapping("")
     fun create(
-        @RequestBody @Valid product: ProductDto,
-    ): ResponseEntity<MessageResponse> {
+        @RequestBody @Valid product: ProductRequestDto,
+    ): ResponseEntity<MessageResponseDto> {
         val uri = adminProductService.createProduct(product)
-        return ResponseEntity.created(uri).body(MessageResponse("Product created"))
+        return ResponseEntity.created(uri).body(MessageResponseDto("Product created"))
     }
 
     @PutMapping("/{id}")
     fun update(
         @PathVariable("id") id: Long,
-        @RequestBody @Valid newProduct: ProductDto,
-    ): ResponseEntity<MessageResponse> {
+        @RequestBody @Valid newProduct: ProductRequestDto,
+    ): ResponseEntity<MessageResponseDto> {
         adminProductService.updateProduct(id, newProduct)
-        return ResponseEntity.ok().body(MessageResponse("Product updated"))
+        return ResponseEntity.ok().body(MessageResponseDto("Product updated"))
     }
 
     @PatchMapping("/{id}")
     fun edit(
         @PathVariable("id") id: Long,
         @RequestBody @Valid patchProduct: ProductPatchDto,
-    ): ResponseEntity<MessageResponse> {
+    ): ResponseEntity<MessageResponseDto> {
         adminProductService.patchProduct(id, patchProduct)
-        return ResponseEntity.ok().body(MessageResponse("Product updated"))
+        return ResponseEntity.ok().body(MessageResponseDto("Product updated"))
     }
 
     @DeleteMapping("/{id}")
@@ -85,20 +85,20 @@ class AdminProductController(private val adminProductService: AdminProductServic
     @PostMapping("/{id}/options")
     fun createOption(
         @PathVariable("id") productId: Long,
-        @RequestBody @Valid optionDto: OptionDto,
-    ): ResponseEntity<MessageResponse> {
+        @RequestBody @Valid optionDto: OptionRequestDto,
+    ): ResponseEntity<MessageResponseDto> {
         val uri = adminProductService.createOption(productId, optionDto)
-        return ResponseEntity.created(uri).body(MessageResponse("Option created"))
+        return ResponseEntity.created(uri).body(MessageResponseDto("Option created"))
     }
 
     @PutMapping("/{productId}/options/{optionId}")
     fun updateOption(
         @PathVariable("productId") productId: Long,
         @PathVariable("optionId") optionId: Long,
-        @RequestBody @Valid optionDto: OptionDto,
-    ): ResponseEntity<MessageResponse> {
+        @RequestBody @Valid optionDto: OptionRequestDto,
+    ): ResponseEntity<MessageResponseDto> {
         adminProductService.updateOption(productId, optionId, optionDto)
-        return ResponseEntity.ok(MessageResponse("Option updated"))
+        return ResponseEntity.ok(MessageResponseDto("Option updated"))
     }
 
     @PatchMapping("/{productId}/options/{optionId}")
@@ -106,9 +106,9 @@ class AdminProductController(private val adminProductService: AdminProductServic
         @PathVariable("productId") productId: Long,
         @PathVariable("optionId") optionId: Long,
         @RequestBody @Valid patchDto: OptionPatchDto,
-    ): ResponseEntity<MessageResponse> {
+    ): ResponseEntity<MessageResponseDto> {
         adminProductService.patchOption(productId, optionId, patchDto)
-        return ResponseEntity.ok(MessageResponse("Option updated"))
+        return ResponseEntity.ok(MessageResponseDto("Option updated"))
     }
 
     @DeleteMapping("/{productId}/options/{optionId}")

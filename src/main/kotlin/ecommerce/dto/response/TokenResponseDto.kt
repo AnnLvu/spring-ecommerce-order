@@ -1,5 +1,5 @@
 package ecommerce.dto.response
 
-class TokenResponse(
+class TokenResponseDto(
     val token: String,
 )

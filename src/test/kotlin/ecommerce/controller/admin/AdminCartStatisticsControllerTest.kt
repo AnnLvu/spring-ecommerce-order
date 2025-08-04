@@ -1,6 +1,6 @@
 package ecommerce.controller.admin
 
-import ecommerce.dto.auth.LoginRequest
+import ecommerce.dto.auth.LoginRequestDto
 import ecommerce.enums.UserRole
 import ecommerce.model.User
 import ecommerce.repository.UserRepository
@@ -36,7 +36,7 @@ class AdminCartStatisticsControllerTest {
                     UserRole.ADMIN,
                 ),
             )
-        token = adminAuthService.login(LoginRequest(user.email, user.password))
+        token = adminAuthService.login(LoginRequestDto(user.email, user.password))
     }
 
     @AfterEach

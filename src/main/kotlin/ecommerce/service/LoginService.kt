@@ -1,7 +1,7 @@
 package ecommerce.service
 
 import ecommerce.dto.auth.AuthTokenPayload
-import ecommerce.dto.auth.LoginRequest
+import ecommerce.dto.auth.LoginRequestDto
 import ecommerce.enums.UserRole
 import ecommerce.repository.UserRepository
 import ecommerce.exception.UserCredentialException
@@ -14,7 +14,7 @@ class LoginService(
     private val jwtProvider: JwtProvider,
 ) {
     fun login(
-        loginRequest: LoginRequest,
+        loginRequest: LoginRequestDto,
         expectedRole: UserRole = UserRole.USER,
     ): String {
         val user =

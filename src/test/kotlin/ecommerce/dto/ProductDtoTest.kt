@@ -1,7 +1,7 @@
 package ecommerce.dto
 
-import ecommerce.dto.products.OptionDto
-import ecommerce.dto.products.ProductDto
+import ecommerce.dto.products.OptionRequestDto
+import ecommerce.dto.products.ProductRequestDto
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import org.assertj.core.api.Assertions.assertThat
@@ -23,10 +23,10 @@ class ProductDtoTest {
     @Test
     fun `should pass validation for valid product`() {
         val dto =
-            ProductDto(
+            ProductRequestDto(
                 "Product-1",
                 mutableListOf(
-                    OptionDto(
+                    OptionRequestDto(
                         "name",
                         10.2,
                         50,
@@ -43,10 +43,10 @@ class ProductDtoTest {
     @ValueSource(strings = ["12", "HelloWorldHelloWorld"])
     fun `should fail validation for invalid name - size`(name: String) {
         val dto =
-            ProductDto(
+            ProductRequestDto(
                 name,
                 mutableListOf(
-                    OptionDto(
+                    OptionRequestDto(
                         "name",
                         10.2,
                         50,
@@ -71,10 +71,10 @@ class ProductDtoTest {
     )
     fun `should fail validation for invalid name - characters`(name: String) {
         val dto =
-            ProductDto(
+            ProductRequestDto(
                 name,
                 mutableListOf(
-                    OptionDto(
+                    OptionRequestDto(
                         "name",
                         10.2,
                         50,

@@ -1,5 +1,5 @@
 package ecommerce.dto.response
 
-class MessageResponse(
+class MessageResponseDto(
     val message: String,
 )

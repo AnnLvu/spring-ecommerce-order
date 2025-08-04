@@ -1,6 +1,6 @@
 package ecommerce.dto.cartProduct
 
-class CartProductDto(
+class CartProductRequestDto(
     val optionId: Long,
     val name: String,
     val price: Double,

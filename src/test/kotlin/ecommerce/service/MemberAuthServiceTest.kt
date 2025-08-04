@@ -1,6 +1,6 @@
 package ecommerce.service
 
-import ecommerce.dto.auth.LoginRequest
+import ecommerce.dto.auth.LoginRequestDto
 import ecommerce.dto.user.UserRequestDto
 import ecommerce.enums.UserRole
 import ecommerce.model.User
@@ -56,7 +56,7 @@ class MemberAuthServiceTest {
     @Test
     fun `No user found at signIn with email`() {
         val loginRequest =
-            LoginRequest(
+            LoginRequestDto(
                 password = "test123",
                 email = "signInError@test.com",
             )
@@ -74,7 +74,7 @@ class MemberAuthServiceTest {
             )
         userRepository.save(memberUser)
         val loginRequest =
-            LoginRequest(
+            LoginRequestDto(
                 email = memberUser.email,
                 password = "test123456",
             )
@@ -92,7 +92,7 @@ class MemberAuthServiceTest {
             )
         userRepository.save(memberUser)
         val loginRequest =
-            LoginRequest(
+            LoginRequestDto(
                 memberUser.email,
                 memberUser.password,
             )

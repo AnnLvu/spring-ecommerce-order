@@ -1,7 +1,7 @@
 package ecommerce.config.advice
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
-import ecommerce.dto.error.ErrorResponse
+import ecommerce.dto.error.ErrorResponseDto
 import ecommerce.exception.CartOperationException
 import ecommerce.exception.DuplicateProductNameException
 import ecommerce.exception.EntityNotFoundException
@@ -22,7 +22,7 @@ class GlobalExceptionHandler {
     fun handleEmptyResult(
         err: EntityNotFoundException,
         request: HttpServletRequest,
-    ): ResponseEntity<ErrorResponse> {
+    ): ResponseEntity<ErrorResponseDto> {
         return errorResponse(HttpStatus.NOT_FOUND, "${err.message}", request)
     }
 
@@ -30,7 +30,7 @@ class GlobalExceptionHandler {
     fun handleHttpMessageNotReadable(
         ex: HttpMessageNotReadableException,
         request: HttpServletRequest,
-    ): ResponseEntity<ErrorResponse> {
+    ): ResponseEntity<ErrorResponseDto> {
         val rootCause = ex.cause
         val message =
             when (rootCause) {
@@ -47,7 +47,7 @@ class GlobalExceptionHandler {
     fun handleDuplicateProductName(
         ex: DuplicateProductNameException,
         request: HttpServletRequest,
-    ): ResponseEntity<ErrorResponse> {
+    ): ResponseEntity<ErrorResponseDto> {
         return errorResponse(HttpStatus.CONFLICT, ex.message ?: "Duplicate product", request)
     }
 
@@ -55,7 +55,7 @@ class GlobalExceptionHandler {
     fun handleValidationException(
         ex: MethodArgumentNotValidException,
         request: HttpServletRequest,
-    ): ResponseEntity<ErrorResponse> {
+    ): ResponseEntity<ErrorResponseDto> {
         val errors = ex.bindingResult.fieldErrors.associate { it.field to (it.defaultMessage ?: "Invalid value") }
         return errorResponse(HttpStatus.BAD_REQUEST, errors, request)
     }
@@ -64,7 +64,7 @@ class GlobalExceptionHandler {
     fun handleUserAlreadyExistsException(
         ex: UserAlreadyExistsException,
         request: HttpServletRequest,
-    ): ResponseEntity<ErrorResponse> {
+    ): ResponseEntity<ErrorResponseDto> {
         return errorResponse(HttpStatus.CONFLICT, ex.message ?: "Already exists", request)
     }
 
@@ -72,7 +72,7 @@ class GlobalExceptionHandler {
     fun handleUnauthorisedUserException(
         ex: UnauthorisedUserException,
         request: HttpServletRequest,
-    ): ResponseEntity<ErrorResponse> {
+    ): ResponseEntity<ErrorResponseDto> {
         return errorResponse(HttpStatus.UNAUTHORIZED, ex.message ?: "UNAUTHORIZED", request)
     }
 
@@ -80,7 +80,7 @@ class GlobalExceptionHandler {
     fun handleUserCredentialException(
         ex: UserCredentialException,
         request: HttpServletRequest,
-    ): ResponseEntity<ErrorResponse> {
+    ): ResponseEntity<ErrorResponseDto> {
         return errorResponse(HttpStatus.UNAUTHORIZED, ex.message ?: "UNAUTHORIZED", request)
     }
 
@@ -88,7 +88,7 @@ class GlobalExceptionHandler {
     fun handleCartOperationException(
         ex: CartOperationException,
         request: HttpServletRequest,
-    ): ResponseEntity<ErrorResponse> {
+    ): ResponseEntity<ErrorResponseDto> {
         return errorResponse(HttpStatus.CONFLICT, ex.message ?: "CONFLICT", request)
     }
 
@@ -96,7 +96,7 @@ class GlobalExceptionHandler {
     fun handleIllegalArgumentException(
         ex: IllegalArgumentException,
         request: HttpServletRequest,
-    ): ResponseEntity<ErrorResponse> {
+    ): ResponseEntity<ErrorResponseDto> {
         return errorResponse(HttpStatus.BAD_REQUEST, ex.message ?: "BAD_REQUEST", request)
     }
 
@@ -104,10 +104,10 @@ class GlobalExceptionHandler {
         status: HttpStatus,
         message: Any,
         request: HttpServletRequest,
-    ): ResponseEntity<ErrorResponse> {
+    ): ResponseEntity<ErrorResponseDto> {
         val error = status.reasonPhrase
         val response =
-            ErrorResponse(
+            ErrorResponseDto(
                 status = status.value(),
                 error = error,
                 message = message,

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.Size
 import org.hibernate.validator.constraints.Range
 
-class OptionDto(
+class OptionRequestDto(
     @field:NotBlank
     @field:Pattern(regexp = "^[a-zA-Z0-9 ()\\[\\]+\\-&/_]+$")
     @field:Size(min = 1, max = NAME_MAX_LENGTH)

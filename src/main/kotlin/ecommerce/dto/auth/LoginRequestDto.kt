@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 
-class LoginRequest(
+class LoginRequestDto(
     @field:NotBlank(message = "Email cannot be blank")
     @field:Email(message = "Please enter a valid email address")
     val email: String,

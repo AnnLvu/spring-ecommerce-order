@@ -1,6 +1,6 @@
 package ecommerce.controller.member
 
-import ecommerce.dto.auth.LoginRequest
+import ecommerce.dto.auth.LoginRequestDto
 import ecommerce.dto.user.UserRequestDto
 import ecommerce.model.User
 import ecommerce.repository.UserRepository
@@ -47,7 +47,7 @@ class MemberAuthControllerTest {
                 ),
             )
         val loginRequest =
-            LoginRequest(
+            LoginRequestDto(
                 "temp2@temp.com",
                 "test-456",
             )

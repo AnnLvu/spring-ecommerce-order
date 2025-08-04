@@ -10,5 +10,5 @@ class ProductPatchDto(
         message = "Product name contains invalid characters",
     )
     val name: String? = null,
-    val optionsList: MutableList<OptionDto>? = null,
+    val optionsList: MutableList<OptionRequestDto>? = null,
 )

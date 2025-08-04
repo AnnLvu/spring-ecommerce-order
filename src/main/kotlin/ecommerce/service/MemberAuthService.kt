@@ -1,8 +1,8 @@
 package ecommerce.service
 
 import ecommerce.dto.auth.AuthTokenPayload
-import ecommerce.dto.auth.LoginRequest
-import ecommerce.dto.user.UserCreateResponse
+import ecommerce.dto.auth.LoginRequestDto
+import ecommerce.dto.user.UserCreateResponseDto
 import ecommerce.dto.user.UserRequestDto
 import ecommerce.enums.UserRole
 import ecommerce.model.Cart
@@ -21,7 +21,7 @@ class MemberAuthService(
     private val jwtProvider: JwtProvider,
     private val loginService: LoginService,
 ) {
-    fun signUp(userRequestDto: UserRequestDto): UserCreateResponse {
+    fun signUp(userRequestDto: UserRequestDto): UserCreateResponseDto {
         if (userRepository.existsByEmail(userRequestDto.email)) {
             throw UserAlreadyExistsException(userRequestDto.email)
         }
@@ -38,10 +38,10 @@ class MemberAuthService(
         val savedMember = userRepository.save(member)
 
         val authTokenPayload = jwtProvider.createToken(AuthTokenPayload(member.email))
-        return UserCreateResponse(URI.create("/users/$savedMember.id"), "Bearer $authTokenPayload")
+        return UserCreateResponseDto(URI.create("/users/$savedMember.id"), "Bearer $authTokenPayload")
     }
 
-    fun login(loginRequest: LoginRequest): String {
+    fun login(loginRequest: LoginRequestDto): String {
         return loginService.login(loginRequest)
     }
 }

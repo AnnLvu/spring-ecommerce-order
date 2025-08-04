@@ -1,9 +1,9 @@
 package ecommerce.controller.admin
 
-import ecommerce.dto.auth.LoginRequest
-import ecommerce.dto.products.OptionDto
+import ecommerce.dto.auth.LoginRequestDto
+import ecommerce.dto.products.OptionRequestDto
 import ecommerce.dto.products.OptionPatchDto
-import ecommerce.dto.products.ProductDto
+import ecommerce.dto.products.ProductRequestDto
 import ecommerce.dto.products.ProductPatchDto
 import ecommerce.enums.UserRole
 import ecommerce.model.Option
@@ -52,7 +52,7 @@ class AdminProductControllerTest {
                     UserRole.ADMIN,
                 ),
             )
-        token = adminAuthService.login(LoginRequest(user.email, user.password))
+        token = adminAuthService.login(LoginRequestDto(user.email, user.password))
     }
 
     @AfterEach
@@ -65,10 +65,10 @@ class AdminProductControllerTest {
     @Test
     fun create() {
         val actual =
-            ProductDto(
+            ProductRequestDto(
                 "test",
                 mutableListOf(
-                    OptionDto(
+                    OptionRequestDto(
                         "name",
                         10.1,
                         51,
@@ -91,10 +91,10 @@ class AdminProductControllerTest {
     @Test
     fun `throws error if validation fails create`() {
         val product =
-            ProductDto(
+            ProductRequestDto(
                 "shouldFailTheTest",
                 mutableListOf(
-                    OptionDto(
+                    OptionRequestDto(
                         "name",
                         10.1,
                         51,
@@ -117,10 +117,10 @@ class AdminProductControllerTest {
     @ValueSource(ints = [-1, 0])
     fun `throws error if validation fails create for option`(quantity: Int) {
         val actual =
-            ProductDto(
+            ProductRequestDto(
                 "test",
                 mutableListOf(
-                    OptionDto(
+                    OptionRequestDto(
                         "name",
                         10.1,
                         quantity,
@@ -172,10 +172,10 @@ class AdminProductControllerTest {
             RestAssured
                 .given().log().all()
                 .body(
-                    ProductDto(
+                    ProductRequestDto(
                         "Product2",
                         mutableListOf(
-                            OptionDto(
+                            OptionRequestDto(
                                 "name",
                                 10.1,
                                 51,
@@ -239,7 +239,7 @@ class AdminProductControllerTest {
     fun createOption() {
         val product = createProduct("createOption")
         val actual =
-            OptionDto(
+            OptionRequestDto(
                 "test",
                 10.1,
                 51,
@@ -262,7 +262,7 @@ class AdminProductControllerTest {
         val product = createProduct("createOption")
         val option = product.options[0]
         val actual =
-            OptionDto(
+            OptionRequestDto(
                 "test",
                 10.1,
                 51,

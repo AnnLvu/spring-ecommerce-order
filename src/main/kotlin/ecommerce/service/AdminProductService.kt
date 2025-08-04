@@ -2,9 +2,9 @@ package ecommerce.service
 
 import ecommerce.controller.admin.AdminProductController.Companion.DEFAULT_PAGE
 import ecommerce.controller.admin.AdminProductController.Companion.PER_PAGE
-import ecommerce.dto.products.OptionDto
+import ecommerce.dto.products.OptionRequestDto
 import ecommerce.dto.products.OptionPatchDto
-import ecommerce.dto.products.ProductDto
+import ecommerce.dto.products.ProductRequestDto
 import ecommerce.dto.products.ProductPatchDto
 import ecommerce.dto.products.ProductResponseDto
 import ecommerce.model.Option
@@ -39,7 +39,7 @@ class AdminProductService(
         return product.toProductDto()
     }
 
-    fun createProduct(productDto: ProductDto): URI {
+    fun createProduct(productDto: ProductRequestDto): URI {
         if (productRepository.existsByName(productDto.name)) {
             throw DuplicateProductNameException(productDto.name)
         }
@@ -56,7 +56,7 @@ class AdminProductService(
 
     fun updateProduct(
         id: Long,
-        productDto: ProductDto,
+        productDto: ProductRequestDto,
     ) {
         val product =
             getValidProduct(id)
@@ -104,7 +104,7 @@ class AdminProductService(
 
     fun createOption(
         productId: Long,
-        optionDto: OptionDto,
+        optionDto: OptionRequestDto,
     ): URI {
         val product = getValidProduct(productId)
 
@@ -121,7 +121,7 @@ class AdminProductService(
     fun updateOption(
         productId: Long,
         optionId: Long,
-        optionDto: OptionDto,
+        optionDto: OptionRequestDto,
     ) {
         val product = getValidProduct(productId)
         val option = findOption(product, optionId)
@@ -165,7 +165,7 @@ class AdminProductService(
         return oldProduct != null && oldProduct.id != id
     }
 
-    private fun getOptionMutableList(option: MutableList<OptionDto>): MutableList<Option> {
+    private fun getOptionMutableList(option: MutableList<OptionRequestDto>): MutableList<Option> {
         return option.map { it.toEntity() }.toMutableList()
     }
 

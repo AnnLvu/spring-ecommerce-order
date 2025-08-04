@@ -1,6 +1,6 @@
 package ecommerce.controller.member
 
-import ecommerce.dto.cartProduct.CartProductDto
+import ecommerce.dto.cartProduct.CartProductRequestDto
 import ecommerce.dto.user.UserRequestDto
 import ecommerce.model.Option
 import ecommerce.model.Product
@@ -96,7 +96,7 @@ class CartControllerTest {
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
-        assertThat(response.body().jsonPath().getList("products", CartProductDto::class.java).size).isEqualTo(1)
+        assertThat(response.body().jsonPath().getList("products", CartProductRequestDto::class.java).size).isEqualTo(1)
     }
 
     @Test
@@ -118,7 +118,7 @@ class CartControllerTest {
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
-        assertThat(cartProductsResponse.body().jsonPath().getList("products", CartProductDto::class.java).size).isEqualTo(1)
+        assertThat(cartProductsResponse.body().jsonPath().getList("products", CartProductRequestDto::class.java).size).isEqualTo(1)
     }
 
     @Test
@@ -160,7 +160,7 @@ class CartControllerTest {
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value())
-        assertThat(cartProductsResponse.body().jsonPath().getList("products", CartProductDto::class.java).size).isZero
+        assertThat(cartProductsResponse.body().jsonPath().getList("products", CartProductRequestDto::class.java).size).isZero
     }
 
     @Test
@@ -189,7 +189,7 @@ class CartControllerTest {
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value())
-        assertThat(cartProductsResponse.body().jsonPath().getList("products", CartProductDto::class.java).size).isZero
+        assertThat(cartProductsResponse.body().jsonPath().getList("products", CartProductRequestDto::class.java).size).isZero
     }
 
     @Test
