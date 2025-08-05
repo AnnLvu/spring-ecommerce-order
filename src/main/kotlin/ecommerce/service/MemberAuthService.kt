@@ -1,0 +1,47 @@
+package ecommerce.service
+
+import ecommerce.dto.auth.AuthTokenPayload
+import ecommerce.dto.auth.LoginRequestDto
+import ecommerce.dto.user.UserCreateResponseDto
+import ecommerce.dto.user.UserRequestDto
+import ecommerce.enums.UserRole
+import ecommerce.exception.UserAlreadyExistsException
+import ecommerce.model.Cart
+import ecommerce.model.User
+import ecommerce.repository.CartRepository
+import ecommerce.repository.UserRepository
+import ecommerce.security.JwtProvider
+import org.springframework.stereotype.Service
+import java.net.URI
+
+@Service
+class MemberAuthService(
+    private val userRepository: UserRepository,
+    private val cartRepository: CartRepository,
+    private val jwtProvider: JwtProvider,
+    private val loginService: LoginService,
+) {
+    fun signUp(userRequestDto: UserRequestDto): UserCreateResponseDto {
+        if (userRepository.existsByEmail(userRequestDto.email)) {
+            throw UserAlreadyExistsException(userRequestDto.email)
+        }
+        val member =
+            User(
+                userRequestDto.email,
+                userRequestDto.password,
+                userRequestDto.name,
+                UserRole.USER,
+            )
+
+        member.cart = cartRepository.save(Cart())
+
+        val savedMember = userRepository.save(member)
+
+        val authTokenPayload = jwtProvider.createToken(AuthTokenPayload(member.email))
+        return UserCreateResponseDto(URI.create("/users/$savedMember.id"), "Bearer $authTokenPayload")
+    }
+
+    fun login(loginRequest: LoginRequestDto): String {
+        return loginService.login(loginRequest)
+    }
+}
