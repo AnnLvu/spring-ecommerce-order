@@ -218,14 +218,16 @@
   - [x] add  properties in application.properties - ``stripe.secret-key=``
   - [x] add `@EnableConfigurationProperties(StripeProperties::class)` in `Application.kt`
   - [x] add `StripeProperties` class with a `secretKey` field
+- [ ] StripeClient
 - [ ] dto
   - [ ] PlaceOrderRequest
   - [ ] PlaceOrderResponse
+  - [x] PaymentRequest
+  - [x] PaymentResponse
 - [ ] model
   - [ ] add order
 - [ ] repository 
   - [ ] OrderRepository
-- [ ] StripeClient
 - [ ] service
   - [ ] OrderService
 - [ ] controller
