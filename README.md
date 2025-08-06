@@ -219,9 +219,9 @@
   - [x] add `@EnableConfigurationProperties(StripeProperties::class)` in `Application.kt`
   - [x] add `StripeProperties` class with a `secretKey` field
 - [x] StripeClient
-- [ ] dto
-  - [ ] PlaceOrderRequest
-  - [ ] PlaceOrderResponse
+- [x] dto
+  - [x] PlaceOrderRequest
+  - [x] PlaceOrderResponse
   - [x] PaymentRequest
   - [x] PaymentResponse
 - [x] model
@@ -236,9 +236,9 @@
     - [x] `id: Long` — primary key
 - [x] repository 
   - [x] OrderRepository
-- [ ] service
-  - [ ] OrderService
-- [ ] controller
-  - [ ] OrderController
-- [ ] exception
-  - [ ] PaymentException
+- [x] service
+  - [x] OrderService
+- [x] controller
+  - [x] OrderController
+- [x] exception
+  - [x] PaymentException

@@ -5,6 +5,7 @@ import ecommerce.dto.error.ErrorResponseDto
 import ecommerce.exception.CartOperationException
 import ecommerce.exception.DuplicateProductNameException
 import ecommerce.exception.EntityNotFoundException
+import ecommerce.exception.PaymentException
 import ecommerce.exception.UnauthorisedUserException
 import ecommerce.exception.UserAlreadyExistsException
 import ecommerce.exception.UserCredentialException
@@ -115,4 +116,9 @@ class GlobalExceptionHandler {
             )
         return ResponseEntity.status(status).body(response)
     }
+
+    @ExceptionHandler(PaymentException::class)
+    fun onPaymentError(e: PaymentException): ResponseEntity<Map<String,String>> =
+        ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED)
+            .body(mapOf("error" to (e.message ?: "Payment error")))
 }
