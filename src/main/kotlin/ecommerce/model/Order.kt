@@ -13,35 +13,27 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 
-
 @Entity
 @Table(name = "orders")
 class Order(
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     val user: User,
-
     @Column(name = "stripe_session_id", nullable = false)
     var stripeSessionId: String,
-
     @Column(nullable = false)
     var amount: Double,
-
     @Column(nullable = false)
     var status: String = "PENDING",
-
-
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime = LocalDateTime.now(),
-
     @OneToMany(
         mappedBy = "order",
         cascade = [CascadeType.ALL],
         orphanRemoval = true,
-        fetch = FetchType.LAZY
+        fetch = FetchType.LAZY,
     )
     val items: MutableList<OrderItem> = mutableListOf(),
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,

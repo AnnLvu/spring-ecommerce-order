@@ -4,5 +4,5 @@ import ecommerce.model.Option
 
 data class OptionQuantity(
     val option: Option,
-    val quantity: Int
+    val quantity: Int,
 )

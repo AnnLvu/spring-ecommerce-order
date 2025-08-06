@@ -118,7 +118,7 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(PaymentException::class)
-    fun onPaymentError(e: PaymentException): ResponseEntity<Map<String,String>> =
+    fun onPaymentError(e: PaymentException): ResponseEntity<Map<String, String>> =
         ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED)
             .body(mapOf("error" to (e.message ?: "Payment error")))
 }

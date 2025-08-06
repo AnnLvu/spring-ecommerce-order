@@ -23,10 +23,13 @@ class OrderService(
     private val optionRepository: OptionRepository,
     private val cartProductRepository: CartProductRepository,
     private val orderRepository: OrderRepository,
-    private val stripeClient: StripeClient
+    private val stripeClient: StripeClient,
 ) {
     @Transactional
-    fun placeOrder(userId: Long, placeOrderRequest: PlaceOrderRequest): PlaceOrderResponse {
+    fun placeOrder(
+        userId: Long,
+        placeOrderRequest: PlaceOrderRequest,
+    ): PlaceOrderResponse {
         val user = loadUserById(userId)
         val cartProducts = loadCartProductsForUser(user)
         val optionQuantityList = validateStockAndPrepareLineItems(cartProducts)
@@ -36,7 +39,7 @@ class OrderService(
         val savedOrder = buildAndSaveOrder(user, checkoutSessionId, totalAmount, optionQuantityList)
         return PlaceOrderResponse(
             savedOrder.id,
-            checkoutSessionId
+            checkoutSessionId,
         )
     }
 
@@ -45,8 +48,9 @@ class OrderService(
             .orElseThrow { IllegalArgumentException("Invalid user ID: $userId") }
 
     private fun loadCartProductsForUser(user: User): List<CartProduct> {
-        val cart = user.cart
-            ?: throw IllegalArgumentException("Cart not found for user ${user.id}")
+        val cart =
+            user.cart
+                ?: throw IllegalArgumentException("Cart not found for user ${user.id}")
         val cartProducts = cartProductRepository.findByCart(cart)
         if (cartProducts.isEmpty()) {
             throw IllegalArgumentException("Cart is empty for user ${user.id}")
@@ -54,12 +58,11 @@ class OrderService(
         return cartProducts
     }
 
-    private fun validateStockAndPrepareLineItems(
-        cartProducts: List<CartProduct>
-    ): List<OptionQuantity> {
+    private fun validateStockAndPrepareLineItems(cartProducts: List<CartProduct>): List<OptionQuantity> {
         return cartProducts.map { cartProduct ->
-            val productOption = optionRepository.findById(cartProduct.option.id)
-                .orElseThrow { IllegalArgumentException("Invalid option ID: ${cartProduct.option.id}") }
+            val productOption =
+                optionRepository.findById(cartProduct.option.id)
+                    .orElseThrow { IllegalArgumentException("Invalid option ID: ${cartProduct.option.id}") }
             if (productOption.quantity < cartProduct.quantity) {
                 throw IllegalArgumentException("Insufficient stock for option ID: ${productOption.id}")
             }
@@ -67,9 +70,7 @@ class OrderService(
         }
     }
 
-    private fun calculateTotalAmount(
-        optionQuantityList: List<OptionQuantity>
-    ): Double {
+    private fun calculateTotalAmount(optionQuantityList: List<OptionQuantity>): Double {
         return optionQuantityList.sumOf { (productOption, quantity) ->
             productOption.price * quantity
         }
@@ -77,25 +78,26 @@ class OrderService(
 
     private fun createStripeCheckoutSession(
         totalAmount: Double,
-        placeOrderRequest: PlaceOrderRequest
+        placeOrderRequest: PlaceOrderRequest,
     ): String {
-        val paymentResponse = try {
-            stripeClient.createCheckoutSession(
-                PaymentRequest(
-                    amount = totalAmount,
-                    currency = placeOrderRequest.currency,
-                    paymentMethod = placeOrderRequest.paymentMethod
+        val paymentResponse =
+            try {
+                stripeClient.createCheckoutSession(
+                    PaymentRequest(
+                        amount = totalAmount,
+                        currency = placeOrderRequest.currency,
+                        paymentMethod = placeOrderRequest.paymentMethod,
+                    ),
                 )
-            )
-        } catch (exception: Exception) {
-            throw PaymentException(exception.message ?: "Payment processing failed")
-        }
+            } catch (exception: Exception) {
+                throw PaymentException(exception.message ?: "Payment processing failed")
+            }
         return paymentResponse.id.toString()
     }
 
     private fun deductStockAndClearCart(
         user: User,
-        optionQuantityList: List<OptionQuantity>
+        optionQuantityList: List<OptionQuantity>,
     ) {
         optionQuantityList.forEach { (productOption, quantity) ->
             productOption.quantity -= quantity
@@ -108,19 +110,21 @@ class OrderService(
         user: User,
         checkoutSessionId: String,
         totalAmount: Double,
-        optionQuantityList: List<OptionQuantity>
+        optionQuantityList: List<OptionQuantity>,
     ): Order {
-        val order = Order(
-            user,
-            checkoutSessionId,
-            totalAmount
-        )
-        optionQuantityList.forEach { (productOption, quantity) ->
-            val orderItem = OrderItem(
-                order,
-                productOption,
-                quantity
+        val order =
+            Order(
+                user,
+                checkoutSessionId,
+                totalAmount,
             )
+        optionQuantityList.forEach { (productOption, quantity) ->
+            val orderItem =
+                OrderItem(
+                    order,
+                    productOption,
+                    quantity,
+                )
             order.items.add(orderItem)
         }
         return orderRepository.save(order)

@@ -4,5 +4,5 @@ import ecommerce.dto.stripe.PaymentResponse
 
 data class PlaceOrderRequest(
     val currency: String,
-    val paymentMethod: PaymentResponse
+    val paymentMethod: PaymentResponse,
 )
