@@ -210,3 +210,24 @@
 ### Service
 - [x] MemberAuthServiceTest
 - [x] ProductServiceTest
+
+
+## Step 2-1 
+### Feature list
+- [ ] Stripe configuration
+  - [ ] add  properties in application.properties - ``stripe.secret-key=``
+  - [ ] add `@EnableConfigurationProperties(StripeProperties::class)` in `Application.kt`
+- [ ] dto
+  - [ ] PlaceOrderRequest
+  - [ ] PlaceOrderResponse
+- [ ] model
+  - [ ] add order
+- [ ] repository 
+  - [ ] OrderRepository
+- [ ] StripeClient
+- [ ] service
+  - [ ] OrderService
+- [ ] controller
+  - [ ] OrderController
+- [ ] exception
+  - [ ] PaymentException
