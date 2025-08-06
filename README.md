@@ -214,9 +214,10 @@
 
 ## Step 2-1 
 ### Feature list
-- [ ] Stripe configuration
-  - [ ] add  properties in application.properties - ``stripe.secret-key=``
-  - [ ] add `@EnableConfigurationProperties(StripeProperties::class)` in `Application.kt`
+- [x] Stripe configuration
+  - [x] add  properties in application.properties - ``stripe.secret-key=``
+  - [x] add `@EnableConfigurationProperties(StripeProperties::class)` in `Application.kt`
+  - [x] add `StripeProperties` class with a `secretKey` field
 - [ ] dto
   - [ ] PlaceOrderRequest
   - [ ] PlaceOrderResponse
