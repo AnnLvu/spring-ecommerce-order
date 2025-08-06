@@ -224,18 +224,24 @@
   - [x] PlaceOrderResponse
   - [x] PaymentRequest
   - [x] PaymentResponse
+  - [x] OptionQuantity
 - [x] model
-  - [x] order
+  - [x] Order
     - [x] `user: User` - reference to the user  (`@ManyToOne`)
-    - [x] `productOption: Option` - reference to the selected product option (`@ManyToOne`)
-    - [x] `quantity: Int` - number of items in the order
     - [x] `stripeSessionId: String` - Stripe checkout session ID
     - [x] `amount: Double` - total payment amount
     - [x] `status: String` - order status (`PENDING`, `SUCCESS`, `FAILED`)
+    - [x] `items: MutableList<OrderItem>` - list of order items (`@OneToMany(mappedBy = "order", cascade = [ALL], orphanRemoval = true)`)
     - [x] `createdAt: LocalDateTime` - order creation timestamp
-    - [x] `id: Long` — primary key
+    - [x] `id: Long` - primary key 
+  - [x] OrderItem
+    - [x] `order: Order` - reference to the parent order (`@ManyToOne(fetch = LAZY)`)
+    - [x] `productOption: Option` - reference to the selected product option (`@ManyToOne(fetch = LAZY)`)
+    - [x] `quantity: Int` - number of items in this line (`@Column(nullable = false)`)
+    - [x] `id: Long` - primary key (`@Id`, `@GeneratedValue(strategy = IDENTITY)`)
 - [x] repository 
   - [x] OrderRepository
+  - [x] OrderItemRepository
 - [x] service
   - [x] OrderService
 - [x] controller

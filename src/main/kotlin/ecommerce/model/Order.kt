@@ -1,12 +1,15 @@
 package ecommerce.model
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 
@@ -17,12 +20,6 @@ class Order(
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     val user: User,
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "option_id")
-    val productOption: Option,
-
-    var quantity: Int,
 
     @Column(name = "stripe_session_id", nullable = false)
     var stripeSessionId: String,
@@ -36,6 +33,14 @@ class Order(
 
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime = LocalDateTime.now(),
+
+    @OneToMany(
+        mappedBy = "order",
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+    )
+    val items: MutableList<OrderItem> = mutableListOf(),
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
