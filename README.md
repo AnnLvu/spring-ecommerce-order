@@ -224,10 +224,18 @@
   - [ ] PlaceOrderResponse
   - [x] PaymentRequest
   - [x] PaymentResponse
-- [ ] model
-  - [ ] add order
-- [ ] repository 
-  - [ ] OrderRepository
+- [x] model
+  - [x] order
+    - [x] `user: User` - reference to the user  (`@ManyToOne`)
+    - [x] `productOption: Option` - reference to the selected product option (`@ManyToOne`)
+    - [x] `quantity: Int` - number of items in the order
+    - [x] `stripeSessionId: String` - Stripe checkout session ID
+    - [x] `amount: Double` - total payment amount
+    - [x] `status: String` - order status (`PENDING`, `SUCCESS`, `FAILED`)
+    - [x] `createdAt: LocalDateTime` - order creation timestamp
+    - [x] `id: Long` — primary key
+- [x] repository 
+  - [x] OrderRepository
 - [ ] service
   - [ ] OrderService
 - [ ] controller
