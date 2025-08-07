@@ -51,6 +51,7 @@ dependencies {
     testImplementation("jakarta.validation:jakarta.validation-api:3.0.2")
     testImplementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
     testImplementation("io.mockk:mockk:1.13.7")
+    testImplementation("com.ninja-squad:springmockk:3.1.1")
 }
 
 kotlin {
