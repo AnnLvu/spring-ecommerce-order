@@ -23,10 +23,14 @@ class Order(
     var stripeSessionId: String,
     @Column(nullable = false)
     var amount: Double,
+    @Column(name = "currency", nullable = false)
+    val currency: String,
+    @Column(name = "payment_method", nullable = false)
+    val paymentMethod: String,
     @Column(nullable = false)
     var status: String = "PENDING",
     @Column(name = "created_at", nullable = false)
-    var createdAt: LocalDateTime = LocalDateTime.now(),
+    var createdAt: LocalDateTime,
     @OneToMany(
         mappedBy = "order",
         cascade = [CascadeType.ALL],

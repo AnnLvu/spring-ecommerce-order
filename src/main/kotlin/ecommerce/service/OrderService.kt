@@ -1,6 +1,8 @@
 package ecommerce.service
 
 import ecommerce.dto.options.OptionQuantity
+import ecommerce.dto.order.OrderItemResponseDto
+import ecommerce.dto.order.OrderResponseDto
 import ecommerce.dto.order.PlaceOrderRequest
 import ecommerce.dto.order.PlaceOrderResponse
 import ecommerce.dto.stripe.PaymentRequest
@@ -14,8 +16,9 @@ import ecommerce.repository.OptionRepository
 import ecommerce.repository.OrderRepository
 import ecommerce.repository.UserRepository
 import ecommerce.stripe.StripeClient
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 class OrderService(
@@ -36,11 +39,47 @@ class OrderService(
         val totalAmount = calculateTotalAmount(optionQuantityList)
         val checkoutSessionId = createStripeCheckoutSession(totalAmount, placeOrderRequest)
         deductStockAndClearCart(user, optionQuantityList)
-        val savedOrder = buildAndSaveOrder(user, checkoutSessionId, totalAmount, optionQuantityList)
+        val savedOrder =
+            buildAndSaveOrder(
+                user,
+                checkoutSessionId,
+                totalAmount,
+                optionQuantityList,
+                placeOrderRequest,
+            )
         return PlaceOrderResponse(
             savedOrder.id,
             checkoutSessionId,
         )
+    }
+
+    @Transactional(readOnly = true)
+    fun listOrders(userId: Long): List<OrderResponseDto> {
+        val user =
+            userRepository.findById(userId)
+                .orElseThrow { IllegalArgumentException("Invalid user ID: $userId") }
+
+        return orderRepository.findAllByUserOrderByCreatedAtDesc(user)
+            .map { order ->
+                OrderResponseDto(
+                    order.id,
+                    order.createdAt,
+                    order.status,
+                    order.stripeSessionId,
+                    order.amount,
+                    order.currency,
+                    order.paymentMethod,
+                    order.items.map { item ->
+                        OrderItemResponseDto(
+                            item.productOption.id,
+                            item.productOption.name,
+                            item.quantity,
+                            item.productOption.price,
+                            item.productOption.price * item.quantity,
+                        )
+                    },
+                )
+            }
     }
 
     private fun loadUserById(userId: Long) =
@@ -111,20 +150,22 @@ class OrderService(
         checkoutSessionId: String,
         totalAmount: Double,
         optionQuantityList: List<OptionQuantity>,
+        placeOrderRequest: PlaceOrderRequest,
     ): Order {
+        val now = LocalDateTime.now()
         val order =
             Order(
                 user,
                 checkoutSessionId,
                 totalAmount,
+                placeOrderRequest.currency,
+                placeOrderRequest.paymentMethod.id.toString(),
+                "PENDING",
+                now,
+                mutableListOf(),
             )
         optionQuantityList.forEach { (productOption, quantity) ->
-            val orderItem =
-                OrderItem(
-                    order,
-                    productOption,
-                    quantity,
-                )
+            val orderItem = OrderItem(order, productOption, quantity)
             order.items.add(orderItem)
         }
         return orderRepository.save(order)

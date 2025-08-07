@@ -112,6 +112,8 @@ class OrderServiceTest {
                 user,
                 paymentResp.id.toString(),
                 totalAmount,
+                request.currency,
+                paymentResp.id.toString(),
                 "PENDING",
                 LocalDateTime.now(),
                 mutableListOf(),

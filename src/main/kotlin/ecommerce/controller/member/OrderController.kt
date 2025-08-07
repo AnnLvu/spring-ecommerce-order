@@ -1,11 +1,13 @@
 package ecommerce.controller.member
 
 import ecommerce.annotations.LoginMember
+import ecommerce.dto.order.OrderResponseDto
 import ecommerce.dto.order.PlaceOrderRequest
 import ecommerce.dto.order.PlaceOrderResponse
 import ecommerce.model.User
 import ecommerce.service.OrderService
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -23,5 +25,13 @@ class OrderController(
     ): ResponseEntity<PlaceOrderResponse> {
         val resp = orderService.placeOrder(user.id, request)
         return ResponseEntity.ok(resp)
+    }
+
+    @GetMapping
+    fun listOrders(
+        @LoginMember user: User,
+    ): ResponseEntity<List<OrderResponseDto>> {
+        val orders = orderService.listOrders(user.id)
+        return ResponseEntity.ok(orders)
     }
 }
