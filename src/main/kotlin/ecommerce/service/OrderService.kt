@@ -84,9 +84,9 @@ class OrderService(
             try {
                 stripeClient.createCheckoutSession(
                     PaymentRequest(
-                        amount = totalAmount,
-                        currency = placeOrderRequest.currency,
-                        paymentMethod = placeOrderRequest.paymentMethod,
+                        totalAmount,
+                        placeOrderRequest.currency,
+                        placeOrderRequest.paymentMethod,
                     ),
                 )
             } catch (exception: Exception) {
