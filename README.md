@@ -211,7 +211,7 @@
 - [x] ProductServiceTest
 
 
-## Step 2-1 
+## Step 2-1 and Step 2-2
 ### Feature list
 - [x] Stripe configuration
   - [x] add  properties in application.properties - ``stripe.secret-key=``
@@ -247,3 +247,9 @@
   - [x] OrderController
 - [x] exception
   - [x] PaymentException
+
+## Step 2-3
+- [ ] Deployment script (automates build -> stop old -> start new)
+- [ ] Environment & secrets management (no secrets in repo; use env vars).
+- [ ] Server CORS configuration for client -> API interaction.
+- [ ] ORS acceptance test (preflight, allowed methods, headers).
