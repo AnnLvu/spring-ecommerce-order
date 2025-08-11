@@ -1,4 +1,3 @@
-// ecommerce/stripe/StripeClient.kt
 package ecommerce.stripe
 
 import com.fasterxml.jackson.annotation.JsonProperty
