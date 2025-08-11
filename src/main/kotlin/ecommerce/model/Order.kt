@@ -1,5 +1,6 @@
 package ecommerce.model
 
+import ecommerce.enums.OrderStatus
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -28,7 +29,9 @@ class Order(
     @Column(name = "payment_method", nullable = false)
     val paymentMethod: String,
     @Column(nullable = false)
-    var status: String = "PENDING",
+    var status: OrderStatus,
+    @Column(nullable = true)
+    var failureReason: String? = null,
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime,
     @OneToMany(

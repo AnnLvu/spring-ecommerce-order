@@ -2,7 +2,6 @@ package ecommerce.controller.member
 
 import ecommerce.dto.order.PlaceOrderRequest
 import ecommerce.dto.order.PlaceOrderResponse
-import ecommerce.dto.stripe.PaymentResponse
 import ecommerce.enums.UserRole
 import ecommerce.model.Cart
 import ecommerce.model.User
@@ -38,8 +37,11 @@ class OrderControllerTest {
                 7L,
             )
 
-        val paymentResp = PaymentResponse(11L, 100L, "usd")
-        val request = PlaceOrderRequest("usd", paymentResp)
+        val request =
+            PlaceOrderRequest(
+                currency = "usd",
+                paymentMethodId = "pm_card_visa",
+            )
         val expected = PlaceOrderResponse(55L, "sess_11")
 
         every { orderService.placeOrder(user.id, request) } returns expected

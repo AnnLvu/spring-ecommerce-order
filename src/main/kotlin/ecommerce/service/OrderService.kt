@@ -1,15 +1,17 @@
 package ecommerce.service
 
 import ecommerce.dto.options.OptionQuantity
-import ecommerce.dto.order.OrderItemResponseDto
 import ecommerce.dto.order.OrderResponseDto
 import ecommerce.dto.order.PlaceOrderRequest
 import ecommerce.dto.order.PlaceOrderResponse
 import ecommerce.dto.stripe.PaymentRequest
+import ecommerce.dto.stripe.PaymentResponse
 import ecommerce.exception.PaymentException
+import ecommerce.exception.StripePaymentException
+import ecommerce.extensions.OrderMapper
+import ecommerce.extensions.toDto
+import ecommerce.extensions.toUserFriendlyMessage
 import ecommerce.model.CartProduct
-import ecommerce.model.Order
-import ecommerce.model.OrderItem
 import ecommerce.model.User
 import ecommerce.repository.CartProductRepository
 import ecommerce.repository.OptionRepository
@@ -18,7 +20,6 @@ import ecommerce.repository.UserRepository
 import ecommerce.stripe.StripeClient
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 
 @Service
 class OrderService(
@@ -37,20 +38,40 @@ class OrderService(
         val cartProducts = loadCartProductsForUser(user)
         val optionQuantityList = validateStockAndPrepareLineItems(cartProducts)
         val totalAmount = calculateTotalAmount(optionQuantityList)
-        val checkoutSessionId = createStripeCheckoutSession(totalAmount, placeOrderRequest)
+
+        var order = OrderMapper.newPending(user, totalAmount, placeOrderRequest)
+        order = orderRepository.save(order)
+
+        val payment: PaymentResponse =
+            try {
+                createStripeCheckoutSession(totalAmount, placeOrderRequest)
+            } catch (ex: StripePaymentException) {
+                val raw = ex.declineCode ?: ex.code ?: "payment_error"
+                val msg = raw.toUserFriendlyMessage()
+                order = OrderMapper.applyFailed(order, msg)
+                orderRepository.save(order)
+                throw PaymentException(msg)
+            } catch (ex: Exception) {
+                val msg = "Unable to process the payment: ${ex.message ?: "technical error"}"
+                order = OrderMapper.applyFailed(order, msg)
+                orderRepository.save(order)
+                throw PaymentException(msg)
+            }
+
+        if (payment.status != "succeeded") {
+            val raw = payment.declineCode ?: payment.status
+            val msg = raw.toUserFriendlyMessage()
+            order = OrderMapper.applyFailed(order, msg, payment.id)
+            orderRepository.save(order)
+            throw PaymentException(msg)
+        }
+
         deductStockAndClearCart(user, optionQuantityList)
-        val savedOrder =
-            buildAndSaveOrder(
-                user,
-                checkoutSessionId,
-                totalAmount,
-                optionQuantityList,
-                placeOrderRequest,
-            )
-        return PlaceOrderResponse(
-            savedOrder.id,
-            checkoutSessionId,
-        )
+
+        order = OrderMapper.applyPaid(order, payment.id, optionQuantityList)
+        order = orderRepository.save(order)
+
+        return PlaceOrderResponse(order.id, order.stripeSessionId)
     }
 
     @Transactional(readOnly = true)
@@ -60,26 +81,7 @@ class OrderService(
                 .orElseThrow { IllegalArgumentException("Invalid user ID: $userId") }
 
         return orderRepository.findAllByUserOrderByCreatedAtDesc(user)
-            .map { order ->
-                OrderResponseDto(
-                    order.id,
-                    order.createdAt,
-                    order.status,
-                    order.stripeSessionId,
-                    order.amount,
-                    order.currency,
-                    order.paymentMethod,
-                    order.items.map { item ->
-                        OrderItemResponseDto(
-                            item.productOption.id,
-                            item.productOption.name,
-                            item.quantity,
-                            item.productOption.price,
-                            item.productOption.price * item.quantity,
-                        )
-                    },
-                )
-            }
+            .map { it.toDto() }
     }
 
     private fun loadUserById(userId: Long) =
@@ -87,9 +89,7 @@ class OrderService(
             .orElseThrow { IllegalArgumentException("Invalid user ID: $userId") }
 
     private fun loadCartProductsForUser(user: User): List<CartProduct> {
-        val cart =
-            user.cart
-                ?: throw IllegalArgumentException("Cart not found for user ${user.id}")
+        val cart = user.cart ?: throw IllegalArgumentException("Cart not found for user ${user.id}")
         val cartProducts = cartProductRepository.findByCart(cart)
         if (cartProducts.isEmpty()) {
             throw IllegalArgumentException("Cart is empty for user ${user.id}")
@@ -118,20 +118,14 @@ class OrderService(
     private fun createStripeCheckoutSession(
         totalAmount: Double,
         placeOrderRequest: PlaceOrderRequest,
-    ): String {
-        val paymentResponse =
-            try {
-                stripeClient.createCheckoutSession(
-                    PaymentRequest(
-                        totalAmount,
-                        placeOrderRequest.currency,
-                        placeOrderRequest.paymentMethod,
-                    ),
-                )
-            } catch (exception: Exception) {
-                throw PaymentException(exception.message ?: "Payment processing failed")
-            }
-        return paymentResponse.id.toString()
+    ): PaymentResponse {
+        return stripeClient.createCheckoutSession(
+            PaymentRequest(
+                totalAmount,
+                placeOrderRequest.currency,
+                placeOrderRequest.paymentMethodId,
+            ),
+        )
     }
 
     private fun deductStockAndClearCart(
@@ -143,31 +137,5 @@ class OrderService(
             optionRepository.save(productOption)
             cartProductRepository.deleteByCartAndOption(user.cart!!, productOption)
         }
-    }
-
-    private fun buildAndSaveOrder(
-        user: User,
-        checkoutSessionId: String,
-        totalAmount: Double,
-        optionQuantityList: List<OptionQuantity>,
-        placeOrderRequest: PlaceOrderRequest,
-    ): Order {
-        val now = LocalDateTime.now()
-        val order =
-            Order(
-                user,
-                checkoutSessionId,
-                totalAmount,
-                placeOrderRequest.currency,
-                placeOrderRequest.paymentMethod.id.toString(),
-                "PENDING",
-                now,
-                mutableListOf(),
-            )
-        optionQuantityList.forEach { (productOption, quantity) ->
-            val orderItem = OrderItem(order, productOption, quantity)
-            order.items.add(orderItem)
-        }
-        return orderRepository.save(order)
     }
 }

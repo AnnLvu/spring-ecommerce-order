@@ -3,7 +3,10 @@ package ecommerce.service
 import ecommerce.dto.order.PlaceOrderRequest
 import ecommerce.dto.stripe.PaymentRequest
 import ecommerce.dto.stripe.PaymentResponse
+import ecommerce.enums.OrderStatus
+import ecommerce.enums.UserRole
 import ecommerce.exception.PaymentException
+import ecommerce.exception.StripePaymentException
 import ecommerce.model.Cart
 import ecommerce.model.CartProduct
 import ecommerce.model.Option
@@ -32,22 +35,17 @@ import java.util.Optional
 
 @ExtendWith(MockKExtension::class)
 class OrderServiceTest {
-    @MockK
-    lateinit var userRepository: UserRepository
+    @MockK lateinit var userRepository: UserRepository
 
-    @MockK
-    lateinit var cartProductRepository: CartProductRepository
+    @MockK lateinit var cartProductRepository: CartProductRepository
 
-    @MockK
-    lateinit var optionRepository: OptionRepository
+    @MockK lateinit var optionRepository: OptionRepository
 
-    @MockK
-    lateinit var orderRepository: OrderRepository
+    @MockK lateinit var orderRepository: OrderRepository
 
-    @MockK
-    lateinit var stripeClient: StripeClient
+    @MockK lateinit var stripeClient: StripeClient
 
-    lateinit var orderService: OrderService
+    private lateinit var orderService: OrderService
 
     @BeforeEach
     fun setUp() {
@@ -69,52 +67,45 @@ class OrderServiceTest {
     @Test
     fun `placeOrder - process successfully`() {
         val userId = 1L
+        val cart = Cart(id = 10L)
         val user =
             User(
                 "ann@example.com",
                 "password12345",
                 "User",
-            ).apply { cart = Cart(id = 10L) }
-
-        val cart = user.cart!!
-        val option =
-            Option(
-                "Option",
-                50.0,
-                5,
-                "https://example.com/img.png",
-            )
-
-        val cartProduct =
-            CartProduct(
+                UserRole.USER,
                 cart,
-                option,
-                2,
+                1L,
             )
 
+        val option = Option("Option", 50.0, 5, "https://example.com/img.png")
+        val cartProduct = CartProduct(cart, option, 2)
         val totalAmount = option.price * cartProduct.quantity
 
         val paymentResp =
             PaymentResponse(
-                123L,
+                "pi_123",
                 totalAmount.toLong(),
                 "usd",
+                "succeeded",
+                null,
             )
 
         val request =
             PlaceOrderRequest(
                 "usd",
-                paymentResp,
+                "pm_card_visa",
             )
 
         val savedOrder =
             Order(
                 user,
-                paymentResp.id.toString(),
+                paymentResp.id,
                 totalAmount,
                 request.currency,
-                paymentResp.id.toString(),
-                "PENDING",
+                request.paymentMethodId,
+                OrderStatus.PAID,
+                null,
                 LocalDateTime.now(),
                 mutableListOf(),
                 99L,
@@ -126,56 +117,69 @@ class OrderServiceTest {
         every { stripeClient.createCheckoutSession(any<PaymentRequest>()) } returns paymentResp
         every { optionRepository.save(option) } returns option
         every { cartProductRepository.deleteByCartAndOption(cart, option) } just runs
-        every { orderRepository.save(match { it.user == user && it.amount == totalAmount }) } returns savedOrder
+
+        every { orderRepository.save(any()) } answers { firstArg() }
+        every { orderRepository.save(match { it.status == OrderStatus.PAID }) } returns savedOrder
 
         val response = orderService.placeOrder(userId, request)
 
         assertEquals(99L, response.orderId)
-        assertEquals("123", response.checkoutSession)
+        assertEquals("pi_123", response.checkoutSession)
         assertEquals(3, option.quantity) // 5 - 2
 
         verify(exactly = 1) { optionRepository.save(option) }
         verify(exactly = 1) { cartProductRepository.deleteByCartAndOption(cart, option) }
-        verify(exactly = 1) { orderRepository.save(any<Order>()) }
+        verify(exactly = 2) { orderRepository.save(any<Order>()) } // PENDING + PAID
     }
 
     @Test
     fun `placeOrder - Stripe error should throw PaymentException and not touch stock or cart`() {
         val userId = 1L
-        val user = User("ann@example.com", "password1234", "User").apply { cart = Cart(id = 10L) }
-        val cart = user.cart!!
+        val cart = Cart(id = 10L)
+        val user = User("ann@example.com", "password1234", "User", UserRole.USER, cart, 1L)
         val option = Option("Opt", 30.0, 4, "https://example.com/img.png")
         val cartProduct = CartProduct(cart, option, 2)
-        val request = PlaceOrderRequest("usd", PaymentResponse(0, 0, "usd"))
+
+        val request =
+            PlaceOrderRequest(
+                currency = "usd",
+                paymentMethodId = "pm_card_visa_chargeDeclinedInsufficientFunds",
+            )
 
         every { userRepository.findById(userId) } returns Optional.of(user)
         every { cartProductRepository.findByCart(cart) } returns listOf(cartProduct)
         every { optionRepository.findById(option.id) } returns Optional.of(option)
 
-        every { stripeClient.createCheckoutSession(any<PaymentRequest>()) } throws IllegalArgumentException("card_declined")
+        every { orderRepository.save(any()) } answers { firstArg() }
 
-        val exception =
-            assertThrows<PaymentException>("PaymentException") {
+        every { stripeClient.createCheckoutSession(any<PaymentRequest>()) } throws
+            StripePaymentException(
+                "card_declined",
+                code = "insufficient_funds",
+                declineCode = "insufficient_funds",
+            )
+
+        val ex =
+            assertThrows<PaymentException> {
                 orderService.placeOrder(userId, request)
             }
-        assertTrue(exception.message!!.contains("card_declined"))
+        assertTrue(ex.message!!.contains("insufficient", ignoreCase = true))
 
-        assertEquals(4, option.quantity) // 4 = 4
-
+        assertEquals(4, option.quantity)
         verify(exactly = 0) { optionRepository.save(any()) }
         verify(exactly = 0) { cartProductRepository.deleteByCartAndOption(any(), any()) }
-        verify(exactly = 0) { orderRepository.save(any()) }
+
+        verify(exactly = 2) { orderRepository.save(any<Order>()) }
     }
 
     @Test
     fun `placeOrder - insufficient stock should throw IllegalArgumentException and not call downstream methods`() {
         val userId = 1L
-        val user = User("ann@example.com", "password1234", "User").apply { cart = Cart(id = 10L) }
-        val cart = user.cart!!
-        // В опции меньше товара, чем в корзине
+        val cart = Cart(id = 10L)
+        val user = User("ann@example.com", "password1234", "User", UserRole.USER, cart, 1L)
         val option = Option("Opt", 30.0, 1, "https://example.com/img.png")
         val cartProduct = CartProduct(cart, option, 2)
-        val request = PlaceOrderRequest("usd", PaymentResponse(0L, 0L, "usd"))
+        val request = PlaceOrderRequest(currency = "usd", paymentMethodId = "pm_card_visa")
 
         every { userRepository.findById(userId) } returns Optional.of(user)
         every { cartProductRepository.findByCart(cart) } returns listOf(cartProduct)
@@ -185,27 +189,21 @@ class OrderServiceTest {
             assertThrows<IllegalArgumentException> {
                 orderService.placeOrder(userId, request)
             }
-        assertTrue(
-            exception.message!!.contains("Insufficient stock for option ID: ${option.id}"),
-        )
+        assertTrue(exception.message!!.contains("Insufficient stock for option ID: ${option.id}"))
 
+        verify(exactly = 0) { orderRepository.save(any()) }
         verify(exactly = 0) { stripeClient.createCheckoutSession(any()) }
         verify(exactly = 0) { optionRepository.save(any()) }
         verify(exactly = 0) { cartProductRepository.deleteByCartAndOption(any(), any()) }
-        verify(exactly = 0) { orderRepository.save(any()) }
     }
 
     @Test
     fun `placeOrder - empty cart should throw IllegalArgumentException and not call downstream methods`() {
         val userId = 1L
-        val user = User("ann@example.com", "password1234", "User").apply { cart = Cart(id = 20L) }
-        val cart = user.cart!!
+        val cart = Cart(id = 20L)
+        val user = User("ann@example.com", "password1234", "User", UserRole.USER, cart, 1L)
 
-        val request =
-            PlaceOrderRequest(
-                "usd",
-                PaymentResponse(0L, 0L, "usd"),
-            )
+        val request = PlaceOrderRequest(currency = "usd", paymentMethodId = "pm_card_visa")
 
         every { userRepository.findById(userId) } returns Optional.of(user)
         every { cartProductRepository.findByCart(cart) } returns emptyList()
@@ -214,9 +212,7 @@ class OrderServiceTest {
             assertThrows<IllegalArgumentException> {
                 orderService.placeOrder(userId, request)
             }
-        assertTrue(
-            exception.message!!.contains("Cart is empty for user ${user.id}"),
-        )
+        assertTrue(exception.message!!.contains("Cart is empty for user ${user.id}"))
 
         verify(exactly = 0) { optionRepository.findById(any()) }
         verify(exactly = 0) { stripeClient.createCheckoutSession(any()) }
@@ -228,11 +224,7 @@ class OrderServiceTest {
     @Test
     fun `placeOrder - invalid userId should throw IllegalArgumentException and not call downstream methods`() {
         val userId = 999L
-        val request =
-            PlaceOrderRequest(
-                "usd",
-                PaymentResponse(0L, 0L, "usd"),
-            )
+        val request = PlaceOrderRequest(currency = "usd", paymentMethodId = "pm_card_visa")
 
         every { userRepository.findById(userId) } returns Optional.empty()
 
@@ -240,10 +232,7 @@ class OrderServiceTest {
             assertThrows<IllegalArgumentException> {
                 orderService.placeOrder(userId, request)
             }
-        assertEquals(
-            "Invalid user ID: $userId",
-            exception.message,
-        )
+        assertEquals("Invalid user ID: $userId", exception.message)
 
         verify(exactly = 0) { cartProductRepository.findByCart(any()) }
         verify(exactly = 0) { optionRepository.findById(any()) }
@@ -255,13 +244,12 @@ class OrderServiceTest {
 
     @Test
     fun `placeOrder - missing option should throw IllegalArgumentException and not call downstream methods`() {
-        // Arrange
         val userId = 1L
-        val user = User("ann@example.com", "password", "User").apply { cart = Cart(id = 30L) }
-        val cart = user.cart!!
+        val cart = Cart(id = 30L)
+        val user = User("ann@example.com", "password", "User", UserRole.USER, cart, 1L)
         val option = Option("OptX", 20.0, 3, "https://example.com/img.png")
         val cartProduct = CartProduct(cart, option, 1)
-        val request = PlaceOrderRequest("usd", PaymentResponse(0L, 0L, "usd"))
+        val request = PlaceOrderRequest(currency = "usd", paymentMethodId = "pm_card_visa")
 
         every { userRepository.findById(userId) } returns Optional.of(user)
         every { cartProductRepository.findByCart(cart) } returns listOf(cartProduct)
@@ -271,10 +259,7 @@ class OrderServiceTest {
             assertThrows<IllegalArgumentException> {
                 orderService.placeOrder(userId, request)
             }
-        assertEquals(
-            "Invalid option ID: ${option.id}",
-            ex.message,
-        )
+        assertEquals("Invalid option ID: ${option.id}", ex.message)
 
         verify(exactly = 0) { stripeClient.createCheckoutSession(any()) }
         verify(exactly = 0) { optionRepository.save(any()) }
