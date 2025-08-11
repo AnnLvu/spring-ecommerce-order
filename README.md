@@ -249,7 +249,6 @@
   - [x] PaymentException
 
 ## Step 2-3
-- [ ] Deployment script (automates build -> stop old -> start new)
-- [ ] Environment & secrets management (no secrets in repo; use env vars).
-- [ ] Server CORS configuration for client -> API interaction.
-- [ ] ORS acceptance test (preflight, allowed methods, headers).
+- [x] Deployment script 
+- [x] Environment & secrets management (no secrets in repo; use env vars).
+- [x] Server CORS configuration.
