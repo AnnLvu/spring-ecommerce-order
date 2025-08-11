@@ -1,6 +1,6 @@
 package ecommerce.dto.order
 
-data class PlaceOrderRequest(
+data class PlaceOrderRequestDto(
     val currency: String,
     val paymentMethodId: String,
 )

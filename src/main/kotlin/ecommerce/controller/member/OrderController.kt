@@ -2,8 +2,8 @@ package ecommerce.controller.member
 
 import ecommerce.annotations.LoginMember
 import ecommerce.dto.order.OrderResponseDto
-import ecommerce.dto.order.PlaceOrderRequest
-import ecommerce.dto.order.PlaceOrderResponse
+import ecommerce.dto.order.PlaceOrderRequestDto
+import ecommerce.dto.order.PlaceOrderResponseDto
 import ecommerce.model.User
 import ecommerce.service.OrderService
 import org.springframework.http.ResponseEntity
@@ -21,8 +21,8 @@ class OrderController(
     @PostMapping
     fun placeOrder(
         @LoginMember user: User,
-        @RequestBody request: PlaceOrderRequest,
-    ): ResponseEntity<PlaceOrderResponse> {
+        @RequestBody request: PlaceOrderRequestDto,
+    ): ResponseEntity<PlaceOrderResponseDto> {
         val resp = orderService.placeOrder(user.id, request)
         return ResponseEntity.ok(resp)
     }

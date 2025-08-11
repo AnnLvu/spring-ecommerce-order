@@ -1,6 +1,6 @@
 package ecommerce.dto.stripe
 
-data class PaymentResponse(
+data class PaymentResponseDto(
     val id: String,
     val amount: Long,
     val currency: String,

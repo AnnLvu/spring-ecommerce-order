@@ -1,8 +1,8 @@
 package ecommerce.service
 
-import ecommerce.dto.order.PlaceOrderRequest
-import ecommerce.dto.stripe.PaymentRequest
-import ecommerce.dto.stripe.PaymentResponse
+import ecommerce.dto.order.PlaceOrderRequestDto
+import ecommerce.dto.stripe.PaymentRequestDto
+import ecommerce.dto.stripe.PaymentResponseDto
 import ecommerce.enums.OrderStatus
 import ecommerce.enums.UserRole
 import ecommerce.exception.PaymentException
@@ -83,7 +83,7 @@ class OrderServiceTest {
         val totalAmount = option.price * cartProduct.quantity
 
         val paymentResp =
-            PaymentResponse(
+            PaymentResponseDto(
                 "pi_123",
                 totalAmount.toLong(),
                 "usd",
@@ -92,7 +92,7 @@ class OrderServiceTest {
             )
 
         val request =
-            PlaceOrderRequest(
+            PlaceOrderRequestDto(
                 "usd",
                 "pm_card_visa",
             )
@@ -114,7 +114,7 @@ class OrderServiceTest {
         every { userRepository.findById(userId) } returns Optional.of(user)
         every { cartProductRepository.findByCart(cart) } returns listOf(cartProduct)
         every { optionRepository.findById(option.id) } returns Optional.of(option)
-        every { stripeClient.createCheckoutSession(any<PaymentRequest>()) } returns paymentResp
+        every { stripeClient.createCheckoutSession(any<PaymentRequestDto>()) } returns paymentResp
         every { optionRepository.save(option) } returns option
         every { cartProductRepository.deleteByCartAndOption(cart, option) } just runs
 
@@ -141,7 +141,7 @@ class OrderServiceTest {
         val cartProduct = CartProduct(cart, option, 2)
 
         val request =
-            PlaceOrderRequest(
+            PlaceOrderRequestDto(
                 currency = "usd",
                 paymentMethodId = "pm_card_visa_chargeDeclinedInsufficientFunds",
             )
@@ -152,7 +152,7 @@ class OrderServiceTest {
 
         every { orderRepository.save(any()) } answers { firstArg() }
 
-        every { stripeClient.createCheckoutSession(any<PaymentRequest>()) } throws
+        every { stripeClient.createCheckoutSession(any<PaymentRequestDto>()) } throws
             StripePaymentException(
                 "card_declined",
                 code = "insufficient_funds",
@@ -179,7 +179,7 @@ class OrderServiceTest {
         val user = User("ann@example.com", "password1234", "User", UserRole.USER, cart, 1L)
         val option = Option("Opt", 30.0, 1, "https://example.com/img.png")
         val cartProduct = CartProduct(cart, option, 2)
-        val request = PlaceOrderRequest(currency = "usd", paymentMethodId = "pm_card_visa")
+        val request = PlaceOrderRequestDto(currency = "usd", paymentMethodId = "pm_card_visa")
 
         every { userRepository.findById(userId) } returns Optional.of(user)
         every { cartProductRepository.findByCart(cart) } returns listOf(cartProduct)
@@ -203,7 +203,7 @@ class OrderServiceTest {
         val cart = Cart(id = 20L)
         val user = User("ann@example.com", "password1234", "User", UserRole.USER, cart, 1L)
 
-        val request = PlaceOrderRequest(currency = "usd", paymentMethodId = "pm_card_visa")
+        val request = PlaceOrderRequestDto(currency = "usd", paymentMethodId = "pm_card_visa")
 
         every { userRepository.findById(userId) } returns Optional.of(user)
         every { cartProductRepository.findByCart(cart) } returns emptyList()
@@ -224,7 +224,7 @@ class OrderServiceTest {
     @Test
     fun `placeOrder - invalid userId should throw IllegalArgumentException and not call downstream methods`() {
         val userId = 999L
-        val request = PlaceOrderRequest(currency = "usd", paymentMethodId = "pm_card_visa")
+        val request = PlaceOrderRequestDto(currency = "usd", paymentMethodId = "pm_card_visa")
 
         every { userRepository.findById(userId) } returns Optional.empty()
 
@@ -249,7 +249,7 @@ class OrderServiceTest {
         val user = User("ann@example.com", "password", "User", UserRole.USER, cart, 1L)
         val option = Option("OptX", 20.0, 3, "https://example.com/img.png")
         val cartProduct = CartProduct(cart, option, 1)
-        val request = PlaceOrderRequest(currency = "usd", paymentMethodId = "pm_card_visa")
+        val request = PlaceOrderRequestDto(currency = "usd", paymentMethodId = "pm_card_visa")
 
         every { userRepository.findById(userId) } returns Optional.of(user)
         every { cartProductRepository.findByCart(cart) } returns listOf(cartProduct)

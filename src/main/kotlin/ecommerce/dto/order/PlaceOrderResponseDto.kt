@@ -1,6 +1,6 @@
 package ecommerce.dto.order
 
-data class PlaceOrderResponse(
+data class PlaceOrderResponseDto(
     val orderId: Long,
     val checkoutSession: String,
 )

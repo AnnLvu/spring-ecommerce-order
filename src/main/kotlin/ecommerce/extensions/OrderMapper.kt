@@ -1,7 +1,7 @@
 package ecommerce.extensions
 
-import ecommerce.dto.options.OptionQuantity
-import ecommerce.dto.order.PlaceOrderRequest
+import ecommerce.dto.options.OptionQuantityDto
+import ecommerce.dto.order.PlaceOrderRequestDto
 import ecommerce.enums.OrderStatus
 import ecommerce.model.Order
 import ecommerce.model.OrderItem
@@ -12,7 +12,7 @@ object OrderMapper {
     fun newPending(
         user: User,
         amount: Double,
-        req: PlaceOrderRequest,
+        req: PlaceOrderRequestDto,
         now: LocalDateTime = LocalDateTime.now(),
     ): Order =
         Order(
@@ -40,7 +40,7 @@ object OrderMapper {
     fun applyPaid(
         order: Order,
         sessionId: String,
-        items: List<OptionQuantity>,
+        items: List<OptionQuantityDto>,
     ): Order {
         order.status = OrderStatus.PAID
         order.failureReason = null

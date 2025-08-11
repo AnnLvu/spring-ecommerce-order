@@ -1,11 +1,11 @@
 package ecommerce.service
 
-import ecommerce.dto.options.OptionQuantity
+import ecommerce.dto.options.OptionQuantityDto
 import ecommerce.dto.order.OrderResponseDto
-import ecommerce.dto.order.PlaceOrderRequest
-import ecommerce.dto.order.PlaceOrderResponse
-import ecommerce.dto.stripe.PaymentRequest
-import ecommerce.dto.stripe.PaymentResponse
+import ecommerce.dto.order.PlaceOrderRequestDto
+import ecommerce.dto.order.PlaceOrderResponseDto
+import ecommerce.dto.stripe.PaymentRequestDto
+import ecommerce.dto.stripe.PaymentResponseDto
 import ecommerce.exception.PaymentException
 import ecommerce.exception.StripePaymentException
 import ecommerce.extensions.OrderMapper
@@ -32,19 +32,19 @@ class OrderService(
     @Transactional
     fun placeOrder(
         userId: Long,
-        placeOrderRequest: PlaceOrderRequest,
-    ): PlaceOrderResponse {
+        placeOrderRequestDto: PlaceOrderRequestDto,
+    ): PlaceOrderResponseDto {
         val user = loadUserById(userId)
         val cartProducts = loadCartProductsForUser(user)
         val optionQuantityList = validateStockAndPrepareLineItems(cartProducts)
         val totalAmount = calculateTotalAmount(optionQuantityList)
 
-        var order = OrderMapper.newPending(user, totalAmount, placeOrderRequest)
+        var order = OrderMapper.newPending(user, totalAmount, placeOrderRequestDto)
         order = orderRepository.save(order)
 
-        val payment: PaymentResponse =
+        val payment: PaymentResponseDto =
             try {
-                createStripeCheckoutSession(totalAmount, placeOrderRequest)
+                createStripeCheckoutSession(totalAmount, placeOrderRequestDto)
             } catch (ex: StripePaymentException) {
                 val raw = ex.declineCode ?: ex.code ?: "payment_error"
                 val msg = raw.toUserFriendlyMessage()
@@ -71,7 +71,7 @@ class OrderService(
         order = OrderMapper.applyPaid(order, payment.id, optionQuantityList)
         order = orderRepository.save(order)
 
-        return PlaceOrderResponse(order.id, order.stripeSessionId)
+        return PlaceOrderResponseDto(order.id, order.stripeSessionId)
     }
 
     @Transactional(readOnly = true)
@@ -97,7 +97,7 @@ class OrderService(
         return cartProducts
     }
 
-    private fun validateStockAndPrepareLineItems(cartProducts: List<CartProduct>): List<OptionQuantity> {
+    private fun validateStockAndPrepareLineItems(cartProducts: List<CartProduct>): List<OptionQuantityDto> {
         return cartProducts.map { cartProduct ->
             val productOption =
                 optionRepository.findById(cartProduct.option.id)
@@ -105,11 +105,11 @@ class OrderService(
             if (productOption.quantity < cartProduct.quantity) {
                 throw IllegalArgumentException("Insufficient stock for option ID: ${productOption.id}")
             }
-            OptionQuantity(productOption, cartProduct.quantity)
+            OptionQuantityDto(productOption, cartProduct.quantity)
         }
     }
 
-    private fun calculateTotalAmount(optionQuantityList: List<OptionQuantity>): Double {
+    private fun calculateTotalAmount(optionQuantityList: List<OptionQuantityDto>): Double {
         return optionQuantityList.sumOf { (productOption, quantity) ->
             productOption.price * quantity
         }
@@ -117,20 +117,20 @@ class OrderService(
 
     private fun createStripeCheckoutSession(
         totalAmount: Double,
-        placeOrderRequest: PlaceOrderRequest,
-    ): PaymentResponse {
+        placeOrderRequestDto: PlaceOrderRequestDto,
+    ): PaymentResponseDto {
         return stripeClient.createCheckoutSession(
-            PaymentRequest(
+            PaymentRequestDto(
                 totalAmount,
-                placeOrderRequest.currency,
-                placeOrderRequest.paymentMethodId,
+                placeOrderRequestDto.currency,
+                placeOrderRequestDto.paymentMethodId,
             ),
         )
     }
 
     private fun deductStockAndClearCart(
         user: User,
-        optionQuantityList: List<OptionQuantity>,
+        optionQuantityList: List<OptionQuantityDto>,
     ) {
         optionQuantityList.forEach { (productOption, quantity) ->
             productOption.quantity -= quantity

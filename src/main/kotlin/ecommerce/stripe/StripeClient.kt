@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import ecommerce.annotations.StripeProperties
-import ecommerce.dto.stripe.PaymentRequest
-import ecommerce.dto.stripe.PaymentResponse
+import ecommerce.dto.stripe.PaymentRequestDto
+import ecommerce.dto.stripe.PaymentResponseDto
 import ecommerce.exception.StripePaymentException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -42,7 +42,7 @@ class StripeClient(
     private val rest = RestClient.create()
     private val mapper = jacksonObjectMapper()
 
-    fun createCheckoutSession(req: PaymentRequest): PaymentResponse {
+    fun createCheckoutSession(req: PaymentRequestDto): PaymentResponseDto {
         val amountMinor = (req.amount * 100).roundToLong()
 
         val body =
@@ -66,7 +66,7 @@ class StripeClient(
                     .toEntity(String::class.java)
 
             val pi = mapper.readValue(resp.body, StripePaymentIntent::class.java)
-            PaymentResponse(
+            PaymentResponseDto(
                 id = pi.id,
                 amount = pi.amount,
                 currency = pi.currency,
