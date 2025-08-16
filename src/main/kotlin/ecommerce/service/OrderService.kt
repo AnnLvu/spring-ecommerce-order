@@ -8,7 +8,7 @@ import ecommerce.dto.stripe.PaymentRequestDto
 import ecommerce.dto.stripe.PaymentResponseDto
 import ecommerce.exception.PaymentException
 import ecommerce.exception.StripePaymentException
-import ecommerce.extensions.OrderMapper
+import ecommerce.extensions.OrderStateMapper
 import ecommerce.extensions.toDto
 import ecommerce.extensions.toUserFriendlyMessage
 import ecommerce.model.CartProduct
@@ -39,7 +39,7 @@ class OrderService(
         val optionQuantityList = validateStockAndPrepareLineItems(cartProducts)
         val totalAmount = calculateTotalAmount(optionQuantityList)
 
-        var order = OrderMapper.newPending(user, totalAmount, placeOrderRequestDto)
+        var order = OrderStateMapper.newPending(user, totalAmount, placeOrderRequestDto)
         order = orderRepository.save(order)
 
         val payment: PaymentResponseDto =
@@ -48,12 +48,12 @@ class OrderService(
             } catch (ex: StripePaymentException) {
                 val raw = ex.declineCode ?: ex.code ?: "payment_error"
                 val msg = raw.toUserFriendlyMessage()
-                order = OrderMapper.applyFailed(order, msg)
+                order = OrderStateMapper.applyFailed(order, msg)
                 orderRepository.save(order)
                 throw PaymentException(msg)
             } catch (ex: Exception) {
                 val msg = "Unable to process the payment: ${ex.message ?: "technical error"}"
-                order = OrderMapper.applyFailed(order, msg)
+                order = OrderStateMapper.applyFailed(order, msg)
                 orderRepository.save(order)
                 throw PaymentException(msg)
             }
@@ -61,14 +61,14 @@ class OrderService(
         if (payment.status != "succeeded") {
             val raw = payment.declineCode ?: payment.status
             val msg = raw.toUserFriendlyMessage()
-            order = OrderMapper.applyFailed(order, msg, payment.id)
+            order = OrderStateMapper.applyFailed(order, msg, payment.id)
             orderRepository.save(order)
             throw PaymentException(msg)
         }
 
         deductStockAndClearCart(user, optionQuantityList)
 
-        order = OrderMapper.applyPaid(order, payment.id, optionQuantityList)
+        order = OrderStateMapper.applyPaid(order, payment.id, optionQuantityList)
         order = orderRepository.save(order)
 
         return PlaceOrderResponseDto(order.id, order.stripeSessionId)
