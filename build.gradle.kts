@@ -52,6 +52,7 @@ dependencies {
     testImplementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
     testImplementation("io.mockk:mockk:1.13.7")
     testImplementation("com.ninja-squad:springmockk:3.1.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 }
 
 kotlin {
