@@ -1,4 +1,4 @@
-package ecommerce.extensions
+package ecommerce.stripe
 
 fun String?.toUserFriendlyMessage(): String =
     when (this?.lowercase()) {

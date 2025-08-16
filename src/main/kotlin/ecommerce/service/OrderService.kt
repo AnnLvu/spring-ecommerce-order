@@ -10,7 +10,6 @@ import ecommerce.exception.PaymentException
 import ecommerce.exception.StripePaymentException
 import ecommerce.extensions.OrderStateMapper
 import ecommerce.extensions.toDto
-import ecommerce.extensions.toUserFriendlyMessage
 import ecommerce.model.CartProduct
 import ecommerce.model.User
 import ecommerce.repository.CartProductRepository
@@ -18,6 +17,7 @@ import ecommerce.repository.OptionRepository
 import ecommerce.repository.OrderRepository
 import ecommerce.repository.UserRepository
 import ecommerce.stripe.StripeClient
+import ecommerce.stripe.toUserFriendlyMessage
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

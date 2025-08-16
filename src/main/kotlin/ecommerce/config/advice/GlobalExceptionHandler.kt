@@ -10,7 +10,7 @@ import ecommerce.exception.StripePaymentException
 import ecommerce.exception.UnauthorisedUserException
 import ecommerce.exception.UserAlreadyExistsException
 import ecommerce.exception.UserCredentialException
-import ecommerce.extensions.toUserFriendlyMessage
+import ecommerce.stripe.toUserFriendlyMessage
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
