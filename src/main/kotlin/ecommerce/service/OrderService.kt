@@ -34,10 +34,16 @@ class OrderService(
         userId: Long,
         placeOrderRequestDto: PlaceOrderRequestDto,
     ): PlaceOrderResponseDto {
+        require(userId > 0) { "Invalid user ID: $userId" }
+        require(placeOrderRequestDto.currency.isNotBlank()) { "Currency must be provided" }
+        require(placeOrderRequestDto.paymentMethodId.isNotBlank()) { "Payment method must be provided" }
+
         val user = loadUserById(userId)
         val cartProducts = loadCartProductsForUser(user)
         val optionQuantityList = validateStockAndPrepareLineItems(cartProducts)
         val totalAmount = calculateTotalAmount(optionQuantityList)
+
+        require(totalAmount > 0) { "Order total must be positive" }
 
         var order = OrderStateMapper.newPending(user, totalAmount, placeOrderRequestDto)
         order = orderRepository.save(order)
@@ -47,23 +53,23 @@ class OrderService(
                 createStripeCheckoutSession(totalAmount, placeOrderRequestDto)
             } catch (ex: StripePaymentException) {
                 val raw = ex.declineCode ?: ex.code ?: "payment_error"
-                val msg = raw.toUserFriendlyMessage()
-                order = OrderStateMapper.applyFailed(order, msg)
+                val message = raw.toUserFriendlyMessage()
+                order = OrderStateMapper.applyFailed(order, message)
                 orderRepository.save(order)
-                throw PaymentException(msg)
+                throw PaymentException(message)
             } catch (ex: Exception) {
-                val msg = "Unable to process the payment: ${ex.message ?: "technical error"}"
-                order = OrderStateMapper.applyFailed(order, msg)
+                val message = "Unable to process the payment: ${ex.message ?: "technical error"}"
+                order = OrderStateMapper.applyFailed(order, message)
                 orderRepository.save(order)
-                throw PaymentException(msg)
+                throw PaymentException(message)
             }
 
         if (payment.status != "succeeded") {
             val raw = payment.declineCode ?: payment.status
-            val msg = raw.toUserFriendlyMessage()
-            order = OrderStateMapper.applyFailed(order, msg, payment.id)
+            val message = raw.toUserFriendlyMessage()
+            order = OrderStateMapper.applyFailed(order, message, payment.id)
             orderRepository.save(order)
-            throw PaymentException(msg)
+            throw PaymentException(message)
         }
 
         deductStockAndClearCart(user, optionQuantityList)
@@ -76,10 +82,7 @@ class OrderService(
 
     @Transactional(readOnly = true)
     fun listOrders(userId: Long): List<OrderResponseDto> {
-        val user =
-            userRepository.findById(userId)
-                .orElseThrow { IllegalArgumentException("Invalid user ID: $userId") }
-
+        val user = loadUserById(userId)
         return orderRepository.findAllByUserOrderByCreatedAtDesc(user)
             .map { it.toDto() }
     }
@@ -89,21 +92,18 @@ class OrderService(
             .orElseThrow { IllegalArgumentException("Invalid user ID: $userId") }
 
     private fun loadCartProductsForUser(user: User): List<CartProduct> {
-        val cart = user.cart ?: throw IllegalArgumentException("Cart not found for user ${user.id}")
+        val cart = checkNotNull(user.cart) { "Cart not found for user ${user.id}" }
         val cartProducts = cartProductRepository.findByCart(cart)
-        if (cartProducts.isEmpty()) {
-            throw IllegalArgumentException("Cart is empty for user ${user.id}")
-        }
+        require(cartProducts.isNotEmpty()) { "Cart is empty for user ${user.id}" }
         return cartProducts
     }
 
     private fun validateStockAndPrepareLineItems(cartProducts: List<CartProduct>): List<OptionQuantityDto> {
         return cartProducts.map { cartProduct ->
-            val productOption =
-                optionRepository.findById(cartProduct.option.id)
-                    .orElseThrow { IllegalArgumentException("Invalid option ID: ${cartProduct.option.id}") }
-            if (productOption.quantity < cartProduct.quantity) {
-                throw IllegalArgumentException("Insufficient stock for option ID: ${productOption.id}")
+            val productOption = optionRepository.findById(cartProduct.option.id).orElse(null)
+            requireNotNull(productOption) { "Invalid option ID: ${cartProduct.option.id}" }
+            require(productOption.quantity >= cartProduct.quantity) {
+                "Insufficient stock for option ID: ${productOption.id}"
             }
             OptionQuantityDto(productOption, cartProduct.quantity)
         }
@@ -134,8 +134,9 @@ class OrderService(
     ) {
         optionQuantityList.forEach { (productOption, quantity) ->
             productOption.quantity -= quantity
+            check(productOption.quantity >= 0) { "Negative stock for option ID: ${productOption.id}" }
             optionRepository.save(productOption)
-            cartProductRepository.deleteByCartAndOption(user.cart!!, productOption)
+            cartProductRepository.deleteByCartAndOption(checkNotNull(user.cart), productOption)
         }
     }
 }
