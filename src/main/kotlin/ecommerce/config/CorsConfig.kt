@@ -14,7 +14,7 @@ class CorsConfig(
 ) {
     @Bean
     fun corsFilter(): CorsFilter {
-        val cfg =
+        val config =
             CorsConfiguration().apply {
                 allowCredentials = false
 
@@ -27,12 +27,12 @@ class CorsConfig(
 
                 allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 allowedHeaders = listOf("*")
-                exposedHeaders = listOf(HttpHeaders.LOCATION) // тест ждёт этот заголовок
+                exposedHeaders = listOf(HttpHeaders.LOCATION)
                 maxAge = 1800
             }
 
         val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", cfg)
+        source.registerCorsConfiguration("/**", config)
         return CorsFilter(source)
     }
 }
